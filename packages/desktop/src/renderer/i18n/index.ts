@@ -14,7 +14,6 @@ import { dict as desktopEs } from "./es"
 import { dict as desktopFr } from "./fr"
 import { dict as desktopJa } from "./ja"
 import { dict as desktopRu } from "./ru"
-import { dict as desktopAr } from "./ar"
 import { dict as desktopBr } from "./br"
 
 export type Locale = DesktopNativeLocale
@@ -70,7 +69,6 @@ function build(locale: Locale): Dictionary {
   if (locale === "fr") return { ...base, ...i18n.flatten(desktopFr) }
   if (locale === "ja") return { ...base, ...i18n.flatten(desktopJa) }
   if (locale === "ru") return { ...base, ...i18n.flatten(desktopRu) }
-  if (locale === "ar") return { ...base, ...i18n.flatten(desktopAr) }
   if (locale === "br") return { ...base, ...i18n.flatten(desktopBr) }
   return { ...base, ...i18n.flatten(desktopKo) }
 }

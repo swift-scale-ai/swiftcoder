@@ -1,5 +1,7 @@
 # SwiftCoder
 
+[English](README.md) | [简体中文](README.zh-CN.md)
+
 SwiftCoder is a lightweight AI coding agent for macOS, powered by
 [SwiftScale](https://swift-scale.com). It turns a natural-language task into a
 controlled local workflow: understand the repository, plan the work, inspect
@@ -160,10 +162,6 @@ credentials stored outside the repository in
 ```bash
 ./tools/package-mac-release.sh
 ```
-
-Use `./tools/package-mac-release.sh beta` for a beta build. Add `--stage-web`
-to copy verified artifacts into `swiftcoder-web/public/releases/<channel>/`
-for the next `swiftcoder.io` website deployment.
 
 For a production-configured internal test build that uses ad-hoc signing and
 skips Apple notarization, run:
