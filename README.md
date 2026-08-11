@@ -1,6 +1,6 @@
 # SwiftCoder
 
-[English](README.md) | [简体中文](README.zh-CN.md)
+English | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md) | [日本語](README.ja.md) | [한국어](README.ko.md) | [Français](README.fr.md) | [Deutsch](README.de.md)
 
 SwiftCoder is a lightweight AI coding agent for macOS, powered by
 [SwiftScale](https://swift-scale.com). It turns a natural-language task into a

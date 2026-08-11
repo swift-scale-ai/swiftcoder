@@ -1,6 +1,6 @@
 # SwiftCoder
 
-[English](README.md) | 简体中文
+[English](README.md) | 简体中文 | [繁體中文](README.zh-TW.md) | [日本語](README.ja.md) | [한국어](README.ko.md) | [Français](README.fr.md) | [Deutsch](README.de.md)
 
 SwiftCoder 是一款由 [SwiftScale](https://swift-scale.com) 驱动的轻量级 macOS AI 编程智能体。它可以将自然语言任务转化为一套可控的本地工作流：理解代码仓库、规划任务、检查和编辑文件、运行命令、审查变更并验证结果。
 
