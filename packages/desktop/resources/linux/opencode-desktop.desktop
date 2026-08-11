@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=SwiftCoder
+Exec=/opt/SwiftCoder/ai.swiftscale.swiftcoder %U
+Terminal=false
+Type=Application
+Icon=ai.swiftscale.swiftcoder
+StartupWMClass=ai.swiftscale.swiftcoder
+NoDisplay=true
+Comment=Open source AI coding agent
+Categories=Development;

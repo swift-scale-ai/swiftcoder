@@ -1,0 +1,266 @@
+:root {
+  --font-family-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", "Segoe UI", sans-serif;
+  --font-family-sans--font-feature-settings: "kern";
+  --font-family-text: var(--font-family-sans);
+  --v2-font-family-sans: var(--font-family-sans);
+  --font-family-mono: "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  --font-size-small: 14px;
+  --font-size-base: 14px;
+  --font-size-large: 17px;
+  --font-size-x-large: 21px;
+}
+
+html,
+body,
+#root {
+  font-family: var(--font-family-sans);
+  font-size: 14px;
+  font-feature-settings: var(--font-family-sans--font-feature-settings);
+  font-variation-settings: normal;
+  font-synthesis: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+[data-layout="swiftcoder-workbench"] {
+  --swiftcoder-line: #d4e1e9;
+  --swiftcoder-line-strong: #b9d0df;
+  --swiftcoder-sidebar: #f5f9fc;
+  --swiftcoder-panel: #f7fafc;
+  --swiftcoder-hover: #edf5fa;
+  --swiftcoder-selected: #e5f1f9;
+  --swiftcoder-ink: #173246;
+  --swiftcoder-muted: #6f8492;
+  --swiftcoder-accent: #167db8;
+  --swiftcoder-user: #eaf5fb;
+  --swiftcoder-user-line: #a8cee4;
+
+  font-family: var(--font-family-sans);
+  font-size: 14px;
+  letter-spacing: 0;
+  color: var(--swiftcoder-ink);
+}
+
+[data-color-scheme="dark"] [data-layout="swiftcoder-workbench"] {
+  --swiftcoder-line: #2d414f;
+  --swiftcoder-line-strong: #3e596a;
+  --swiftcoder-sidebar: #111a21;
+  --swiftcoder-panel: #151f27;
+  --swiftcoder-hover: #1c2c37;
+  --swiftcoder-selected: #203746;
+  --swiftcoder-ink: #d8e6ef;
+  --swiftcoder-muted: #8ca1ae;
+  --swiftcoder-accent: #67b4e3;
+  --swiftcoder-user: #183444;
+  --swiftcoder-user-line: #3d708d;
+}
+
+[data-layout="swiftcoder-workbench"] > header {
+  height: 44px !important;
+  min-height: 44px !important;
+  border-bottom: 1px solid var(--swiftcoder-line);
+  background: var(--swiftcoder-sidebar) !important;
+}
+
+[data-layout="swiftcoder-workbench"] [data-slot="swiftcoder-brand-title"] {
+  z-index: 1;
+  color: var(--swiftcoder-ink);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+[data-layout="swiftcoder-workbench"] [data-slot="channel-indicator"],
+[data-layout="swiftcoder-workbench"] .group\/sidebar-toggle,
+[data-layout="swiftcoder-workbench"] #swiftcoder-titlebar-center > [data-component="button"] {
+  display: none !important;
+}
+
+[data-layout="swiftcoder-workbench"] [data-component="sidebar-rail"] {
+  border-color: var(--swiftcoder-line) !important;
+  background: var(--swiftcoder-sidebar) !important;
+}
+
+[data-layout="swiftcoder-workbench"] [data-component="sidebar-rail"] > div:first-child {
+  padding: 14px 10px 8px;
+}
+
+[data-layout="swiftcoder-workbench"] [data-component="sidebar-rail"] > div:first-child > button {
+  height: 36px;
+  border-color: var(--swiftcoder-line-strong);
+  border-radius: 2px;
+  background: transparent;
+  padding-inline: 8px;
+  color: var(--swiftcoder-ink);
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: none;
+}
+
+[data-layout="swiftcoder-workbench"] [data-component="sidebar-rail"] > div:nth-child(2) {
+  padding-inline: 10px;
+}
+
+[data-layout="swiftcoder-workbench"] [data-component="sidebar-rail"] .uppercase {
+  color: var(--swiftcoder-muted);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+[data-layout="swiftcoder-workbench"] [data-component="sidebar-project-row"] button[data-action="project-switch"] {
+  height: 32px;
+  gap: 4px;
+  border-radius: 3px;
+  padding-left: 6px;
+  padding-right: 36px;
+  color: var(--swiftcoder-ink);
+}
+
+[data-layout="swiftcoder-workbench"] [data-component="sidebar-project-row"] button[data-action="project-switch"] > div {
+  width: 16px;
+  height: 16px;
+}
+
+[data-layout="swiftcoder-workbench"]
+  [data-component="sidebar-project-row"]
+  button[data-action="project-switch"]
+  > span {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+[data-layout="swiftcoder-workbench"]
+  [data-component="sidebar-project-row"]
+  button[data-action="project-switch"].bg-surface-base-active {
+  background: var(--swiftcoder-selected);
+}
+
+[data-layout="swiftcoder-workbench"] [data-component="sidebar-session-row"] {
+  min-height: 28px;
+  gap: 4px;
+  padding-block: 2px;
+}
+
+[data-layout="swiftcoder-workbench"] [data-component="sidebar-session-row"] a > span:first-child {
+  font-size: 14px;
+  font-weight: 400;
+}
+
+[data-layout="swiftcoder-workbench"] [data-component="sidebar-rail"] > div:last-child {
+  border-color: var(--swiftcoder-line);
+  padding: 8px 10px;
+}
+
+[data-layout="swiftcoder-workbench"] [data-component="sidebar-rail"] > div:last-child button {
+  height: 28px;
+  border-radius: 3px;
+  font-size: 14px;
+}
+
+[data-layout="swiftcoder-workbench"] main {
+  border-color: var(--swiftcoder-line) !important;
+  border-radius: 0 !important;
+  background: var(--background-base);
+}
+
+[data-layout="swiftcoder-workbench"] [data-component="session-route-frame"] {
+  padding: 0 !important;
+  background: var(--background-base);
+}
+
+[data-layout="swiftcoder-workbench"] [data-component="session-panel-row"] {
+  gap: 0 !important;
+  padding: 0 !important;
+}
+
+[data-layout="swiftcoder-workbench"] [data-component="session-panel-frame"],
+[data-layout="swiftcoder-workbench"] [data-component="session-side-panel"] {
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+[data-layout="swiftcoder-workbench"] [data-component="session-side-panel"] {
+  border-left: 1px solid var(--swiftcoder-line);
+  background: var(--swiftcoder-panel) !important;
+}
+
+[data-layout="swiftcoder-workbench"] [data-component="session-side-panel"] [role="tablist"] {
+  border-bottom: 1px solid var(--swiftcoder-line);
+  background: var(--swiftcoder-panel);
+}
+
+[data-layout="swiftcoder-workbench"] [data-component="session-side-panel"] [role="tab"] {
+  min-height: 40px;
+  border-radius: 0;
+  font-size: 13px;
+}
+
+[data-layout="swiftcoder-workbench"] [data-session-title] {
+  border-bottom: 1px solid var(--swiftcoder-line);
+  background: var(--background-base) !important;
+  padding: 0 16px !important;
+}
+
+[data-layout="swiftcoder-workbench"] [data-session-title] > div {
+  height: 48px;
+}
+
+[data-layout="swiftcoder-workbench"] [data-session-title] [data-slot="session-title-project"] {
+  font-size: 14px;
+  letter-spacing: 0;
+}
+
+[data-layout="swiftcoder-workbench"] [data-session-title] [data-slot="session-title-child"] {
+  border-radius: 2px;
+  font-size: 14px;
+  letter-spacing: 0;
+}
+
+[data-layout="swiftcoder-workbench"] [data-component="user-message"] [data-slot="user-message-text"] {
+  border: 1px solid var(--swiftcoder-user-line) !important;
+  border-radius: 6px !important;
+  background: var(--swiftcoder-user) !important;
+  color: var(--swiftcoder-ink) !important;
+  box-shadow: none !important;
+}
+
+[data-layout="swiftcoder-workbench"] [data-component="session-turn"] {
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+[data-layout="swiftcoder-workbench"] [data-component="session-turn"] [data-slot="assistant-content"] {
+  color: var(--swiftcoder-ink);
+}
+
+[data-layout="swiftcoder-workbench"] [data-component="session-prompt-dock"] {
+  padding-bottom: 14px;
+  background: var(--background-base);
+}
+
+[data-layout="swiftcoder-workbench"] [data-component="prompt-input-v2"] {
+  min-height: 88px !important;
+  border: 1px solid var(--swiftcoder-line-strong) !important;
+  border-radius: 6px !important;
+  background: var(--background-base) !important;
+  box-shadow: none !important;
+}
+
+[data-layout="swiftcoder-workbench"] [data-component="prompt-input-v2"] textarea,
+[data-layout="swiftcoder-workbench"] [data-component="prompt-input-v2"] [data-component="prompt-input"],
+[data-layout="swiftcoder-workbench"] [data-component="prompt-input-v2"] [data-component="prompt-input"] + div,
+[data-layout="swiftcoder-workbench"] [data-component="prompt-input-v2"] [data-component="button-v2"] {
+  font-size: 14px;
+}
+
+[data-layout="swiftcoder-workbench"] [data-component="prompt-input-v2"] textarea,
+[data-layout="swiftcoder-workbench"] [data-component="prompt-input-v2"] [data-component="prompt-input"] {
+  line-height: 1.5;
+}
+
+[data-layout="swiftcoder-workbench"] button,
+[data-layout="swiftcoder-workbench"] input,
+[data-layout="swiftcoder-workbench"] textarea {
+  letter-spacing: 0;
+}

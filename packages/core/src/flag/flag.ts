@@ -1,0 +1,78 @@
+import { Config } from "effect"
+
+export function truthy(key: string) {
+  const value = process.env[key]?.toLowerCase()
+  return value === "true" || value === "1"
+}
+
+const copy = process.env["SWIFTCODER_EXPERIMENTAL_DISABLE_COPY_ON_SELECT"]
+const fff = process.env["SWIFTCODER_DISABLE_FFF"]
+
+function enabledByExperimental(key: string) {
+  return process.env[key] === undefined ? truthy("SWIFTCODER_EXPERIMENTAL") : truthy(key)
+}
+
+export const Flag = {
+  OTEL_EXPORTER_OTLP_ENDPOINT: process.env["OTEL_EXPORTER_OTLP_ENDPOINT"],
+  OTEL_EXPORTER_OTLP_HEADERS: process.env["OTEL_EXPORTER_OTLP_HEADERS"],
+
+  SWIFTCODER_AUTO_HEAP_SNAPSHOT: truthy("SWIFTCODER_AUTO_HEAP_SNAPSHOT"),
+  SWIFTCODER_GIT_BASH_PATH: process.env["SWIFTCODER_GIT_BASH_PATH"],
+  SWIFTCODER_CONFIG: process.env["SWIFTCODER_CONFIG"],
+  SWIFTCODER_CONFIG_CONTENT: process.env["SWIFTCODER_CONFIG_CONTENT"],
+  SWIFTCODER_DISABLE_AUTOUPDATE: truthy("SWIFTCODER_DISABLE_AUTOUPDATE"),
+  SWIFTCODER_ALWAYS_NOTIFY_UPDATE: truthy("SWIFTCODER_ALWAYS_NOTIFY_UPDATE"),
+  SWIFTCODER_DISABLE_PRUNE: truthy("SWIFTCODER_DISABLE_PRUNE"),
+  SWIFTCODER_DISABLE_TERMINAL_TITLE: truthy("SWIFTCODER_DISABLE_TERMINAL_TITLE"),
+  SWIFTCODER_SHOW_TTFD: truthy("SWIFTCODER_SHOW_TTFD"),
+  SWIFTCODER_DISABLE_AUTOCOMPACT: truthy("SWIFTCODER_DISABLE_AUTOCOMPACT"),
+  SWIFTCODER_DISABLE_MODELS_FETCH: truthy("SWIFTCODER_DISABLE_MODELS_FETCH"),
+  SWIFTCODER_DISABLE_MOUSE: truthy("SWIFTCODER_DISABLE_MOUSE"),
+  SWIFTCODER_FAKE_VCS: process.env["SWIFTCODER_FAKE_VCS"],
+  SWIFTCODER_SERVER_PASSWORD: process.env["SWIFTCODER_SERVER_PASSWORD"],
+  SWIFTCODER_SERVER_USERNAME: process.env["SWIFTCODER_SERVER_USERNAME"],
+  SWIFTCODER_DISABLE_FFF: fff === undefined ? process.platform === "win32" : truthy("SWIFTCODER_DISABLE_FFF"),
+
+  // Experimental
+  SWIFTCODER_EXPERIMENTAL_FILEWATCHER: Config.boolean("SWIFTCODER_EXPERIMENTAL_FILEWATCHER").pipe(
+    Config.withDefault(false),
+  ),
+  SWIFTCODER_EXPERIMENTAL_DISABLE_FILEWATCHER: Config.boolean("SWIFTCODER_EXPERIMENTAL_DISABLE_FILEWATCHER").pipe(
+    Config.withDefault(false),
+  ),
+  SWIFTCODER_EXPERIMENTAL_DISABLE_COPY_ON_SELECT:
+    copy === undefined ? process.platform === "win32" : truthy("SWIFTCODER_EXPERIMENTAL_DISABLE_COPY_ON_SELECT"),
+  SWIFTCODER_MODELS_URL: process.env["SWIFTCODER_MODELS_URL"],
+  SWIFTCODER_MODELS_PATH: process.env["SWIFTCODER_MODELS_PATH"],
+  SWIFTCODER_DB: process.env["SWIFTCODER_DB"],
+
+  SWIFTCODER_WORKSPACE_ID: process.env["SWIFTCODER_WORKSPACE_ID"],
+  SWIFTCODER_EXPERIMENTAL_WORKSPACES: enabledByExperimental("SWIFTCODER_EXPERIMENTAL_WORKSPACES"),
+
+  // Evaluated at access time (not module load) because tests, the CLI, and
+  // external tooling set these env vars at runtime.
+  get SWIFTCODER_DISABLE_PROJECT_CONFIG() {
+    return truthy("SWIFTCODER_DISABLE_PROJECT_CONFIG")
+  },
+  get SWIFTCODER_EXPERIMENTAL_REFERENCES() {
+    return enabledByExperimental("SWIFTCODER_EXPERIMENTAL_REFERENCES")
+  },
+  get SWIFTCODER_TUI_CONFIG() {
+    return process.env["SWIFTCODER_TUI_CONFIG"]
+  },
+  get SWIFTCODER_CONFIG_DIR() {
+    return process.env["SWIFTCODER_CONFIG_DIR"]
+  },
+  get SWIFTCODER_PURE() {
+    return truthy("SWIFTCODER_PURE")
+  },
+  get SWIFTCODER_PERMISSION() {
+    return process.env["SWIFTCODER_PERMISSION"]
+  },
+  get SWIFTCODER_PLUGIN_META_FILE() {
+    return process.env["SWIFTCODER_PLUGIN_META_FILE"]
+  },
+  get SWIFTCODER_CLIENT() {
+    return process.env["SWIFTCODER_CLIENT"] ?? "cli"
+  },
+}
