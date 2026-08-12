@@ -1,4 +1,5 @@
 const commercialFamily = /(?:^|[\s._/-])(gpt|claude|gemini)(?:[\s._/-]|$)/i
+const directCommercialProviders = new Set(["openai", "anthropic", "google"])
 
 export function isCommercialSwiftScaleModel(model: { id: string; name: string }) {
   return commercialFamily.test(model.id) || commercialFamily.test(model.name)
@@ -19,6 +20,31 @@ const modelAliases = (id: string) => {
 
 export function isSwiftCoderTextModel(model: { id: string }) {
   return !/^swift(?:[./_-]?(?:audio|image))(?:[./_-]|$)/i.test(model.id.trim())
+}
+
+export function isDirectCommercialTextModel(model: {
+  provider: { id: string }
+  capabilities: { input: { text: boolean }; output: { text: boolean } }
+}) {
+  return (
+    directCommercialProviders.has(model.provider.id) && model.capabilities.input.text && model.capabilities.output.text
+  )
+}
+
+export function selectDirectCommercialTextModels<
+  T extends {
+    id: string
+    provider: { id: string }
+    capabilities: { input: { text: boolean }; output: { text: boolean } }
+  },
+>(models: T[], visible: (model: T) => boolean) {
+  const candidates = models.filter(isDirectCommercialTextModel)
+  const byKey = new Map(candidates.map((model) => [`${model.provider.id}:${model.id}`, model]))
+  const selected = candidates.filter(visible).map((model) => {
+    if (!/^gpt-\d+(?:\.\d+)+$/.test(model.id)) return model
+    return byKey.get(`${model.provider.id}:${model.id}-sol`) ?? model
+  })
+  return [...new Map(selected.map((model) => [`${model.provider.id}:${model.id}`, model])).values()]
 }
 
 export function filterSwiftScaleModelsByProducts<T extends { id: string }>(

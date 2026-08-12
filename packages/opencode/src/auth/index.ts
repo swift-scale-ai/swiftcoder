@@ -56,15 +56,21 @@ const layer = Layer.effect(
     const fsys = yield* FSUtil.Service
     const decode = Schema.decodeUnknownOption(Info)
 
-    const all = Effect.fn("Auth.all")(function* () {
-      let data: Record<string, unknown> | undefined
-      if (process.env.SWIFTCODER_AUTH_CONTENT) {
-        try {
-          data = JSON.parse(process.env.SWIFTCODER_AUTH_CONTENT)
-        } catch (err) {}
-      }
+    const persisted = Effect.fn("Auth.persisted")(function* () {
+      return (yield* fsys.readJson(file).pipe(Effect.orElseSucceed(() => ({})))) as Record<string, unknown>
+    })
 
-      data ??= (yield* fsys.readJson(file).pipe(Effect.orElseSucceed(() => ({})))) as Record<string, unknown>
+    const injected = () => {
+      if (!process.env.SWIFTCODER_AUTH_CONTENT) return {} as Record<string, unknown>
+      try {
+        return JSON.parse(process.env.SWIFTCODER_AUTH_CONTENT) as Record<string, unknown>
+      } catch {
+        return {} as Record<string, unknown>
+      }
+    }
+
+    const all = Effect.fn("Auth.all")(function* () {
+      const data = { ...(yield* persisted()), ...injected() }
       if (MacOSKeychain.enabled()) {
         const secure = yield* Effect.promise(() => MacOSKeychain.read()).pipe(
           Effect.mapError(fail("Failed to read credentials from macOS Keychain")),
@@ -87,7 +93,7 @@ const layer = Layer.effect(
         )
         return
       }
-      const data = yield* all()
+      const data = yield* persisted()
       if (norm !== key) delete data[key]
       delete data[norm + "/"]
       yield* fsys
@@ -103,7 +109,7 @@ const layer = Layer.effect(
         )
         return
       }
-      const data = yield* all()
+      const data = yield* persisted()
       delete data[key]
       delete data[norm]
       yield* fsys.writeJson(file, data, 0o600).pipe(Effect.mapError(fail("Failed to write auth data")))

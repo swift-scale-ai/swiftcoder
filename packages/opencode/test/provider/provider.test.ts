@@ -14,7 +14,7 @@ import { Auth } from "@/auth"
 import { Config } from "@/config/config"
 import { Env } from "../../src/env"
 import { Plugin } from "../../src/plugin/index"
-import { applySwiftScaleCatalog, Provider } from "@/provider/provider"
+import { applySwiftScaleCatalog, Provider, swiftScaleCatalogModelIDs } from "@/provider/provider"
 import { resolveSwiftScaleBaseURL } from "@/provider/swiftscale-base-url"
 
 import { RuntimeFlags } from "@/effect/runtime-flags"
@@ -119,6 +119,39 @@ it.instance("provider loaded from env variable", () =>
     // merge additional options.
     expect(providers[ProviderV2.ID.anthropic].source).toBe("env")
     expect(providers[ProviderV2.ID.anthropic].options.headers["anthropic-beta"]).toBeDefined()
+  }),
+)
+
+it.instance("provider loaded from a stored OpenAI API key alongside injected SwiftScale auth", () =>
+  Effect.gen(function* () {
+    const authPath = path.join(Global.Path.data, "auth.json")
+    const original = yield* Effect.promise(() => Filesystem.readText(authPath).catch(() => undefined))
+    yield* Effect.acquireRelease(
+      Effect.promise(() =>
+        Filesystem.write(authPath, JSON.stringify({ openai: { type: "api", key: "test-openai-key" } })),
+      ),
+      () =>
+        Effect.promise(async () => {
+          if (original !== undefined) await Filesystem.write(authPath, original)
+          else await unlink(authPath).catch(() => undefined)
+        }),
+    )
+    yield* set(
+      "SWIFTCODER_AUTH_CONTENT",
+      JSON.stringify({
+        swiftcoder: {
+          type: "oauth",
+          refresh: "refresh-token",
+          access: "access-token",
+          expires: Date.now() + 60_000,
+        },
+      }),
+    )
+
+    const providers = yield* list
+
+    expect(providers[ProviderV2.ID.openai]).toBeDefined()
+    expect(providers[ProviderV2.ID.openai].source).toBe("api")
   }),
 )
 
@@ -2064,6 +2097,13 @@ test("Coding Plan catalog exposes one SwiftScale model", () => {
 
   expect(Object.keys(models)).toEqual(["swiftlite.auto"])
   expect(models["swiftlite.auto"].name).toBe("SwiftScale")
+})
+
+test("account OAuth catalog excludes API Services commercial models", () => {
+  const modelIDs = ["swiftlite.auto", "swiftpro.auto", "gpt-5.4", "claude-sonnet-4-6", "gemini-3.1-pro"]
+
+  expect(swiftScaleCatalogModelIDs(modelIDs, false)).toEqual(["swiftlite.auto", "swiftpro.auto"])
+  expect(swiftScaleCatalogModelIDs(modelIDs, true)).toEqual(modelIDs)
 })
 
 test("SwiftScale catalog gives discovered product models distinct names", () => {

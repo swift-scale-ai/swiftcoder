@@ -7,6 +7,32 @@ import { testEffect } from "../lib/effect"
 const it = testEffect(LayerNode.compile(Auth.node))
 
 describe("Auth", () => {
+  it.instance("merges injected SwiftScale auth with persisted provider keys", () =>
+    Effect.gen(function* () {
+      const auth = yield* Auth.Service
+      const previous = process.env.SWIFTCODER_AUTH_CONTENT
+      yield* auth.set("openai", {
+        type: "api",
+        key: "persisted-openai-key",
+      })
+      process.env.SWIFTCODER_AUTH_CONTENT = JSON.stringify({
+        swiftcoder: {
+          type: "oauth",
+          refresh: "refresh-token",
+          access: "access-token",
+          expires: Date.now() + 60_000,
+        },
+      })
+
+      const data = yield* auth.all()
+      expect(data.openai?.type).toBe("api")
+      expect(data.swiftcoder?.type).toBe("oauth")
+
+      if (previous === undefined) delete process.env.SWIFTCODER_AUTH_CONTENT
+      else process.env.SWIFTCODER_AUTH_CONTENT = previous
+    }),
+  )
+
   it.instance("set normalizes trailing slashes in keys", () =>
     Effect.gen(function* () {
       const auth = yield* Auth.Service

@@ -36,10 +36,16 @@ import {
   createPromptInputV2State,
   type PromptInputV2Interaction,
 } from "@opencode-ai/session-ui/v2/prompt-input/interaction"
-import { sortSwiftScaleModelFamilies, swiftScaleModelFamily } from "./swiftscale-model-family"
+import {
+  connectedProviderModelFamily,
+  preferredSwiftScaleModel,
+  sortSwiftScaleModelFamilies,
+} from "./swiftscale-model-family"
 import {
   effectiveSwiftScaleProductMode,
   filterSwiftScaleModelsByProductMode,
+  isSwiftCoderTextModel,
+  selectDirectCommercialTextModels,
 } from "./swiftscale-model-access"
 
 export type PromptInputV2ComposerProps = {
@@ -420,31 +426,45 @@ export function usePromptInputV2Controller(props: PromptInputV2ControllerProps):
   const selectedProductMode = createMemo(() =>
     effectiveSwiftScaleProductMode(products(), local.productMode.current()),
   )
+  const apiServicesOnly = createMemo(() => {
+    const value = products()
+    return Boolean(value?.apiServices.enabled && !value.coding.enabled)
+  })
   const selectableModels = createMemo(() => {
-    const models = props.controls.model.selection
-      .list()
-      .filter((model) => model.provider.id === "swiftcoder")
-      .filter((model) => props.controls.model.selection.visible({ providerID: model.provider.id, modelID: model.id }))
-    if (modelEntitlements.loading()) return []
-    return filterSwiftScaleModelsByProductMode(models, products(), selectedProductMode())
+    const models = props.controls.model.selection.list()
+    const isVisible = (model: (typeof models)[number]) =>
+      props.controls.model.selection.visible({ providerID: model.provider.id, modelID: model.id })
+    const visible = models.filter(isVisible)
+    const direct = selectDirectCommercialTextModels(models, isVisible)
+    if (modelEntitlements.loading()) return direct
+    const swiftScale = filterSwiftScaleModelsByProductMode(
+      visible.filter((model) => model.provider.id === "swiftcoder").filter(isSwiftCoderTextModel),
+      products(),
+      selectedProductMode(),
+    )
+    return [...swiftScale, ...direct]
   })
   const currentFamily = createMemo(() => {
     const current = props.controls.model.selection.current()
-    if (current && selectableModels().some((model) => modelKey(model) === modelKey(current))) {
-      return swiftScaleModelFamily(current)
+    const available = selectableModels()
+    const currentAvailable = current && available.some((model) => modelKey(model) === modelKey(current))
+    if (current && currentAvailable && (!apiServicesOnly() || props.controls.model.selection.explicit())) {
+      return connectedProviderModelFamily(current)
     }
+    const preferred = apiServicesOnly() ? preferredSwiftScaleModel(available) : undefined
+    if (preferred) return connectedProviderModelFamily(preferred)
     return (
-      [...new Set(selectableModels().map(swiftScaleModelFamily))].sort(sortSwiftScaleModelFamilies)[0] ?? "SwiftScale"
+      [...new Set(available.map(connectedProviderModelFamily))].sort(sortSwiftScaleModelFamilies)[0] ?? "SwiftScale"
     )
   })
   const familyOptions = createMemo(() =>
-    [...new Set(selectableModels().map(swiftScaleModelFamily))]
+    [...new Set(selectableModels().map(connectedProviderModelFamily))]
       .sort(sortSwiftScaleModelFamilies)
       .map((family) => ({ id: family, label: family })),
   )
   const versionModels = createMemo(() =>
     selectableModels()
-      .filter((model) => swiftScaleModelFamily(model) === currentFamily())
+      .filter((model) => connectedProviderModelFamily(model) === currentFamily())
       .sort((a, b) => a.name.localeCompare(b.name)),
   )
   const selectModel = (value: string) => {
@@ -456,8 +476,9 @@ export function usePromptInputV2Controller(props: PromptInputV2ControllerProps):
     if (modelEntitlements.loading()) return
     const available = selectableModels()
     const current = props.controls.model.selection.current()
-    if (current && available.some((model) => modelKey(model) === modelKey(current))) return
-    const fallback = available[0]
+    const currentAvailable = current && available.some((model) => modelKey(model) === modelKey(current))
+    if (currentAvailable && (!apiServicesOnly() || props.controls.model.selection.explicit())) return
+    const fallback = apiServicesOnly() ? preferredSwiftScaleModel(available) : available[0]
     if (fallback) selectModel(modelKey(fallback))
   })
   const modelFamily: PromptInputV2ModelHierarchyControl = {
@@ -465,9 +486,9 @@ export function usePromptInputV2Controller(props: PromptInputV2ControllerProps):
     current: currentFamily,
     onSelect: (family) => {
       const current = props.controls.model.selection.current()
-      if (current && swiftScaleModelFamily(current) === family) return
+      if (current && connectedProviderModelFamily(current) === family) return
       const model = selectableModels()
-        .filter((item) => swiftScaleModelFamily(item) === family)
+        .filter((item) => connectedProviderModelFamily(item) === family)
         .sort((a, b) => a.name.localeCompare(b.name))[0]
       if (model) selectModel(modelKey(model))
     },
@@ -491,7 +512,13 @@ export function usePromptInputV2Controller(props: PromptInputV2ControllerProps):
     options: () =>
       versionModels().map((model) => ({
         id: modelKey(model),
-        label: `${model.name} · ${selectedProductMode() === "coding" ? "Included" : "PAYG"}`,
+        label: `${model.name} · ${
+          model.provider.id === "swiftcoder"
+            ? selectedProductMode() === "coding"
+              ? "Included"
+              : "PAYG"
+            : "API key"
+        }`,
       })),
     current: () => {
       const current = props.controls.model.selection.current()

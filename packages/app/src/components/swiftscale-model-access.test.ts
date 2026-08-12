@@ -4,7 +4,9 @@ import {
   filterSwiftScaleModelsByProductMode,
   filterSwiftScaleModelsByProducts,
   isCommercialSwiftScaleModel,
+  isDirectCommercialTextModel,
   isSwiftCoderTextModel,
+  selectDirectCommercialTextModels,
   swiftScaleProductAccess,
 } from "./swiftscale-model-access"
 
@@ -25,6 +27,36 @@ describe("SwiftScale model access", () => {
     expect(filterSwiftScaleModelsByProducts([{ id: "swiftaudio.auto" }, { id: "swiftagent.auto" }])).toEqual([
       { id: "swiftagent.auto" },
     ])
+  })
+
+  test("includes text models from supported connected commercial providers", () => {
+    const model = (providerID: string, input = true, output = true) => ({
+      provider: { id: providerID },
+      capabilities: { input: { text: input }, output: { text: output } },
+    })
+
+    expect(isDirectCommercialTextModel(model("openai"))).toBe(true)
+    expect(isDirectCommercialTextModel(model("anthropic"))).toBe(true)
+    expect(isDirectCommercialTextModel(model("google"))).toBe(true)
+    expect(isDirectCommercialTextModel(model("openai", true, false))).toBe(false)
+    expect(isDirectCommercialTextModel(model("openrouter"))).toBe(false)
+  })
+
+  test("replaces a visible GPT base alias with its named Sol model", () => {
+    const model = (id: string) => ({
+      id,
+      provider: { id: "openai" },
+      capabilities: { input: { text: true }, output: { text: true } },
+    })
+    const base = model("gpt-5.6")
+    const sol = model("gpt-5.6-sol")
+    const luna = model("gpt-5.6-luna")
+
+    expect(selectDirectCommercialTextModels([base, sol, luna], (item) => item === base || item === luna)).toEqual([
+      sol,
+      luna,
+    ])
+    expect(selectDirectCommercialTextModels([base], () => true)).toEqual([base])
   })
 
   test("uses entitlements before connection inference", () => {

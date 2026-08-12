@@ -39,6 +39,7 @@ const OPENAI_HEADER_TIMEOUT_DEFAULT = 300_000
 const SWIFTSCALE_STREAM_IDLE_TIMEOUT = 120_000
 const SWIFTSCALE_FALLBACK_MODEL = "swiftlite.auto"
 const SWIFTSCALE_AGENT_SESSION = `swiftcoder-${crypto.randomUUID()}`
+const supportedProviderIDs = new Set(["swiftcoder", "openai", "anthropic", "google"])
 
 export const isSwiftScaleTextModelID = (id: string) => !/^swift(?:[./_-]?(?:audio|image))(?:[./_-]|$)/i.test(id.trim())
 
@@ -47,6 +48,9 @@ const isSwiftScaleProductModel = (id: string) =>
   (id === "swift.auto" || (/^swift[a-z0-9-]+\.auto$/.test(id) && id !== "swiftembed.auto" && id !== "swiftrerank.auto"))
 
 const isSwiftScaleDirectModel = (id: string) => /^(?:gpt|claude|gemini)-[a-z0-9][a-z0-9.-]*$/.test(id)
+
+export const swiftScaleCatalogModelIDs = (modelIDs: string[] | undefined, apiServicesKey: boolean) =>
+  apiServicesKey ? modelIDs : modelIDs?.filter((id) => isSwiftScaleProductModel(id))
 
 const inferredSwiftScaleModelName = (id: string) => {
   const slug = id.replace(/^swift/, "").replace(/\.auto$/, "")
@@ -247,14 +251,16 @@ function custom(dep: CustomDep): Record<string, CustomLoader> {
       const configuredKey = cfg.provider?.["swiftcoder"]?.options?.apiKey
       const key =
         input.env.map((item) => env[item]).find(Boolean) ??
-        (stored?.type === "api" ? stored.key : stored?.type === "oauth" ? stored.access : undefined) ??
-        (typeof configuredKey === "string" ? configuredKey : undefined)
+        (stored?.type === "api" ? stored.key : undefined) ??
+        (typeof configuredKey === "string" ? configuredKey : undefined) ??
+        (stored?.type === "oauth" ? stored.access : undefined)
       const hasKey = iife(() => {
         if (input.env.some((item) => env[item])) return true
         return false
       })
       const ok = hasKey || Boolean(stored) || Boolean(configuredKey)
-      const codingPlan = stored?.type === "oauth" || (!hasKey && !configuredKey && stored?.type !== "api")
+      const apiServicesKey = hasKey || stored?.type === "api" || Boolean(configuredKey)
+      const codingPlan = !apiServicesKey && (stored?.type === "oauth" || (!hasKey && !configuredKey))
 
       if (ok && key) {
         const configuredURL = cfg.provider?.["swiftcoder"]?.options?.baseURL
@@ -276,7 +282,7 @@ function custom(dep: CustomDep): Record<string, CustomLoader> {
             return undefined
           }
         })
-        applySwiftScaleCatalog(input.models, modelIDs)
+        applySwiftScaleCatalog(input.models, swiftScaleCatalogModelIDs(modelIDs, apiServicesKey))
       } else {
         applySwiftScaleCatalog(input.models)
       }
@@ -1508,7 +1514,7 @@ const layer = Layer.effect(
         const enabled = cfg.enabled_providers ? new Set(cfg.enabled_providers) : null
 
         function isProviderAllowed(providerID: ProviderV2.ID): boolean {
-          if (providerID !== ProviderV2.ID.swiftcoder) return false
+          if (!supportedProviderIDs.has(providerID)) return false
           if (enabled && !enabled.has(providerID)) return false
           if (disabled.has(providerID)) return false
           return true

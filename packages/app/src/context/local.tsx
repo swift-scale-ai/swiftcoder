@@ -287,6 +287,7 @@ export const { use: useLocal, provider: LocalProvider } = createSimpleContext({
     const model = {
       ready: models.ready,
       current,
+      explicit: () => Boolean(scope()?.model),
       recent,
       list: models.list,
       cycle(direction: 1 | -1) {

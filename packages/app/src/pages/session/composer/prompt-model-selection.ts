@@ -54,6 +54,7 @@ export function createPromptModelSelection(input: { agent: () => { model?: Model
   const selection = {
     ready: models.ready,
     current,
+    explicit: () => Boolean(prompt.model.current()),
     recent: recentModels,
     list: models.list,
     cycle(direction: 1 | -1) {

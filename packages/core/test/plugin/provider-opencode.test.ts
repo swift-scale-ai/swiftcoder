@@ -246,6 +246,48 @@ describe("SwiftCoderPlugin", () => {
     ),
   )
 
+  it.effect("hides commercial models when only an account OAuth credential is connected", () =>
+    withEnv({ SWIFTCODER_API_KEY: undefined }, () =>
+      Effect.gen(function* () {
+        const credentials = yield* Credential.Service
+        const catalog = yield* Catalog.Service
+        yield* catalog.transform((draft) => {
+          const provider = ProviderV2.Info.make({
+            ...ProviderV2.Info.empty(ProviderV2.ID.swiftcoder),
+            api: { type: "aisdk", package: "test-provider" },
+          })
+          draft.provider.update(provider.id, () => {})
+          for (const id of ["swiftpro.auto", "gpt-5.6-luna"]) {
+            draft.model.update(provider.id, ModelV2.ID.make(id), (model) => {
+              model.name = id
+              model.cost = cost(1)
+            })
+          }
+        })
+        yield* credentials.create({
+          integrationID: Integration.ID.make("swiftcoder"),
+          value: Credential.OAuth.make({
+            type: "oauth",
+            methodID: Integration.MethodID.make("device"),
+            access: "access",
+            refresh: "refresh",
+            expires: Date.now() + 60_000,
+            metadata: { server: "http://127.0.0.1:1" },
+          }),
+        })
+
+        yield* addPlugin()
+
+        expect(
+          required(yield* catalog.model.get(ProviderV2.ID.swiftcoder, ModelV2.ID.make("swiftpro.auto"))).enabled,
+        ).toBe(true)
+        expect(
+          required(yield* catalog.model.get(ProviderV2.ID.swiftcoder, ModelV2.ID.make("gpt-5.6-luna"))).enabled,
+        ).toBe(false)
+      }),
+    ),
+  )
+
   it.effect("treats output-only cost as free without credentials", () =>
     withEnv({ SWIFTCODER_API_KEY: undefined }, () =>
       Effect.gen(function* () {
@@ -365,28 +407,32 @@ describe("SwiftCoderPlugin", () => {
     ),
   )
 
-  it.effect("removes non-swiftcoder providers and models", () =>
+  it.effect("keeps supported commercial providers and removes unsupported providers", () =>
     withEnv({ SWIFTCODER_API_KEY: undefined }, () =>
       Effect.gen(function* () {
         const catalog = yield* Catalog.Service
         yield* addPlugin()
         yield* catalog.transform((catalog) => {
-          const provider = ProviderV2.Info.make({
-            ...ProviderV2.Info.empty(ProviderV2.ID.openai),
-            api: { type: "aisdk", package: "test-provider" },
-          })
-          const model = ModelV2.Info.make({
-            ...ModelV2.Info.empty(provider.id, ModelV2.ID.make("paid")),
-            api: { id: ModelV2.ID.make("paid"), type: "aisdk", package: "test-provider" },
-            cost: cost(1),
-          })
-          catalog.provider.update(provider.id, () => {})
-          catalog.model.update(provider.id, model.id, (draft) => {
-            draft.cost = [...model.cost]
-          })
+          for (const providerID of [ProviderV2.ID.openai, ProviderV2.ID.make("openrouter")]) {
+            const provider = ProviderV2.Info.make({
+              ...ProviderV2.Info.empty(providerID),
+              api: { type: "aisdk", package: "test-provider" },
+            })
+            const model = ModelV2.Info.make({
+              ...ModelV2.Info.empty(provider.id, ModelV2.ID.make("paid")),
+              api: { id: ModelV2.ID.make("paid"), type: "aisdk", package: "test-provider" },
+              cost: cost(1),
+            })
+            catalog.provider.update(provider.id, () => {})
+            catalog.model.update(provider.id, model.id, (draft) => {
+              draft.cost = [...model.cost]
+            })
+          }
         })
-        expect(yield* catalog.provider.get(ProviderV2.ID.openai)).toBeUndefined()
-        expect(yield* catalog.model.get(ProviderV2.ID.openai, ModelV2.ID.make("paid"))).toBeUndefined()
+        expect(yield* catalog.provider.get(ProviderV2.ID.openai)).toBeDefined()
+        expect(yield* catalog.model.get(ProviderV2.ID.openai, ModelV2.ID.make("paid"))).toBeDefined()
+        expect(yield* catalog.provider.get(ProviderV2.ID.make("openrouter"))).toBeUndefined()
+        expect(yield* catalog.model.get(ProviderV2.ID.make("openrouter"), ModelV2.ID.make("paid"))).toBeUndefined()
       }),
     ),
   )

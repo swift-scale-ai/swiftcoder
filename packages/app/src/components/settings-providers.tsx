@@ -13,6 +13,7 @@ import { DialogCustomProvider } from "./dialog-custom-provider"
 import { SettingsList } from "./settings-list"
 import { SettingsServerPicker, SettingsServerScope } from "./settings-server-picker"
 import { useSwiftScaleAuthStatus } from "@/hooks/use-swiftscale-auth-status"
+import { settingsConnectedProviders } from "./settings-provider-connection"
 
 type ProviderSource = "env" | "api" | "config" | "custom"
 type ProviderItem = ReturnType<ReturnType<typeof useProviders>["connected"]>[number]
@@ -54,9 +55,11 @@ const SettingsProvidersContent: Component<{ onBack?: () => void }> = (props) => 
   }
 
   const connected = createMemo(() => {
-    return providers
-      .connected()
-      .filter((p) => p.id !== "swiftcoder" || Object.values(p.models).find((m) => m.cost?.input))
+    return settingsConnectedProviders({
+      connected: providers.connected(),
+      all: providers.all(),
+      swiftScaleAccountSignedIn: swiftScaleAuth.status()?.state === "signed_in",
+    })
   })
 
   const popular = createMemo(() => {
@@ -198,9 +201,15 @@ const SettingsProvidersContent: Component<{ onBack?: () => void }> = (props) => 
                         </span>
                       }
                     >
-                      <Button size="large" variant="ghost" onClick={() => void disconnect(item.id, item.name)}>
-                        {language.t("common.disconnect")}
-                      </Button>
+                      <div class="flex items-center gap-2">
+                        <span class="inline-flex items-center gap-1.5 text-14-regular text-text-base">
+                          <span class="size-1.5 rounded-full bg-icon-success-base" aria-hidden="true" />
+                          {language.t("settings.providers.connected.accountDescription")}
+                        </span>
+                        <Button size="large" variant="ghost" onClick={() => void disconnect(item.id, item.name)}>
+                          {language.t("common.disconnect")}
+                        </Button>
+                      </div>
                     </Show>
                   </div>
                 )}
@@ -219,9 +228,6 @@ const SettingsProvidersContent: Component<{ onBack?: () => void }> = (props) => 
                     <div class="flex items-center gap-x-3">
                       <ProviderIcon id={item.id} class="size-5 shrink-0 icon-strong-base" />
                       <span class="text-14-medium text-text-strong">{item.name}</span>
-                      <Show when={item.id === "swiftcoder"}>
-                        <Tag>{language.t("dialog.provider.tag.recommended")}</Tag>
-                      </Show>
                       <Show when={item.id === "swiftcoder"}>
                         <Tag>{language.t("dialog.provider.tag.recommended")}</Tag>
                       </Show>

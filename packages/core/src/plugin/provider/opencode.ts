@@ -17,6 +17,7 @@ const defaultServer = "https://console.swift-scale.com"
 const defaultGateway = "https://api.swift-scale.com/v1"
 const clientID = "swiftcoder-cli"
 const methodID = Integration.MethodID.make("device")
+const commercialModelFamily = /(?:^|[\s._/-])(gpt|claude|gemini)(?:[\s._/-]|$)/i
 const RemoteResponse = Schema.Struct({ config: ConfigV1.Info })
 const Device = Schema.Struct({
   device_code: Schema.String,
@@ -82,6 +83,7 @@ export const SwiftCoderPlugin = define<HttpClient.HttpClient | EventV2.Service |
     const http = yield* HttpClient.HttpClient
     const loading = Semaphore.makeUnsafe(1)
     let connected = false
+    let apiServicesKeyConnected = false
     let providers: typeof ConfigV1.Info.Type.provider | undefined
 
     const load = Effect.fn("SwiftCoderPlugin.load")(function* () {
@@ -89,7 +91,8 @@ export const SwiftCoderPlugin = define<HttpClient.HttpClient | EventV2.Service |
       const credential = connection
         ? yield* ctx.integration.connection.resolve(connection).pipe(Effect.catch(() => Effect.succeed(undefined)))
         : undefined
-      connected = connection !== undefined
+      connected = credential !== undefined
+      apiServicesKeyConnected = credential?.type === "key"
       providers = credential
         ? yield* fetchProviders(http, credential).pipe(
             Effect.catch((cause) =>
@@ -169,13 +172,17 @@ export const SwiftCoderPlugin = define<HttpClient.HttpClient | EventV2.Service |
 
       const item = catalog.provider.get(ProviderV2.ID.swiftcoder)
       if (!item) return
-      const hasKey = Boolean(process.env.SWIFTCODER_API_KEY || connected || item.provider.request.body.apiKey)
+      const hasCredential = Boolean(process.env.SWIFTCODER_API_KEY || connected || item.provider.request.body.apiKey)
+      const hasApiServicesKey = Boolean(
+        process.env.SWIFTCODER_API_KEY || apiServicesKeyConnected || item.provider.request.body.apiKey,
+      )
       catalog.provider.update(item.provider.id, (provider) => {
-        if (!hasKey) provider.request.body.apiKey = "public"
+        if (!hasCredential) provider.request.body.apiKey = "public"
       })
-      if (hasKey) return
       for (const model of item.models.values()) {
-        if (!model.cost.some((cost) => cost.input > 0)) continue
+        const commercial = commercialModelFamily.test(model.id) || commercialModelFamily.test(model.name)
+        const paidWithoutCredential = !hasCredential && model.cost.some((cost) => cost.input > 0)
+        if (!paidWithoutCredential && (hasApiServicesKey || !commercial)) continue
         catalog.model.update(item.provider.id, model.id, (draft) => {
           draft.enabled = false
         })

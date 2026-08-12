@@ -1,6 +1,8 @@
 import { describe, expect, test } from "bun:test"
 import {
+  connectedProviderModelFamily,
   groupSwiftScaleModelsByFamily,
+  preferredSwiftScaleModel,
   sortSwiftScaleModelFamilies,
   swiftScaleModelFamily,
   swiftScaleModelFamilyProviderID,
@@ -25,6 +27,31 @@ describe("SwiftScale model families", () => {
     expect(swiftScaleModelFamilyProviderID("Claude")).toBe("anthropic")
     expect(swiftScaleModelFamilyProviderID("Gemini")).toBe("google")
     expect(swiftScaleModelFamilyProviderID("SwiftScale")).toBe("swiftcoder")
+  })
+
+  test.each([
+    ["openai", "GPT"],
+    ["anthropic", "Claude"],
+    ["google", "Gemini"],
+  ] as const)("maps connected %s models to the %s family", (providerID, family) => {
+    expect(
+      connectedProviderModelFamily({
+        id: "provider-model",
+        name: "Provider model",
+        provider: { id: providerID },
+      }),
+    ).toBe(family)
+  })
+
+  test("prefers the first SwiftScale model over commercial families", () => {
+    const models = [
+      { id: "gpt-5.6-luna", name: "GPT-5.6 Luna" },
+      { id: "swift-pro", name: "Swift Pro" },
+      { id: "swift-auto", name: "Swift Auto" },
+    ]
+
+    expect(preferredSwiftScaleModel(models)).toEqual({ id: "swift-auto", name: "Swift Auto" })
+    expect(preferredSwiftScaleModel(models.slice(0, 1))).toEqual(models[0])
   })
 
   test("groups models by family and omits empty families", () => {

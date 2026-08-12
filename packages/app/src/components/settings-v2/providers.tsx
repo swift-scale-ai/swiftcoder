@@ -13,6 +13,7 @@ import { DialogCustomProvider } from "../dialog-custom-provider"
 import { SettingsListV2 } from "./parts/list"
 import "./settings-v2.css"
 import { useSwiftScaleAuthStatus } from "@/hooks/use-swiftscale-auth-status"
+import { settingsConnectedProviders } from "../settings-provider-connection"
 
 type ProviderSource = "env" | "api" | "config" | "custom"
 type ProviderItem = ReturnType<ReturnType<typeof useProviders>["connected"]>[number]
@@ -51,9 +52,11 @@ export const SettingsProvidersV2: Component<{
   }
 
   const connected = createMemo(() => {
-    return providers
-      .connected()
-      .filter((p) => p.id !== "swiftcoder" || Object.values(p.models).find((m) => m.cost?.input))
+    return settingsConnectedProviders({
+      connected: providers.connected(),
+      all: providers.all(),
+      swiftScaleAccountSignedIn: swiftScaleAuth.status()?.state === "signed_in",
+    })
   })
 
   const popular = createMemo(() => {
@@ -194,9 +197,19 @@ export const SettingsProvidersV2: Component<{
                         </span>
                       }
                     >
-                      <ButtonV2 size="normal" variant="ghost-muted" onClick={() => void disconnect(item.id, item.name)}>
-                        {language.t("common.disconnect")}
-                      </ButtonV2>
+                      <div class="flex items-center gap-2">
+                        <span class="inline-flex items-center gap-1.5 text-v2-text-text-muted">
+                          <span class="size-1.5 rounded-full bg-icon-success-base" aria-hidden="true" />
+                          {language.t("settings.providers.connected.accountDescription")}
+                        </span>
+                        <ButtonV2
+                          size="normal"
+                          variant="ghost-muted"
+                          onClick={() => void disconnect(item.id, item.name)}
+                        >
+                          {language.t("common.disconnect")}
+                        </ButtonV2>
+                      </div>
                     </Show>
                   </div>
                 )}
@@ -221,7 +234,7 @@ export const SettingsProvidersV2: Component<{
                     <div class="settings-v2-provider-copy">
                       <div class="settings-v2-provider-main">
                         <span class="settings-v2-provider-name">{item.name}</span>
-                        <Show when={item.id === "swiftcoder" || item.id === "swiftcoder"}>
+                        <Show when={item.id === "swiftcoder"}>
                           <Tag>{language.t("dialog.provider.tag.recommended")}</Tag>
                         </Show>
                       </div>

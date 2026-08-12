@@ -26,6 +26,13 @@ type Data = {
   defaultModel?: DefaultModel
 }
 
+const supportedProviderIDs = new Set<ProviderV2.ID>([
+  ProviderV2.ID.swiftcoder,
+  ProviderV2.ID.openai,
+  ProviderV2.ID.anthropic,
+  ProviderV2.ID.make("google"),
+])
+
 export type Draft = {
   provider: {
     list: () => readonly ProviderRecord[]
@@ -159,7 +166,7 @@ const layer = Layer.effect(
       },
       finalize: Effect.fn("CatalogV2.finalize")(function* (catalog) {
         for (const record of [...catalog.provider.list()]) {
-          if (record.provider.id !== ProviderV2.ID.swiftcoder) catalog.provider.remove(record.provider.id)
+          if (!supportedProviderIDs.has(record.provider.id)) catalog.provider.remove(record.provider.id)
         }
 
         const swiftCoder = catalog.provider.get(ProviderV2.ID.swiftcoder)
