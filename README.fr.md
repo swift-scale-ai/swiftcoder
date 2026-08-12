@@ -147,8 +147,6 @@ Les artefacts de test locaux ne peuvent jamais être publiés sur un canal de mi
 - `script` : utilitaires de maintenance amont conservés en attente de consolidation.
 - `UPSTREAM_BASELINE.json` : provenance amont exacte et liste des paquets conservés.
 
-La compilation ne lit pas `../opencode` ; ce répertoire sert uniquement de référence amont.
-
 ## Licence et attribution
 
 Le code source de SwiftCoder est publié sous la licence MIT du fichier `LICENSE`. Des parties importantes sont dérivées d'OpenCode et conservent le copyright amont et la notice MIT dans `THIRD_PARTY_NOTICES.md` et `legal/OpenCode-LICENSE.txt`.

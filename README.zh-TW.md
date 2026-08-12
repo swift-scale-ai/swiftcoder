@@ -147,8 +147,6 @@ bun run check:security
 - `script`：等待後續整合的上游儲存庫維護工具。
 - `UPSTREAM_BASELINE.json`：準確記錄上游來源與保留套件清單。
 
-本儲存庫建置時不會讀取 `../opencode`；該目錄僅作為上游參考。
-
 ## 授權與歸屬
 
 SwiftCoder 原始碼依根目錄 `LICENSE` 中的 MIT License 發布。專案的重要部分衍生自 OpenCode，並在 `THIRD_PARTY_NOTICES.md` 和 `legal/OpenCode-LICENSE.txt` 中保留上游著作權及 MIT License 聲明。

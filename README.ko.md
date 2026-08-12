@@ -147,8 +147,6 @@ bun run check:security
 - `script`: 향후 통합할 업스트림 저장소 유지관리 도구
 - `UPSTREAM_BASELINE.json`: 정확한 업스트림 출처와 유지 패키지 목록
 
-빌드 과정에서 `../opencode`를 읽지 않으며 해당 디렉터리는 업스트림 참조용입니다.
-
 ## 라이선스 및 귀속
 
 SwiftCoder 소스는 루트 `LICENSE`의 MIT License로 공개됩니다. 주요 부분은 OpenCode에서 파생되었으며 업스트림 저작권과 MIT 고지를 `THIRD_PARTY_NOTICES.md` 및 `legal/OpenCode-LICENSE.txt`에 유지합니다.

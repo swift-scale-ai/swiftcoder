@@ -158,8 +158,6 @@ bun run check:security
 - `script`：等待后续整合的上游仓库维护工具。
 - `UPSTREAM_BASELINE.json`：准确记录上游来源和保留的软件包列表。
 
-本仓库构建时不会读取 `../opencode`；该目录仅作为上游参考。
-
 ## 许可证与归属
 
 SwiftCoder 源码根据根目录 `LICENSE` 中的 MIT License 发布。项目的重要部分衍生自 OpenCode，并在 `THIRD_PARTY_NOTICES.md` 和 `legal/OpenCode-LICENSE.txt` 中保留上游版权及 MIT License 声明。

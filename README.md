@@ -195,9 +195,6 @@ Local test artifacts are never eligible for staging to a public update channel.
 - `script`: retained upstream repository-maintenance utilities pending consolidation.
 - `UPSTREAM_BASELINE.json`: exact upstream provenance and retained package list.
 
-The repository builds without reading `../opencode`; that directory is an
-upstream reference only.
-
 ## License And Attribution
 
 SwiftCoder source is released under the MIT License in `LICENSE`. Substantial

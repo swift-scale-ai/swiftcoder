@@ -147,8 +147,6 @@ Lokale Testartefakte dürfen nicht in einem öffentlichen Update-Kanal bereitges
 - `script`: beibehaltene Upstream-Wartungswerkzeuge, deren Konsolidierung noch aussteht.
 - `UPSTREAM_BASELINE.json`: genaue Upstream-Herkunft und Liste der beibehaltenen Pakete.
 
-Der Build liest nicht aus `../opencode`; dieses Verzeichnis dient ausschließlich als Upstream-Referenz.
-
 ## Lizenz und Namensnennung
 
 Der SwiftCoder-Quellcode wird unter der MIT License in `LICENSE` veröffentlicht. Wesentliche Teile sind von OpenCode abgeleitet und behalten den Upstream-Copyright- und MIT-Hinweis in `THIRD_PARTY_NOTICES.md` und `legal/OpenCode-LICENSE.txt` bei.

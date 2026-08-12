@@ -147,8 +147,6 @@ bun run check:security
 - `script`：今後統合予定の上流リポジトリ保守ユーティリティ
 - `UPSTREAM_BASELINE.json`：正確な上流由来と維持パッケージ一覧
 
-ビルド時に `../opencode` を読み込むことはありません。このディレクトリは上流参照専用です。
-
 ## ライセンスと帰属
 
 SwiftCoder のソースはルート `LICENSE` の MIT License で公開されます。重要な部分は OpenCode から派生しており、上流の著作権と MIT 表示を `THIRD_PARTY_NOTICES.md` および `legal/OpenCode-LICENSE.txt` に保持しています。
