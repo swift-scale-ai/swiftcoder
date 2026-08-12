@@ -76,7 +76,7 @@ SwiftCoder Desktop (프로젝트, 세션, 타임라인, Diff, 터미널)
 
 - macOS 13 이상
 - Bun 1.3.14
-- Node.js 22.19 이상
+- Node.js 22.22.2 이상
 - Xcode Command Line Tools
 
 ## 개발

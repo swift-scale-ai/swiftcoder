@@ -76,7 +76,7 @@ SwiftCoder Desktop（專案、工作階段、時間線、程式碼差異、終�
 
 - macOS 13 或更新版本
 - Bun 1.3.14
-- Node.js 22.19 或更新版本
+- Node.js 22.22.2 或更新版本
 - Xcode Command Line Tools
 
 ## 開發

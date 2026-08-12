@@ -76,7 +76,7 @@ SwiftCoder Desktop（プロジェクト、セッション、タイムライン�
 
 - macOS 13 以降
 - Bun 1.3.14
-- Node.js 22.19 以降
+- Node.js 22.22.2 以降
 - Xcode Command Line Tools
 
 ## 開発

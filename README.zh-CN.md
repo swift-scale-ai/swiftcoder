@@ -76,7 +76,7 @@ SwiftCoder Desktop（项目、会话、时间线、代码差异、终端）
 
 - macOS 13 或更高版本
 - Bun 1.3.14
-- Node.js 22.19 或更高版本
+- Node.js 22.22.2 或更高版本
 - Xcode Command Line Tools
 
 ## 开发
@@ -107,6 +107,17 @@ SWIFTCODER_CHANNEL=prod bun run build
 ```bash
 ./tools/check-phase4.sh
 ```
+
+### TypeScript 7 实验版本
+
+`experiment/typescript-7` 分支用于验证 SwiftCoder 全部工作区在稳定版
+TypeScript 7 编译器下的兼容性。此次升级替换了原有 native preview 配置，
+统一使用 `tsc` 执行类型检查，显式引入 Bun 环境类型，并同步升级兼容的构建
+和运行时依赖。仍依赖 JavaScript Compiler API 的工具暂时保留 TypeScript 6
+运行时兼容层。
+
+完整的改动范围、依赖版本、验证结果和已知限制请参阅
+[TypeScript 7 升级说明](docs/typescript-7-upgrade.zh-CN.md)。
 
 ## 开源发布检查
 

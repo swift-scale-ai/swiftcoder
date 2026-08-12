@@ -76,7 +76,7 @@ SwiftCoder Desktop (projets, sessions, chronologie, différences, terminal)
 
 - macOS 13 ou version ultérieure
 - Bun 1.3.14
-- Node.js 22.19 ou version ultérieure
+- Node.js 22.22.2 ou version ultérieure
 - Xcode Command Line Tools
 
 ## Développement
