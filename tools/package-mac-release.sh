@@ -179,18 +179,45 @@ fi
 # electron-builder notarizes and staples the app. Submit the outer DMG as well
 # so Gatekeeper can validate the downloaded container before it is mounted.
 if ! xcrun stapler validate "$DMG" >/dev/null 2>&1; then
+  NOTARY_RESULT="$(mktemp "${TMPDIR:-/tmp}/swiftcoder-notary.XXXXXX")"
+  NOTARY_EXIT=0
   if [[ -n "${APPLE_API_KEY:-}" && -n "${APPLE_API_KEY_ID:-}" && -n "${APPLE_API_ISSUER:-}" ]]; then
     xcrun notarytool submit "$DMG" \
       --key "$APPLE_API_KEY" \
       --key-id "$APPLE_API_KEY_ID" \
       --issuer "$APPLE_API_ISSUER" \
-      --wait
+      --wait \
+      --output-format json >"$NOTARY_RESULT" || NOTARY_EXIT=$?
   else
     xcrun notarytool submit "$DMG" \
       --apple-id "$APPLE_ID" \
       --password "$APPLE_APP_SPECIFIC_PASSWORD" \
       --team-id "$APPLE_TEAM_ID" \
-      --wait
+      --wait \
+      --output-format json >"$NOTARY_RESULT" || NOTARY_EXIT=$?
+  fi
+
+  cat "$NOTARY_RESULT"
+  NOTARY_ID="$(node -e 'try { console.log(JSON.parse(require("node:fs").readFileSync(process.argv[1], "utf8")).id || "") } catch {}' "$NOTARY_RESULT")"
+  NOTARY_STATUS="$(node -e 'try { console.log(JSON.parse(require("node:fs").readFileSync(process.argv[1], "utf8")).status || "") } catch {}' "$NOTARY_RESULT")"
+  rm -f "$NOTARY_RESULT"
+
+  if [[ "$NOTARY_EXIT" -ne 0 || "$NOTARY_STATUS" != "Accepted" ]]; then
+    echo "Apple notarization failed with status: ${NOTARY_STATUS:-unknown}" >&2
+    if [[ -n "$NOTARY_ID" ]]; then
+      if [[ -n "${APPLE_API_KEY:-}" && -n "${APPLE_API_KEY_ID:-}" && -n "${APPLE_API_ISSUER:-}" ]]; then
+        xcrun notarytool log "$NOTARY_ID" \
+          --key "$APPLE_API_KEY" \
+          --key-id "$APPLE_API_KEY_ID" \
+          --issuer "$APPLE_API_ISSUER" || true
+      else
+        xcrun notarytool log "$NOTARY_ID" \
+          --apple-id "$APPLE_ID" \
+          --password "$APPLE_APP_SPECIFIC_PASSWORD" \
+          --team-id "$APPLE_TEAM_ID" || true
+      fi
+    fi
+    exit 1
   fi
   xcrun stapler staple "$DMG"
 fi

@@ -107,8 +107,8 @@ fi
 
 hdiutil verify "$DMG" >/dev/null
 unzip -tq "$ZIP"
-rg -q 'url: .*\.zip' "$METADATA"
-rg -q '^sha512: ' "$METADATA"
+grep -Eq 'url: .*\.zip' "$METADATA"
+grep -Eq '^sha512: ' "$METADATA"
 
 VERSION="$(sed -n 's/^version:[[:space:]]*//p' "$METADATA" | head -1 | tr -d "'\"")"
 MANIFEST_SHA512="$(sed -n 's/^sha512:[[:space:]]*//p' "$METADATA" | tail -1 | tr -d "'\"")"
