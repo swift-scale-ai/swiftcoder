@@ -905,6 +905,7 @@ export const dict = {
   "settings.section.server": "Agent",
   "settings.tab.general": "General",
   "settings.tab.shortcuts": "Shortcuts",
+  "settings.tab.agentEnvironments": "Environments",
   "settings.tab.accountPlan": "Account & plan",
   "settings.account.title": "Account",
   "settings.account.desktopOnly": "Account login is available in the macOS app.",

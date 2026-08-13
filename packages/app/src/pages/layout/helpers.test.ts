@@ -25,6 +25,7 @@ import {
   homeSessionServerStatus,
   latestRootSession,
   numberedDefaultSessionTitle,
+  placedChatSessions,
   formatRecentSessionTime,
   recentRootSessions,
   sortedRootSessions,
@@ -233,6 +234,41 @@ describe("layout workspace helpers", () => {
   test("keeps legacy sessions without placement metadata in project lists", () => {
     expect(belongsToChat(undefined)).toBe(false)
     expect(belongsToProject(undefined)).toBe(true)
+  })
+
+  test("keeps placed chats visible when the project session window is trimmed", () => {
+    const chat = session({ id: "chat-1", directory: "/workspace", time: { created: 1, updated: 2 } })
+    const newerProjectSessions = Object.fromEntries(
+      Array.from({ length: 7 }, (_, index) => {
+        const item = session({
+          id: `project-${index}`,
+          directory: "/workspace",
+          time: { created: index + 3, updated: index + 3 },
+        })
+        return [item.id, item]
+      }),
+    )
+
+    expect(
+      placedChatSessions(
+        { "chat-1": "chat", ...Object.fromEntries(Object.keys(newerProjectSessions).map((id) => [id, "project"])) },
+        { "chat-1": chat, ...newerProjectSessions },
+        ["/workspace"],
+      ).map((item) => item.id),
+    ).toEqual(["chat-1"])
+  })
+
+  test("hides archived chats and chats from closed projects", () => {
+    const archived = session({
+      id: "archived",
+      directory: "/workspace",
+      time: { created: 1, updated: 2, archived: 3 },
+    })
+    const closed = session({ id: "closed", directory: "/closed", time: { created: 1, updated: 3 } })
+
+    expect(
+      placedChatSessions({ archived: "chat", closed: "chat" }, { archived, closed }, ["/workspace"]),
+    ).toEqual([])
   })
 
   test("numbers only sessions that still have a default title", () => {

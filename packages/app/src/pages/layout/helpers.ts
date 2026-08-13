@@ -41,6 +41,24 @@ export const recentRootSessions = (stores: SessionStore[], limit: number) => {
     .slice(0, Math.max(0, limit))
 }
 
+export function placedChatSessions(
+  placements: Record<string, SidebarSessionPlacement | undefined>,
+  sessions: Record<string, Session | undefined>,
+  directories: Iterable<string>,
+) {
+  const visibleDirectories = new Set(Array.from(directories, pathKey))
+  return Object.entries(placements)
+    .filter(([, placement]) => belongsToChat(placement))
+    .flatMap(([sessionID]) => {
+      const session = sessions[sessionID]
+      if (!session) return []
+      if (session.parentID || session.time?.archived) return []
+      if (!visibleDirectories.has(pathKey(session.directory))) return []
+      return [session]
+    })
+    .sort(compareSessionTime)
+}
+
 export function firstUserMessageText(
   messages: readonly { id: string; role: string }[] | undefined,
   parts: Record<string, readonly { type: string; text?: string }[] | undefined>,

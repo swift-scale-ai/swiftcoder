@@ -581,6 +581,7 @@ export const dict = {
   "settings.section.server": "에이전트",
   "settings.tab.general": "일반",
   "settings.tab.shortcuts": "단축키",
+  "settings.tab.agentEnvironments": "실행 환경",
   "settings.desktop.section.wsl": "WSL",
   "settings.desktop.wsl.title": "WSL 통합",
   "settings.desktop.wsl.description": "Windows의 WSL 내부에서 SwiftCoder 서버를 실행합니다.",

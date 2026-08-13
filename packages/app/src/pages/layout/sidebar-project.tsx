@@ -29,6 +29,7 @@ export type ProjectSidebarContext = {
   onHoverOpenChanged: (worktree: string, hovered: boolean) => void
   navigateToProject: (directory: string) => void
   navigateToNewSession: (directory: string) => void
+  toggleProjectExpanded: (project: LocalProject) => void
   openSidebar: () => void
   closeProject: (directory: string) => void
   showEditProjectDialog: (project: LocalProject) => void
@@ -74,6 +75,7 @@ const ProjectTile = (props: {
   onProjectFocus: (worktree: string) => void
   navigateToProject: (directory: string) => void
   navigateToNewSession: (directory: string) => void
+  toggleProjectExpanded: (project: LocalProject) => void
   showEditProjectDialog: (project: LocalProject) => void
   renameProject: (project: LocalProject) => void
   toggleProjectWorkspaces: (project: LocalProject) => void
@@ -149,7 +151,7 @@ const ProjectTile = (props: {
           }}
           onClick={() => {
             props.setOpen(false)
-            props.navigateToProject(props.project.worktree)
+            props.toggleProjectExpanded(props.project)
           }}
           onBlur={() => props.setOpen(false)}
         >
@@ -389,6 +391,7 @@ export const SortableProject = (props: {
       onProjectFocus={props.ctx.onProjectFocus}
       navigateToProject={props.ctx.navigateToProject}
       navigateToNewSession={props.ctx.navigateToNewSession}
+      toggleProjectExpanded={props.ctx.toggleProjectExpanded}
       showEditProjectDialog={props.ctx.showEditProjectDialog}
       renameProject={props.ctx.renameProject}
       toggleProjectWorkspaces={props.ctx.toggleProjectWorkspaces}
@@ -434,7 +437,7 @@ export const SortableProject = (props: {
           </HoverCard>
         </Show>
       </div>
-      <Show when={selected() && (props.mobile || props.ctx.sidebarOpened())}>
+      <Show when={selected() && props.project.expanded && (props.mobile || props.ctx.sidebarOpened())}>
         <div class="ml-7 border-l border-border-weak-base py-1 pl-1">
           <For each={projectSessions().slice(0, 6)}>
             {(session) => (

@@ -1,7 +1,7 @@
 import { ImagePreview } from "@opencode-ai/ui/image-preview"
 import { useDialog } from "@opencode-ai/ui/context/dialog"
 import type { ReferenceInfo } from "@opencode-ai/sdk/v2/client"
-import { createEffect, createMemo, For, on, Show } from "solid-js"
+import { createEffect, createMemo, createSignal, For, on, Show } from "solid-js"
 import type { PromptInputProps } from "@/components/prompt-input/contracts"
 import { normalizePromptHistoryEntry, promptLength, type PromptHistoryComment } from "@/components/prompt-input/history"
 import { createPersistedPromptInputHistory } from "@/components/prompt-input/history-store"
@@ -427,10 +427,16 @@ export function usePromptInputV2Controller(props: PromptInputV2ControllerProps):
   const selectedProductMode = createMemo(() =>
     effectiveSwiftScaleProductMode(products(), local.productMode.current()),
   )
-  const apiServicesOnly = createMemo(() => {
-    const value = products()
-    return Boolean(value?.apiServices.enabled && !value.coding.enabled)
-  })
+  const apiServicesMode = createMemo(() => selectedProductMode() === "api_services")
+  const [modelSelectedInComposer, setModelSelectedInComposer] = createSignal(false)
+  const explicitModelSelection = () => Boolean(props.controls.session.id) || modelSelectedInComposer()
+  createEffect(
+    on(
+      () => sdk().directory,
+      () => setModelSelectedInComposer(false),
+      { defer: true },
+    ),
+  )
   const selectableModels = createMemo(() => {
     const models = props.controls.model.selection.list()
     const isVisible = (model: (typeof models)[number]) =>
@@ -452,10 +458,10 @@ export function usePromptInputV2Controller(props: PromptInputV2ControllerProps):
     const current = props.controls.model.selection.current()
     const available = selectableModels()
     const currentAvailable = current && available.some((model) => modelKey(model) === modelKey(current))
-    if (current && currentAvailable && (!apiServicesOnly() || props.controls.model.selection.explicit())) {
+    if (current && currentAvailable && (!apiServicesMode() || explicitModelSelection())) {
       return connectedProviderModelFamily(current)
     }
-    const preferred = apiServicesOnly() ? preferredSwiftScaleModel(available) : undefined
+    const preferred = apiServicesMode() ? preferredSwiftScaleModel(available) : undefined
     if (preferred) return connectedProviderModelFamily(preferred)
     return (
       [...new Set(available.map(connectedProviderModelFamily))].sort(sortSwiftScaleModelFamilies)[0] ?? "SwiftScale"
@@ -466,14 +472,19 @@ export function usePromptInputV2Controller(props: PromptInputV2ControllerProps):
       .sort(sortSwiftScaleModelFamilies)
       .map((family) => ({ id: family, label: family })),
   )
-  const versionModels = createMemo(() =>
-    selectableModels()
+  const versionModels = createMemo(() => {
+    const models = selectableModels()
       .filter((model) => connectedProviderModelFamily(model) === currentFamily())
-      .sort((a, b) => a.name.localeCompare(b.name)),
-  )
-  const selectModel = (value: string) => {
+      .sort((a, b) => a.name.localeCompare(b.name))
+    if (!apiServicesMode() || currentFamily() !== "SwiftScale") return models
+    const preferred = preferredSwiftScaleModel(models)
+    if (!preferred) return models
+    return [preferred, ...models.filter((model) => modelKey(model) !== modelKey(preferred))]
+  })
+  const selectModel = (value: string, explicit = false) => {
     const model = selectableModels().find((item) => modelKey(item) === value)
     if (!model) return
+    if (explicit) setModelSelectedInComposer(true)
     props.controls.model.selection.set({ providerID: model.provider.id, modelID: model.id }, { recent: true })
   }
   createEffect(() => {
@@ -481,9 +492,11 @@ export function usePromptInputV2Controller(props: PromptInputV2ControllerProps):
     const available = selectableModels()
     const current = props.controls.model.selection.current()
     const currentAvailable = current && available.some((model) => modelKey(model) === modelKey(current))
-    if (currentAvailable && (!apiServicesOnly() || props.controls.model.selection.explicit())) return
-    const fallback = apiServicesOnly() ? preferredSwiftScaleModel(available) : available[0]
-    if (fallback) selectModel(modelKey(fallback))
+    if (currentAvailable && (!apiServicesMode() || explicitModelSelection())) return
+    const fallback = apiServicesMode() ? preferredSwiftScaleModel(available) : available[0]
+    if (!fallback) return
+    if (current && modelKey(current) === modelKey(fallback)) return
+    selectModel(modelKey(fallback))
   })
   const modelFamily: PromptInputV2ModelHierarchyControl = {
     options: familyOptions,
@@ -494,7 +507,7 @@ export function usePromptInputV2Controller(props: PromptInputV2ControllerProps):
       const model = selectableModels()
         .filter((item) => connectedProviderModelFamily(item) === family)
         .sort((a, b) => a.name.localeCompare(b.name))[0]
-      if (model) selectModel(modelKey(model))
+      if (model) selectModel(modelKey(model), true)
     },
   }
   const productMode: PromptInputV2ModelHierarchyControl = {
@@ -509,6 +522,7 @@ export function usePromptInputV2Controller(props: PromptInputV2ControllerProps):
     current: selectedProductMode,
     onSelect: (value) => {
       if (value !== "coding" && value !== "api_services") return
+      setModelSelectedInComposer(false)
       local.productMode.set(value)
     },
   }
@@ -526,11 +540,16 @@ export function usePromptInputV2Controller(props: PromptInputV2ControllerProps):
       })),
     current: () => {
       const current = props.controls.model.selection.current()
-      if (current && versionModels().some((model) => modelKey(model) === modelKey(current))) return modelKey(current)
+      if (
+        current &&
+        versionModels().some((model) => modelKey(model) === modelKey(current)) &&
+        (!apiServicesMode() || explicitModelSelection())
+      )
+        return modelKey(current)
       const fallback = versionModels()[0]
       return fallback ? modelKey(fallback) : ""
     },
-    onSelect: selectModel,
+    onSelect: (value) => selectModel(value, true),
   }
   const controller = createPromptInputV2Controller({
     store: () => prompt.capture().store,

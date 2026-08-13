@@ -52,7 +52,7 @@ export const DialogSettings: Component<{ defaultValue?: string }> = (props) => {
                     </Tabs.Trigger>
                     <Tabs.Trigger value="servers">
                       <Icon name="server" />
-                      {language.t("status.popover.tab.servers")}
+                      {language.t("settings.tab.agentEnvironments")}
                     </Tabs.Trigger>
                   </div>
                 </div>

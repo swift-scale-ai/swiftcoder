@@ -820,6 +820,7 @@ export const dict = {
   "settings.section.server": "エージェント",
   "settings.tab.general": "一般",
   "settings.tab.shortcuts": "ショートカット",
+  "settings.tab.agentEnvironments": "実行環境",
   "settings.desktop.section.wsl": "WSL",
   "settings.desktop.wsl.title": "WSL連携",
   "settings.desktop.wsl.description": "WindowsのWSL環境でSwiftCoderサーバーを実行します。",

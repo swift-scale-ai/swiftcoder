@@ -33,11 +33,15 @@ export function sortSwiftScaleModelFamilies(a: SwiftScaleModelFamily, b: SwiftSc
 }
 
 export function preferredSwiftScaleModel<T extends { id: string; name: string }>(models: T[]) {
-  return (
-    models
-      .filter((model) => swiftScaleModelFamily(model) === "SwiftScale")
-      .sort((a, b) => a.name.localeCompare(b.name))[0] ?? models[0]
-  )
+  const swiftScale = models
+    .filter((model) => swiftScaleModelFamily(model) === "SwiftScale")
+    .sort((a, b) => a.name.localeCompare(b.name))
+  const swiftPro = swiftScale.find((model) => {
+    const id = model.id.trim().toLowerCase().split("/").at(-1)
+    const name = model.name.trim().toLowerCase()
+    return id === "swiftpro.auto" || id === "swift-pro" || name === "swift pro"
+  })
+  return swiftPro ?? swiftScale[0] ?? models[0]
 }
 
 export function swiftScaleModelFamilyProviderID(family: SwiftScaleModelFamily) {

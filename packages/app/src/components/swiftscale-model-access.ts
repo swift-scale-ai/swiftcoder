@@ -110,12 +110,9 @@ export function filterSwiftScaleModelsByProductMode<T extends { id: string }>(
   if (effective === "api_services" && product.models.length === 0) return entitled
 
   const allowed = new Set(product.models.flatMap((id) => [...modelAliases(id)]))
-  const coding = new Set(products.coding.models.flatMap((id) => [...modelAliases(id)]))
   return entitled.filter((model) => {
     const aliases = [...modelAliases(model.id)]
-    if (!aliases.some((alias) => allowed.has(alias))) return false
-    if (effective !== "api_services" || !products.coding.enabled) return true
-    return !aliases.some((alias) => coding.has(alias))
+    return aliases.some((alias) => allowed.has(alias))
   })
 }
 

@@ -43,15 +43,26 @@ describe("SwiftScale model families", () => {
     ).toBe(family)
   })
 
-  test("prefers the first SwiftScale model over commercial families", () => {
+  test("prefers Swift Pro over other SwiftScale and commercial models", () => {
     const models = [
       { id: "gpt-5.6-luna", name: "GPT-5.6 Luna" },
-      { id: "swift-pro", name: "Swift Pro" },
+      { id: "swiftpro.auto", name: "Swift Pro" },
       { id: "swift-auto", name: "Swift Auto" },
+      { id: "swiftagent.auto", name: "Swift Agent" },
     ]
 
-    expect(preferredSwiftScaleModel(models)).toEqual({ id: "swift-auto", name: "Swift Auto" })
+    expect(preferredSwiftScaleModel(models)).toEqual({ id: "swiftpro.auto", name: "Swift Pro" })
     expect(preferredSwiftScaleModel(models.slice(0, 1))).toEqual(models[0])
+  })
+
+  test("falls back to the first available SwiftScale model when Swift Pro is unavailable", () => {
+    const models = [
+      { id: "gpt-5.6-luna", name: "GPT-5.6 Luna" },
+      { id: "swiftlite.auto", name: "Swift Lite" },
+      { id: "swiftagent.auto", name: "Swift Agent" },
+    ]
+
+    expect(preferredSwiftScaleModel(models)).toEqual({ id: "swiftagent.auto", name: "Swift Agent" })
   })
 
   test("groups models by family and omits empty families", () => {

@@ -903,6 +903,7 @@ export const dict = {
   "settings.section.server": "Agente",
   "settings.tab.general": "General",
   "settings.tab.shortcuts": "Atajos",
+  "settings.tab.agentEnvironments": "Entornos",
   "settings.desktop.section.wsl": "WSL",
   "settings.desktop.wsl.title": "Integración con WSL",
   "settings.desktop.wsl.description": "Ejecutar el servidor SwiftCoder dentro de WSL en Windows.",

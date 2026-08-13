@@ -140,7 +140,7 @@ describe("SwiftScale model access", () => {
     ).toEqual([{ id: "swiftpro.auto" }, { id: "gemini-3.1-pro" }])
   })
 
-  test("separates combined accounts into explicit included and PAYG modes", () => {
+  test("uses the selected product catalog for combined accounts", () => {
     const models = [{ id: "swiftlite.auto" }, { id: "swiftpro.auto" }, { id: "gpt-5.6-sol" }, { id: "claude-sonnet-5" }]
     const products = {
       coding: { enabled: true, models: ["swiftlite.auto"] },
@@ -153,10 +153,21 @@ describe("SwiftScale model access", () => {
     expect(effectiveSwiftScaleProductMode(products, "coding")).toBe("coding")
     expect(filterSwiftScaleModelsByProductMode(models, products, "coding")).toEqual([{ id: "swiftlite.auto" }])
     expect(filterSwiftScaleModelsByProductMode(models, products, "api_services")).toEqual([
+      { id: "swiftlite.auto" },
       { id: "swiftpro.auto" },
       { id: "gpt-5.6-sol" },
       { id: "claude-sonnet-5" },
     ])
+  })
+
+  test("keeps Swift Pro available in API Services when it is shared with Coding Plan", () => {
+    const models = [{ id: "swiftpro.auto" }, { id: "swiftagent.auto" }]
+    const products = {
+      coding: { enabled: true, models: ["swiftpro.auto"] },
+      apiServices: { enabled: true, models: ["swiftpro.auto", "swiftagent.auto"] },
+    }
+
+    expect(filterSwiftScaleModelsByProductMode(models, products, "api_services")).toEqual(models)
   })
 
   test("forces the only enabled product regardless of a stale project preference", () => {

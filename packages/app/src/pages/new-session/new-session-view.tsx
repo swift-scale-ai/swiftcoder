@@ -72,7 +72,7 @@ export function NewSessionView(props: {
 
         <aside
           data-component="session-new-context"
-          class="flex min-h-0 flex-col border-l border-border-weaker-base bg-[#fafafa]"
+          class="flex min-h-0 flex-col border-l border-border-weaker-base bg-background-stronger"
         >
           <div class="flex h-12 shrink-0 items-center border-b border-border-weaker-base px-4 text-13-medium text-text-strong">
             Context

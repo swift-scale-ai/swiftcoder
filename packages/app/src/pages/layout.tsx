@@ -64,14 +64,13 @@ import { useLanguage, type Locale } from "@/context/language"
 import { pathKey } from "@/utils/path-key"
 import {
   displayName,
-  belongsToChat,
   belongsToProject,
   effectiveWorkspaceOrder,
   errorMessage,
   firstUserMessageText,
   latestRootSession,
   numberedDefaultSessionTitle,
-  recentRootSessions,
+  placedChatSessions,
   sortedRootSessions,
   type SidebarSessionPlacement,
 } from "./layout/helpers"
@@ -184,7 +183,8 @@ export default function LegacyLayout(props: ParentProps) {
     peek: undefined as string | undefined,
     peeked: false,
     debugTools: true,
-    chatLimit: 8,
+    projectLimit: 10,
+    chatLimit: 10,
   })
 
   const updateVersion = () => {
@@ -659,23 +659,15 @@ export default function LegacyLayout(props: ParentProps) {
     return result
   })
 
-  const allRecentSessions = createMemo(() => {
-    const directories = new Map<string, string>()
-    for (const project of layout.projects.list()) {
-      for (const directory of [project.worktree, ...(project.sandboxes ?? [])]) {
-        directories.set(pathKey(directory), directory)
-      }
-    }
-    const stores = [...directories.values()].map((directory) => serverSync().child(directory, { bootstrap: true })[0])
-    return recentRootSessions(stores, Number.MAX_SAFE_INTEGER)
-  })
-
   const chatPreview = (session: Session) =>
     firstUserMessageText(serverSync().session.data.message[session.id], serverSync().session.data.part)
 
-  const allChatSessions = createMemo(() =>
-    allRecentSessions().filter((session) => belongsToChat(store.sessionPlacement[session.id])),
-  )
+  const allChatSessions = createMemo(() => {
+    const directories = layout.projects
+      .list()
+      .flatMap((project) => [project.worktree, ...(project.sandboxes ?? [])])
+    return placedChatSessions(store.sessionPlacement, serverSync().session.data.info, directories)
+  })
   const chatSessions = createMemo(() => allChatSessions().slice(0, state.chatLimit))
 
   type PrefetchQueue = {
@@ -2047,6 +2039,15 @@ export default function LegacyLayout(props: ParentProps) {
     },
     navigateToProject,
     navigateToNewSession: (directory) => void createProjectSession(directory),
+    toggleProjectExpanded: (project) => {
+      const selected = currentProject()?.worktree === project.worktree
+      if (selected && project.expanded) {
+        layout.projects.collapse(project.worktree)
+        return
+      }
+      layout.projects.expand(project.worktree)
+      void navigateToProject(project.worktree)
+    },
     openSidebar: () => layout.sidebar.open(),
     closeProject,
     showEditProjectDialog: (proj) => showEditProjectDialog(server.current!, proj),
@@ -2376,20 +2377,24 @@ export default function LegacyLayout(props: ParentProps) {
   }
 
   const projects = () => layout.projects.list()
+  const visibleProjects = createMemo(() => projects().slice(0, state.projectLimit))
   const projectOverlay = () => <ProjectDragOverlay projects={projects} activeProject={() => store.activeProject} />
   const sidebarContent = (mobile?: boolean) => (
     <SidebarContent
       mobile={mobile}
       opened={sidebarOpened}
       aimMove={aim.move}
-      projects={projects}
+      projects={visibleProjects}
       projectsLabel={language.t("sidebar.projects")}
       chatLabel={language.t("sidebar.chat")}
       noProjectsLabel={language.t("sidebar.projects.empty")}
       noChatsLabel={language.t("sidebar.chat.empty")}
+      loadMoreProjectsLabel={language.t("common.loadMore")}
+      hasMoreProjects={() => visibleProjects().length < projects().length}
+      onLoadMoreProjects={() => setState("projectLimit", (limit) => limit + 10)}
       loadMoreChatsLabel={language.t("common.loadMore")}
       hasMoreChats={() => chatSessions().length < allChatSessions().length}
-      onLoadMoreChats={() => setState("chatLimit", (limit) => limit + 8)}
+      onLoadMoreChats={() => setState("chatLimit", (limit) => limit + 10)}
       recents={() =>
         chatSessions().map((session) => (
           <SessionItem

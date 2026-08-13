@@ -932,6 +932,7 @@ export const dict = {
   "settings.section.server": "Agent",
   "settings.tab.general": "一般",
   "settings.tab.shortcuts": "快速鍵",
+  "settings.tab.agentEnvironments": "執行環境",
   "settings.desktop.section.wsl": "WSL",
   "settings.desktop.wsl.title": "WSL 整合",
   "settings.desktop.wsl.description": "在 Windows 上的 WSL 中執行 SwiftCoder 伺服器。",

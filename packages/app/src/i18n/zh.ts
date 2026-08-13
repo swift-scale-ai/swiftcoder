@@ -895,6 +895,7 @@ export const dict = {
 
   "settings.tab.general": "通用",
   "settings.tab.shortcuts": "快捷键",
+  "settings.tab.agentEnvironments": "运行环境",
   "settings.tab.accountPlan": "账号与套餐",
   "settings.account.title": "账号",
   "settings.account.desktopOnly": "账号登录仅在 macOS App 中可用。",

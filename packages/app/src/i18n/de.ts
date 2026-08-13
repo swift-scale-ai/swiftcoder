@@ -726,6 +726,7 @@ export const dict = {
   "settings.section.server": "Agent",
   "settings.tab.general": "Allgemein",
   "settings.tab.shortcuts": "Tastenkombinationen",
+  "settings.tab.agentEnvironments": "Umgebungen",
   "settings.desktop.section.wsl": "WSL",
   "settings.desktop.wsl.title": "WSL-Integration",
   "settings.desktop.wsl.description": "SwiftCoder-Server innerhalb von WSL unter Windows ausführen.",

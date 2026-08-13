@@ -27,6 +27,9 @@ export const SidebarContent = (props: {
   chatLabel: string
   noProjectsLabel: string
   noChatsLabel: string
+  loadMoreProjectsLabel: string
+  hasMoreProjects: Accessor<boolean>
+  onLoadMoreProjects: () => void
   loadMoreChatsLabel: string
   hasMoreChats: Accessor<boolean>
   onLoadMoreChats: () => void
@@ -139,6 +142,16 @@ export const SidebarContent = (props: {
             </SortableProvider>
             <Show when={expanded() && props.projects().length === 0}>
               <div class="px-2 py-2 text-12-regular text-text-weak">{props.noProjectsLabel}</div>
+            </Show>
+            <Show when={expanded() && props.hasMoreProjects()}>
+              <Button
+                variant="ghost"
+                size="large"
+                class="flex w-full justify-start px-2 text-left text-14-regular text-text-weak"
+                onClick={props.onLoadMoreProjects}
+              >
+                {props.loadMoreProjectsLabel}
+              </Button>
             </Show>
             <Show when={!expanded()}>
               <Tooltip
