@@ -19,6 +19,7 @@ const required = [
   "legal/OpenCode-LICENSE.txt",
   "legal/models.dev-LICENSE.txt",
   "legal/FONT-LICENSES.md",
+  "packages/opencode/script/build-node.ts",
   ".github/workflows/verify.yml",
   ".github/dependabot.yml",
 ]
