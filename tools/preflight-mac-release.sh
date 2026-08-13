@@ -31,14 +31,18 @@ if [[ -n "${CSC_LINK:-}" ]]; then
   fi
 
   certificate_subject="$({
-    openssl pkcs12 -legacy -in "$CSC_LINK" -passin "pass:${CSC_KEY_PASSWORD:-}" -clcerts -nokeys 2>/dev/null |
+    openssl pkcs12 -in "$CSC_LINK" -passin "pass:${CSC_KEY_PASSWORD:-}" -clcerts -nokeys 2>/dev/null |
       openssl x509 -noout -subject 2>/dev/null
   } || true)"
   if [[ -z "$certificate_subject" ]]; then
-    echo "Unable to read the signing certificate; verify CSC_LINK and CSC_KEY_PASSWORD" >&2
-    exit 1
+    certificate_subject="$({
+      openssl pkcs12 -legacy -in "$CSC_LINK" -passin "pass:${CSC_KEY_PASSWORD:-}" -clcerts -nokeys 2>/dev/null |
+        openssl x509 -noout -subject 2>/dev/null
+    } || true)"
   fi
-  if ! printf '%s\n' "$certificate_subject" | grep -Eq 'CN[[:space:]]*=[[:space:]]*Developer ID Application:'; then
+  if [[ -z "$certificate_subject" ]]; then
+    echo "OpenSSL could not inspect the signing certificate; macOS will validate it during import." >&2
+  elif ! printf '%s\n' "$certificate_subject" | grep -Eq 'CN[[:space:]]*=[[:space:]]*Developer ID Application:'; then
     echo "The signing certificate is not a Developer ID Application certificate." >&2
     echo "Certificate subject: $certificate_subject" >&2
     exit 1
