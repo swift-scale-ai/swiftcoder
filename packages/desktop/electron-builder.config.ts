@@ -27,7 +27,6 @@ const APP_IDS = {
 } as const
 
 const getBase = (appId: string): Configuration => ({
-  electronDist: path.join(packageDir, "node_modules/electron/dist"),
   artifactName: "swiftcoder-${version}-${os}-${arch}.${ext}",
   buildVersion,
   ...(releaseVersion ? { extraMetadata: { version: releaseVersion } } : {}),

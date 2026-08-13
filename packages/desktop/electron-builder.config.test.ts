@@ -45,6 +45,13 @@ test("uses the release version in package metadata and immutable artifact names"
   expect(config.artifactName).toBe("swiftcoder-${version}-${os}-${arch}.${ext}")
 })
 
+test("lets electron-builder resolve the Electron runtime", async () => {
+  const module = await import("./electron-builder.config.ts?electron-runtime")
+  const config = module.default as Configuration
+
+  expect(config.electronDist).toBeUndefined()
+})
+
 test("uses an integer macOS build version", async () => {
   const previous = process.env.SWIFTCODER_BUILD_VERSION
   process.env.SWIFTCODER_BUILD_VERSION = "42"
@@ -66,7 +73,7 @@ test("excludes non-macOS resources from packaged apps", async () => {
 test("excludes source maps from distributed apps", async () => {
   const module = await import("./electron-builder.config.ts?no-source-maps")
   const config = module.default as Configuration
-  expect(config.files).toContain("!out/**/*.map")
+  expect(config.files).toContain("!**/*.map")
 })
 
 test("bundles the CLI outside the dev app archive", async () => {
