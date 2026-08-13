@@ -1,6 +1,7 @@
 import { describe, expect, test } from "bun:test"
 import {
   effectiveSwiftScaleProductMode,
+  filterDirectCommercialModelsByProducts,
   filterSwiftScaleModelsByProductMode,
   filterSwiftScaleModelsByProducts,
   isCommercialSwiftScaleModel,
@@ -57,6 +58,35 @@ describe("SwiftScale model access", () => {
       luna,
     ])
     expect(selectDirectCommercialTextModels([base], () => true)).toEqual([base])
+  })
+
+  test("limits direct provider models to the backend-enabled API Services catalog", () => {
+    const model = (providerID: string, id: string) => ({
+      id,
+      provider: { id: providerID },
+      capabilities: { input: { text: true }, output: { text: true } },
+    })
+    const models = [
+      model("openai", "gpt-4"),
+      model("openai", "gpt-5.6-sol"),
+      model("anthropic", "claude-sonnet-5"),
+      model("google", "gemini-3.1-pro"),
+    ]
+    const products = {
+      coding: { enabled: false, models: [] },
+      apiServices: {
+        enabled: true,
+        models: ["openai/gpt-5.6-sol", "anthropic/claude-sonnet-5"],
+      },
+    }
+
+    expect(filterDirectCommercialModelsByProducts(models, products)).toEqual([models[1], models[2]])
+    expect(
+      filterDirectCommercialModelsByProducts(models, {
+        coding: { enabled: false, models: [] },
+        apiServices: { enabled: true, models: [] },
+      }),
+    ).toEqual([])
   })
 
   test("uses entitlements before connection inference", () => {

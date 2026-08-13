@@ -47,6 +47,22 @@ export function selectDirectCommercialTextModels<
   return [...new Map(selected.map((model) => [`${model.provider.id}:${model.id}`, model])).values()]
 }
 
+export function filterDirectCommercialModelsByProducts<
+  T extends {
+    id: string
+    provider: { id: string }
+    capabilities: { input: { text: boolean }; output: { text: boolean } }
+  },
+>(models: T[], products?: SwiftScaleModelProducts) {
+  if (!products?.apiServices.enabled || products.apiServices.models.length === 0) return []
+
+  const allowed = new Set(products.apiServices.models.flatMap((id) => [...modelAliases(id)]))
+  return models.filter((model) => {
+    if (!isDirectCommercialTextModel(model)) return false
+    return [...modelAliases(model.id)].some((alias) => allowed.has(alias))
+  })
+}
+
 export function filterSwiftScaleModelsByProducts<T extends { id: string }>(
   models: T[],
   products?: SwiftScaleModelProducts,

@@ -136,7 +136,7 @@ export const DESKTOP_NATIVE_ENGLISH = {
   "desktop.dialog.chooseFile": "Choose a file",
   "desktop.dialog.saveFile": "Save file",
   "desktop.dialog.files": "Files",
-  "desktop.server.local": "Local Server",
+  "desktop.server.local": "Local Agent environment",
 
   "desktop.wsl.error.windowsOnly": "WSL is only available on Windows",
   "desktop.wsl.error.unavailable": "WSL is unavailable",
