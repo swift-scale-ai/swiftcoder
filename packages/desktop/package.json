@@ -1,7 +1,7 @@
 {
   "name": "@swiftscale/swiftcoder-desktop",
   "private": true,
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "SwiftScale-powered AI coding agent for macOS",
   "type": "module",
   "license": "MIT",
