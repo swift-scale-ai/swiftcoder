@@ -173,7 +173,7 @@ describe("SwiftScale desktop OAuth contract", () => {
             enabled: true,
             models: ["gpt-5.6-sol", "claude-sonnet-5", "gemini-3.1-pro"],
             billing: "payg",
-            account_tier: "personal",
+            account_tier: "developer",
           },
         },
       }).products,
@@ -183,8 +183,31 @@ describe("SwiftScale desktop OAuth contract", () => {
         enabled: true,
         models: ["gpt-5.6-sol", "claude-sonnet-5", "gemini-3.1-pro"],
         billing: "payg",
-        accountTier: "personal",
+        accountTier: "developer",
       },
     })
+  })
+
+  test("normalizes the legacy personal API Services tier to developer", () => {
+    expect(
+      parseEntitlementsResponse({
+        tier: "free",
+        product: "api_services",
+        subscription: "active",
+        usage: { level: "available" },
+        limits: { concurrent_tasks: 1, context_tier: "standard" },
+        service: { status: "operational" },
+        products: {
+          coding: { enabled: false, models: [] },
+          api_services: {
+            enabled: true,
+            models: ["swiftpro.auto"],
+            billing: "payg",
+            account_tier: "personal",
+            concurrency_limit: 3,
+          },
+        },
+      }).products?.apiServices.accountTier,
+    ).toBe("developer")
   })
 })

@@ -51,7 +51,7 @@ export type SwiftScaleEntitlements = {
       enabled: boolean
       models: string[]
       billing: "payg"
-      accountTier?: "personal" | "team" | "business" | "enterprise"
+      accountTier?: "developer" | "team" | "business" | "enterprise"
       concurrencyLimit?: number
     }
   }

@@ -70,7 +70,7 @@ export type SwiftScaleEntitlements = {
       enabled: boolean
       models: string[]
       billing: "payg"
-      accountTier?: "personal" | "team" | "business" | "enterprise"
+      accountTier?: "developer" | "team" | "business" | "enterprise"
       concurrencyLimit?: number
     }
   }
@@ -231,7 +231,7 @@ export const parseEntitlementsResponse = (value: unknown, requestID?: string): S
             !Number.isInteger(apiServices.concurrency_limit) ||
             apiServices.concurrency_limit < 0)) ||
         (apiServices.account_tier !== undefined &&
-          !["personal", "team", "business", "enterprise"].includes(String(apiServices.account_tier)))))
+          !["personal", "developer", "team", "business", "enterprise"].includes(String(apiServices.account_tier)))))
   ) {
     throw new Error("SwiftScale returned invalid account entitlements")
   }
@@ -270,7 +270,9 @@ export const parseEntitlementsResponse = (value: unknown, requestID?: string): S
             ...(apiServices!.account_tier === undefined
               ? {}
               : {
-                  accountTier: apiServices!.account_tier as SwiftScaleProducts["apiServices"]["accountTier"],
+                  accountTier: (apiServices!.account_tier === "personal"
+                    ? "developer"
+                    : apiServices!.account_tier) as SwiftScaleProducts["apiServices"]["accountTier"],
                 }),
             ...(apiServices!.concurrency_limit === undefined
               ? {}

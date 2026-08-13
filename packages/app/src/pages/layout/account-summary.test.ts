@@ -42,7 +42,7 @@ describe("accountSummary", () => {
           product: "api_services",
           products: {
             coding: { enabled: false, models: [] },
-            apiServices: { enabled: true, models: ["swift.api"], billing: "payg", accountTier: "personal" },
+            apiServices: { enabled: true, models: ["swift.api"], billing: "payg", accountTier: "developer" },
           },
         },
       ),
