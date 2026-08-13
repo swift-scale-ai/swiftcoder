@@ -76,7 +76,7 @@ SwiftCoder Desktop (프로젝트, 세션, 타임라인, Diff, 터미널)
 
 - macOS 13 이상
 - Bun 1.3.14
-- Node.js 22.19 이상
+- Node.js 22.22.2 이상
 - Xcode Command Line Tools
 
 ## 개발
@@ -146,8 +146,6 @@ bun run check:security
 - `tools`: 개발, 검증, 패키징 및 릴리스 자동화
 - `script`: 향후 통합할 업스트림 저장소 유지관리 도구
 - `UPSTREAM_BASELINE.json`: 정확한 업스트림 출처와 유지 패키지 목록
-
-빌드 과정에서 `../opencode`를 읽지 않으며 해당 디렉터리는 업스트림 참조용입니다.
 
 ## 라이선스 및 귀속
 

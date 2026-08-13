@@ -76,7 +76,7 @@ SwiftCoder Desktop（專案、工作階段、時間線、程式碼差異、終�
 
 - macOS 13 或更新版本
 - Bun 1.3.14
-- Node.js 22.19 或更新版本
+- Node.js 22.22.2 或更新版本
 - Xcode Command Line Tools
 
 ## 開發
@@ -146,8 +146,6 @@ bun run check:security
 - `tools`：SwiftCoder 開發、驗證、打包和發布自動化工具。
 - `script`：等待後續整合的上游儲存庫維護工具。
 - `UPSTREAM_BASELINE.json`：準確記錄上游來源與保留套件清單。
-
-本儲存庫建置時不會讀取 `../opencode`；該目錄僅作為上游參考。
 
 ## 授權與歸屬
 

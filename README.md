@@ -104,7 +104,7 @@ SwiftCoder Desktop (projects, sessions, timeline, diff, terminal)
 
 - macOS 13 or newer
 - Bun 1.3.14
-- Node.js 22.19 or newer
+- Node.js 22.22.2 or newer
 - Xcode Command Line Tools
 
 ## Development
@@ -136,6 +136,18 @@ Run the complete current implementation gate:
 ```bash
 ./tools/check-phase4.sh
 ```
+
+### TypeScript 7 Experiment
+
+The `experiment/typescript-7` branch validates SwiftCoder with the stable
+TypeScript 7 compiler across the monorepo. It replaces the previous native
+preview setup, standardizes workspace type checks on `tsc`, adds explicit Bun
+ambient types, and updates compatible build and runtime dependencies. The
+JavaScript Compiler API remains on TypeScript 6 temporarily for tools that
+still depend on its runtime API.
+
+See [TypeScript 7 Upgrade](docs/typescript-7-upgrade.md) for the migration
+scope, dependency changes, validation results, and known limitations.
 
 ## Open-Source Release Checks
 
@@ -182,9 +194,6 @@ Local test artifacts are never eligible for staging to a public update channel.
 - `tools`: SwiftCoder development, verification, packaging, and release automation.
 - `script`: retained upstream repository-maintenance utilities pending consolidation.
 - `UPSTREAM_BASELINE.json`: exact upstream provenance and retained package list.
-
-The repository builds without reading `../opencode`; that directory is an
-upstream reference only.
 
 ## License And Attribution
 

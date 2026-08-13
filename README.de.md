@@ -76,7 +76,7 @@ SwiftCoder Desktop (Projekte, Sitzungen, Zeitleiste, Diffs, Terminal)
 
 - macOS 13 oder neuer
 - Bun 1.3.14
-- Node.js 22.19 oder neuer
+- Node.js 22.22.2 oder neuer
 - Xcode Command Line Tools
 
 ## Entwicklung
@@ -146,8 +146,6 @@ Lokale Testartefakte dürfen nicht in einem öffentlichen Update-Kanal bereitges
 - `tools`: Automatisierung für Entwicklung, Prüfung, Paketierung und Veröffentlichung.
 - `script`: beibehaltene Upstream-Wartungswerkzeuge, deren Konsolidierung noch aussteht.
 - `UPSTREAM_BASELINE.json`: genaue Upstream-Herkunft und Liste der beibehaltenen Pakete.
-
-Der Build liest nicht aus `../opencode`; dieses Verzeichnis dient ausschließlich als Upstream-Referenz.
 
 ## Lizenz und Namensnennung
 
