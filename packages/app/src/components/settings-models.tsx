@@ -4,13 +4,18 @@ import { Switch } from "@opencode-ai/ui/switch"
 import { Icon } from "@opencode-ai/ui/icon"
 import { IconButton } from "@opencode-ai/ui/icon-button"
 import { TextField } from "@opencode-ai/ui/text-field"
-import { type Component, For, Show } from "solid-js"
+import { createMemo, type Component, For, Show } from "solid-js"
 import { useLanguage } from "@/context/language"
 import { useModels } from "@/context/models"
 import { popularProviders } from "@/hooks/use-providers"
+import { useSwiftScaleModelEntitlements } from "@/hooks/use-swiftscale-model-entitlements"
 import { SettingsList } from "./settings-list"
 import { SettingsServerPicker, SettingsServerScope } from "./settings-server-picker"
 import { groupSwiftScaleModelsByFamily, swiftScaleModelFamilyProviderID } from "./swiftscale-model-family"
+import {
+  filterDirectCommercialModelsByProducts,
+  filterSwiftScaleModelsByProducts,
+} from "./swiftscale-model-access"
 
 type ModelItem = ReturnType<ReturnType<typeof useModels>["list"]>[number]
 
@@ -44,13 +49,25 @@ export const SettingsModels: Component = () => {
 const SettingsModelsContent: Component = () => {
   const language = useLanguage()
   const models = useModels()
+  const modelEntitlements = useSwiftScaleModelEntitlements()
+  const availableModels = createMemo(() => {
+    if (modelEntitlements.loading()) return []
+    const all = models.list()
+    const products = modelEntitlements.products()
+    const swiftScale = filterSwiftScaleModelsByProducts(
+      all.filter((item) => item.provider.id === "swiftcoder"),
+      products,
+    )
+    const direct = filterDirectCommercialModelsByProducts(all, products)
+    return [...swiftScale, ...direct]
+  })
   const modelGroups = (items: ModelItem[]) =>
     items[0]?.provider.id === "swiftcoder"
       ? groupSwiftScaleModelsByFamily(items)
       : [{ family: undefined, models: items }]
 
   const list = useFilteredList<ModelItem>({
-    items: (_filter) => models.list(),
+    items: (_filter) => availableModels(),
     key: (x) => `${x.provider.id}:${x.id}`,
     filterKeys: ["provider.name", "name", "id"],
     sortBy: (a, b) => a.name.localeCompare(b.name),

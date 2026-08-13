@@ -43,6 +43,7 @@ import {
 } from "./swiftscale-model-family"
 import {
   effectiveSwiftScaleProductMode,
+  filterDirectCommercialModelsByProducts,
   filterSwiftScaleModelsByProductMode,
   isSwiftCoderTextModel,
   selectDirectCommercialTextModels,
@@ -435,8 +436,11 @@ export function usePromptInputV2Controller(props: PromptInputV2ControllerProps):
     const isVisible = (model: (typeof models)[number]) =>
       props.controls.model.selection.visible({ providerID: model.provider.id, modelID: model.id })
     const visible = models.filter(isVisible)
-    const direct = selectDirectCommercialTextModels(models, isVisible)
-    if (modelEntitlements.loading()) return direct
+    if (modelEntitlements.loading()) return []
+    const direct = selectDirectCommercialTextModels(
+      filterDirectCommercialModelsByProducts(models, products()),
+      isVisible,
+    )
     const swiftScale = filterSwiftScaleModelsByProductMode(
       visible.filter((model) => model.provider.id === "swiftcoder").filter(isSwiftCoderTextModel),
       products(),
