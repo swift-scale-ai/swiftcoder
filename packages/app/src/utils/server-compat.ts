@@ -1,6 +1,6 @@
 import type { ServerApi } from "./server"
 import type { ServerProtocol } from "./server-protocol"
-import type { AgentPartInput, FilePartInput, SwiftCoderClient, Session, TextPartInput } from "@opencode-ai/sdk/v2/client"
+import type { AgentPartInput, FilePartInput, SwiftCoderClient, Session, TextPartInput } from "@swiftscale/sdk/v2/client"
 import type {
   Project,
   ProjectCurrent,

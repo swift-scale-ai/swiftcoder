@@ -12,8 +12,8 @@
 //   3. starts the stream transport (SDK event subscription), lazily for fresh
 //      local sessions,
 //   4. runs the prompt queue until the footer closes.
-import { createSwiftCoderClient } from "@opencode-ai/sdk/v2"
-import { Flag } from "@opencode-ai/core/flag/flag"
+import { createSwiftCoderClient } from "@swiftscale/sdk/v2"
+import { Flag } from "@swiftscale/core/flag/flag"
 import { MessageID } from "@/session/schema"
 import { createRunDemo } from "./demo"
 import { resolveModelInfo, resolveRunTuiConfig, resolveSessionInfo } from "./runtime.boot"

@@ -2,27 +2,27 @@ export * as TuiConfig from "./tui"
 
 import path from "path"
 import { mergeDeep, unique } from "remeda"
-import { AppNodeBuilder } from "@opencode-ai/core/effect/app-node-builder"
-import { LayerNode } from "@opencode-ai/core/effect/layer-node"
+import { AppNodeBuilder } from "@swiftscale/core/effect/app-node-builder"
+import { LayerNode } from "@swiftscale/core/effect/layer-node"
 import { Cause, Context, Effect, Fiber, Layer } from "effect"
 import { ConfigParse } from "@/config/parse"
 import * as ConfigPaths from "@/config/paths"
 import { migrateTuiConfig } from "./tui-migrate"
 import { resolveHostAttentionSoundPaths } from "./tui-host-attention"
-import { Flag } from "@opencode-ai/core/flag/flag"
-import { isRecord } from "@opencode-ai/tui/util/record"
-import { Global } from "@opencode-ai/core/global"
-import { FSUtil } from "@opencode-ai/core/fs-util"
+import { Flag } from "@swiftscale/core/flag/flag"
+import { isRecord } from "@swiftscale/coder-tui/util/record"
+import { Global } from "@swiftscale/core/global"
+import { FSUtil } from "@swiftscale/core/fs-util"
 import { CurrentWorkingDirectory } from "./tui-cwd"
 import { ConfigPlugin } from "@/config/plugin"
-import { TuiKeybind } from "@opencode-ai/tui/config/keybind"
-import { InstallationLocal, InstallationVersion } from "@opencode-ai/core/installation/version"
-import { makeRuntime } from "@opencode-ai/core/effect/runtime"
+import { TuiKeybind } from "@swiftscale/coder-tui/config/keybind"
+import { InstallationLocal, InstallationVersion } from "@swiftscale/core/installation/version"
+import { makeRuntime } from "@swiftscale/core/effect/runtime"
 import { Filesystem } from "@/util/filesystem"
 import { ConfigVariable } from "@/config/variable"
-import { Npm } from "@opencode-ai/core/npm"
+import { Npm } from "@swiftscale/core/npm"
 import { FormatError, FormatUnknownError } from "@/cli/error"
-import { TuiConfig } from "@opencode-ai/tui/config"
+import { TuiConfig } from "@swiftscale/coder-tui/config"
 
 export const Info = TuiConfig.Info
 export type Info = TuiConfig.Info
@@ -238,7 +238,7 @@ const layer = Layer.effect(
           .install(dir, {
             add: [
               {
-                name: "@opencode-ai/plugin",
+                name: "@swiftscale/plugin",
                 version: InstallationLocal ? undefined : InstallationVersion,
               },
             ],

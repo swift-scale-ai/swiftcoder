@@ -1,7 +1,7 @@
 // @ts-nocheck
 
-import { SwiftCoder } from "@opencode-ai/core"
-import { ReadTool } from "@opencode-ai/core/tools"
+import { SwiftCoder } from "@swiftscale/core"
+import { ReadTool } from "@swiftscale/core/tools"
 
 const swiftcoder = SwiftCoder.make({})
 

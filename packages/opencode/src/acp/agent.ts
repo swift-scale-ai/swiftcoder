@@ -17,7 +17,7 @@ import {
   type SetSessionModeRequest,
 } from "@agentclientprotocol/sdk"
 import { Effect } from "effect"
-import type { SwiftCoderClient } from "@opencode-ai/sdk/v2"
+import type { SwiftCoderClient } from "@swiftscale/sdk/v2"
 import * as ACPError from "./error"
 import * as ACPService from "./service"
 

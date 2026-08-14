@@ -1,4 +1,4 @@
-import { base64Encode } from "@opencode-ai/core/util/encode"
+import { base64Encode } from "@swiftscale/core/util/encode"
 import type { ApprovalMode } from "./permission-mode"
 
 export function acceptKey(sessionID: string, directory?: string) {

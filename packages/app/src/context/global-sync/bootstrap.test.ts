@@ -1,9 +1,9 @@
 import { describe, expect, test } from "bun:test"
 import { createStore } from "solid-js/store"
 import { QueryClient } from "@tanstack/solid-query"
-import type { Config, SwiftCoderClient, Project } from "@opencode-ai/sdk/v2/client"
+import type { Config, SwiftCoderClient, Project } from "@swiftscale/sdk/v2/client"
 import type { AgentApi, CatalogApi, CommandApi, ReferenceApi } from "@opencode-ai/client/promise"
-import type { NormalizedProviderListResponse } from "@opencode-ai/session-ui/context"
+import type { NormalizedProviderListResponse } from "@swiftscale/session-ui/context"
 import {
   bootstrapDirectory,
   loadAgentsQuery,

@@ -87,6 +87,9 @@ export const DESKTOP_MENU: DesktopMenu[] = [
       {
         type: "item",
         labelKey: "desktop.menu.settings",
+        // Keep the native macOS entry aligned with the account button in the
+        // sidebar footer. Both resolve to Layout.openAccount and therefore
+        // render the same Account & plan dialog.
         command: "settings.account",
         accelerator: { macos: "Cmd+," },
       },

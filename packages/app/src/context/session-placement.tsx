@@ -1,4 +1,4 @@
-import { createSimpleContext } from "@opencode-ai/ui/context"
+import { createSimpleContext } from "@swiftscale/ui/context"
 
 export type SessionPlacement = "chat" | "project"
 

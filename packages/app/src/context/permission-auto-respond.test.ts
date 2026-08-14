@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test"
-import type { PermissionRequest, Session } from "@opencode-ai/sdk/v2/client"
-import { base64Encode } from "@opencode-ai/core/util/encode"
+import type { PermissionRequest, Session } from "@swiftscale/sdk/v2/client"
+import { base64Encode } from "@swiftscale/core/util/encode"
 import {
   approvalModeFor,
   autoRespondsPermission,

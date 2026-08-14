@@ -1,9 +1,9 @@
-import { LayerNode } from "@opencode-ai/core/effect/layer-node"
+import { LayerNode } from "@swiftscale/core/effect/layer-node"
 import path from "path"
 import { Effect, Layer, Record, Result, Schema, Context } from "effect"
-import { NonNegativeInt } from "@opencode-ai/core/schema"
-import { Global } from "@opencode-ai/core/global"
-import { FSUtil } from "@opencode-ai/core/fs-util"
+import { NonNegativeInt } from "@swiftscale/core/schema"
+import { Global } from "@swiftscale/core/global"
+import { FSUtil } from "@swiftscale/core/fs-util"
 import * as MacOSKeychain from "./macos-keychain"
 
 export const OAUTH_DUMMY_KEY = "swiftcoder-oauth-dummy-key"

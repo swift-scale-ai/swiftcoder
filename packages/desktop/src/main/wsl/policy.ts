@@ -1,4 +1,4 @@
-import type { WslDistroProbe, WslSwiftCoderCheck, WslServerItem } from "@opencode-ai/app/wsl/types"
+import type { WslDistroProbe, WslSwiftCoderCheck, WslServerItem } from "@swiftscale/coder-app/wsl/types"
 
 export function wslServerIdToRestart(servers: WslServerItem[], distro: string) {
   return servers.find((item) => item.config.distro === distro)?.config.id

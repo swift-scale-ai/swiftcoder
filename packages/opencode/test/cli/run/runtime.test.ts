@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, mock, spyOn, test } from "bun:test"
-import { SwiftCoderClient } from "@opencode-ai/sdk/v2"
+import { SwiftCoderClient } from "@swiftscale/sdk/v2"
 import { runInteractiveMode } from "@/cli/cmd/run/runtime"
 import type { FooterApi, RunProvider } from "@/cli/cmd/run/types"
 

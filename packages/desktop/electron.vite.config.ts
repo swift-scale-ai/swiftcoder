@@ -1,6 +1,6 @@
 import { sentryVitePlugin } from "@sentry/vite-plugin"
 import { defineConfig } from "electron-vite"
-import appPlugin from "@opencode-ai/app/vite"
+import appPlugin from "@swiftscale/coder-app/vite"
 import * as fs from "node:fs/promises"
 
 const SWIFTCODER_SERVER_DIST = "../opencode/dist/node"
@@ -52,7 +52,7 @@ const require = __cjs_mod__.createRequire(import.meta.url);
 `,
         },
       },
-      externalizeDeps: { include: [nodePtyPkg] },
+      externalizeDeps: { include: [nodePtyPkg], exclude: ["@swiftscale/desktop-kit"] },
     },
     plugins: [
       {

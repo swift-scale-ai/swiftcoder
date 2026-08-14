@@ -11,8 +11,8 @@
 //     → stream.ts bridges to footer API
 //       → footer.ts queues commits and patches the footer view
 //         → OpenTUI split-footer renderer writes to terminal
-import type { SwiftCoderClient, PermissionRequest, QuestionRequest, ToolPart } from "@opencode-ai/sdk/v2"
-import type { TuiConfig } from "@opencode-ai/tui/config"
+import type { SwiftCoderClient, PermissionRequest, QuestionRequest, ToolPart } from "@swiftscale/sdk/v2"
+import type { TuiConfig } from "@swiftscale/coder-tui/config"
 
 export type RunFilePart = {
   type: "file"

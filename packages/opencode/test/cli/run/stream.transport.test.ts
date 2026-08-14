@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, mock, spyOn, test } from "bun:test"
-import { SwiftCoderClient, type GlobalEvent } from "@opencode-ai/sdk/v2"
+import { SwiftCoderClient, type GlobalEvent } from "@swiftscale/sdk/v2"
 import { createSessionTransport } from "@/cli/cmd/run/stream.transport"
 import type { FooterApi, FooterEvent, LocalReplayRow, RunFilePart, StreamCommit } from "@/cli/cmd/run/types"
 

@@ -18,7 +18,7 @@ export const GenerateCommand = {
           {
             lang: "js",
             source: [
-              `import { createSwiftCoderClient } from "@opencode-ai/sdk`,
+              `import { createSwiftCoderClient } from "@swiftscale/sdk`,
               ``,
               `const client = createSwiftCoderClient()`,
               `await client.${operation.operationId}({`,

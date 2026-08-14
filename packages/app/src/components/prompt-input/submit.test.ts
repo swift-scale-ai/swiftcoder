@@ -125,19 +125,19 @@ beforeAll(async () => {
     useSearchParams: () => [search, () => undefined],
   }))
 
-  mock.module("@opencode-ai/sdk/v2/client", () => ({
+  mock.module("@swiftscale/sdk/v2/client", () => ({
     createSwiftCoderClient: (input: { directory: string }) => {
       createdClients.push(input.directory)
       return clientFor(input.directory)
     },
   }))
 
-  mock.module("@opencode-ai/ui/toast", () => ({
+  mock.module("@swiftscale/ui/toast", () => ({
     Toast: { Region: () => null },
     showToast: () => 0,
   }))
 
-  mock.module("@opencode-ai/core/util/encode", () => ({
+  mock.module("@swiftscale/core/util/encode", () => ({
     base64Encode: (value: string) => value,
   }))
 

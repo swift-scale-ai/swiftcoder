@@ -1,6 +1,6 @@
 import { usePlatform, type SwiftScaleAuthStatus, type SwiftScaleEntitlements } from "@/context/platform"
-import { Button } from "@opencode-ai/ui/button"
-import { Dialog } from "@opencode-ai/ui/dialog"
+import { Button } from "@swiftscale/ui/button"
+import { Dialog } from "@swiftscale/ui/dialog"
 import { Show, createMemo, createSignal, onCleanup, onMount } from "solid-js"
 import { swiftScaleAccountDisplayName, swiftScaleAccountPresentation } from "./swiftscale-account-presentation"
 import { SettingsList } from "./settings-list"

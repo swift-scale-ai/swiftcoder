@@ -10,6 +10,60 @@
   --font-size-x-large: 21px;
 }
 
+:root[data-color-scheme="light"] {
+  --background-base: #ffffff;
+  --background-weak: #f7f8fa;
+  --v2-background-bg-base: #ffffff;
+  --v2-background-bg-deep: #f7f8fa;
+  --v2-background-bg-layer-01: #ffffff;
+  --v2-background-bg-layer-02: #f2f5f7;
+  --v2-background-bg-layer-03: #e9edef;
+  --v2-background-bg-layer-04: #e2e7ea;
+  --v2-background-bg-accent: #3268d8;
+  --v2-text-text-base: #202124;
+  --v2-text-text-muted: #6f7479;
+  --v2-text-text-faint: #858a8f;
+  --v2-text-text-accent: #3268d8;
+  --v2-text-text-accent-hover: #2859bd;
+  --v2-icon-icon-base: #59616a;
+  --v2-icon-icon-muted: #707880;
+  --v2-icon-icon-accent: #3268d8;
+  --v2-icon-icon-accent-hover: #2859bd;
+  --v2-border-border-muted: #e9edef;
+  --v2-border-border-base: #dfe3e6;
+  --v2-border-border-strong: #c9d1d8;
+  --v2-border-border-focus: #3268d8;
+  --v2-overlay-simple-overlay-hover: rgb(32 33 36 / 6%);
+  --v2-overlay-simple-overlay-pressed: rgb(32 33 36 / 10%);
+}
+
+:root[data-color-scheme="dark"] {
+  --background-base: #202327;
+  --background-weak: #16181b;
+  --v2-background-bg-base: #202327;
+  --v2-background-bg-deep: #16181b;
+  --v2-background-bg-layer-01: #202327;
+  --v2-background-bg-layer-02: #25292d;
+  --v2-background-bg-layer-03: #2a2f34;
+  --v2-background-bg-layer-04: #30363c;
+  --v2-background-bg-accent: #3268d8;
+  --v2-text-text-base: #e8eaed;
+  --v2-text-text-muted: #a5abb2;
+  --v2-text-text-faint: #7f878f;
+  --v2-text-text-accent: #7d9fe8;
+  --v2-text-text-accent-hover: #9eb3df;
+  --v2-icon-icon-base: #c5c9ce;
+  --v2-icon-icon-muted: #8f969d;
+  --v2-icon-icon-accent: #7d9fe8;
+  --v2-icon-icon-accent-hover: #9eb3df;
+  --v2-border-border-muted: #2a2f34;
+  --v2-border-border-base: #353a40;
+  --v2-border-border-strong: #4a5158;
+  --v2-border-border-focus: #7d9fe8;
+  --v2-overlay-simple-overlay-hover: rgb(255 255 255 / 6%);
+  --v2-overlay-simple-overlay-pressed: rgb(255 255 255 / 10%);
+}
+
 html,
 body,
 #root {
@@ -24,17 +78,19 @@ body,
 }
 
 [data-layout="swiftcoder-workbench"] {
-  --swiftcoder-line: #d4e1e9;
-  --swiftcoder-line-strong: #b9d0df;
-  --swiftcoder-sidebar: #f5f9fc;
-  --swiftcoder-panel: #f7fafc;
-  --swiftcoder-hover: #edf5fa;
-  --swiftcoder-selected: #e5f1f9;
-  --swiftcoder-ink: #173246;
-  --swiftcoder-muted: #6f8492;
-  --swiftcoder-accent: #167db8;
-  --swiftcoder-user: #eaf5fb;
-  --swiftcoder-user-line: #a8cee4;
+  --swiftcoder-line: #dfe3e6;
+  --swiftcoder-line-strong: #c9d1d8;
+  --swiftcoder-canvas: #f7f8fa;
+  --swiftcoder-sidebar: #f2f5f7;
+  --swiftcoder-panel: #ffffff;
+  --swiftcoder-toolbar: var(--swiftcoder-panel);
+  --swiftcoder-hover: #e9edef;
+  --swiftcoder-selected: #e2e7ea;
+  --swiftcoder-ink: #202124;
+  --swiftcoder-muted: #6f7479;
+  --swiftcoder-accent: #3268d8;
+  --swiftcoder-user: #edf3ff;
+  --swiftcoder-user-line: #9eb3df;
 
   font-family: var(--font-family-sans);
   font-size: 14px;
@@ -43,20 +99,27 @@ body,
 }
 
 [data-color-scheme="dark"] [data-layout="swiftcoder-workbench"] {
-  --swiftcoder-line: #2d414f;
-  --swiftcoder-line-strong: #3e596a;
-  --swiftcoder-sidebar: #111a21;
-  --swiftcoder-panel: #151f27;
-  --swiftcoder-hover: #1c2c37;
-  --swiftcoder-selected: #203746;
-  --swiftcoder-ink: #d8e6ef;
-  --swiftcoder-muted: #8ca1ae;
-  --swiftcoder-accent: #67b4e3;
-  --swiftcoder-user: #183444;
-  --swiftcoder-user-line: #3d708d;
+  --swiftcoder-line: #353a40;
+  --swiftcoder-line-strong: #4a5158;
+  --swiftcoder-canvas: #16181b;
+  --swiftcoder-sidebar: #1b1e22;
+  --swiftcoder-panel: #202327;
+  --swiftcoder-toolbar: var(--swiftcoder-panel);
+  --swiftcoder-hover: #2a2f34;
+  --swiftcoder-selected: #30363c;
+  --swiftcoder-ink: #e8eaed;
+  --swiftcoder-muted: #a5abb2;
+  --swiftcoder-accent: #7d9fe8;
+  --swiftcoder-user: #26334c;
+  --swiftcoder-user-line: #4d78cc;
 }
 
 [data-layout="swiftcoder-workbench"] > header {
+  --v2-background-bg-deep: var(--swiftcoder-sidebar);
+  --v2-background-bg-layer-01: var(--swiftcoder-sidebar);
+  --v2-background-bg-layer-02: var(--swiftcoder-sidebar);
+  --v2-background-bg-layer-03: var(--swiftcoder-line);
+
   height: 44px !important;
   min-height: 44px !important;
   border-bottom: 1px solid var(--swiftcoder-line);
@@ -79,6 +142,111 @@ body,
 [data-layout="swiftcoder-workbench"] [data-component="sidebar-rail"] {
   border-color: var(--swiftcoder-line) !important;
   background: var(--swiftcoder-sidebar) !important;
+}
+
+/*
+ * The review/file tabs sit directly below the native titlebar and are built by
+ * the shared Core tabs component. Core intentionally gives that component a
+ * white/base surface plus opaque backgrounds on its sticky edge slots. In the
+ * SwiftCoder workbench this produced the patchwork visible across the top row
+ * (sidebar toggle, active tab, add button, empty strip and open-in-app action).
+ * Keep the whole row on one workbench surface. The active tab is identified by
+ * a thin accent rule instead of another filled rectangle.
+ */
+[data-layout="swiftcoder-workbench"] #review-panel .session-review-v2-tabs-bar,
+[data-layout="swiftcoder-workbench"] #review-panel .session-review-v2-tabs-bar [data-slot="tabs-list"],
+[data-layout="swiftcoder-workbench"] #review-panel .session-review-v2-tabs-bar .session-review-v2-sidebar-toggle-slot,
+[data-layout="swiftcoder-workbench"] #review-panel .session-review-v2-tabs-bar .session-review-v2-open-in-app-slot,
+[data-layout="swiftcoder-workbench"]
+  #review-panel
+  .session-review-v2-tabs-bar
+  [data-slot="tabs-list"]
+  > .sticky {
+  background-color: var(--swiftcoder-toolbar) !important;
+}
+
+/*
+ * Core's tab bar supports both legacy and V2 controls. Collapse both token
+ * families to one toolbar surface at this component boundary so nested sticky
+ * slots, fades and controls cannot reintroduce theme-dependent color seams.
+ */
+[data-layout="swiftcoder-workbench"] #review-panel .session-review-v2-tabs-bar {
+  --background-base: var(--swiftcoder-toolbar);
+  --background-strong: var(--swiftcoder-toolbar);
+  --background-stronger: var(--swiftcoder-toolbar);
+  --surface-base: transparent;
+  --surface-raised-base: transparent;
+  --surface-raised-base-active: transparent;
+  --v2-background-bg-base: var(--swiftcoder-toolbar);
+  --v2-background-bg-deep: var(--swiftcoder-toolbar);
+  --v2-background-bg-layer-01: var(--swiftcoder-toolbar);
+  --v2-background-bg-layer-02: var(--swiftcoder-toolbar);
+  --v2-background-bg-layer-03: var(--swiftcoder-toolbar);
+}
+
+[data-layout="swiftcoder-workbench"]
+  #review-panel
+  .session-review-v2-tabs-bar
+  [data-slot="tabs-trigger-wrapper"] {
+  background-color: transparent !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+[data-layout="swiftcoder-workbench"]
+  #review-panel
+  .session-review-v2-tabs-bar
+  [data-slot="tabs-trigger-wrapper"]:has([data-selected]) {
+  background-color: transparent !important;
+  box-shadow: inset 0 -2px var(--swiftcoder-accent) !important;
+}
+
+[data-layout="swiftcoder-workbench"]
+  #review-panel
+  .session-review-v2-tabs-bar
+  [data-slot="tabs-trigger-wrapper"]:not(:has([data-selected])):hover {
+  background-color: var(--swiftcoder-hover) !important;
+}
+
+[data-layout="swiftcoder-workbench"]
+  #review-panel
+  .session-review-v2-tabs-bar
+  [data-component="icon-button-v2"],
+[data-layout="swiftcoder-workbench"]
+  #review-panel
+  .session-review-v2-tabs-bar
+  [data-component="icon-button-v2"][data-state="pressed"],
+[data-layout="swiftcoder-workbench"]
+  #review-panel
+  .session-review-v2-tabs-bar
+  [data-component="icon-button-v2"][aria-pressed="true"] {
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+[data-layout="swiftcoder-workbench"]
+  #review-panel
+  .session-review-v2-tabs-bar
+  [data-component="icon-button-v2"]:hover {
+  background-color: var(--swiftcoder-hover) !important;
+}
+
+[data-layout="swiftcoder-workbench"]
+  #review-panel
+  .session-review-v2-tabs-bar
+  [data-slot="tabs-list"]
+  > .sticky::before,
+[data-layout="swiftcoder-workbench"]
+  #review-panel
+  .session-review-v2-tabs-bar
+  [data-slot="tabs-list"]
+  > .sticky::after,
+[data-layout="swiftcoder-workbench"]
+  #review-panel
+  .session-review-v2-tabs-bar
+  [data-component="icon-button-v2"]::after {
+  background-color: var(--swiftcoder-toolbar) !important;
+  background-image: none !important;
 }
 
 [data-layout="swiftcoder-workbench"] [data-component="sidebar-rail"] > div:first-child {

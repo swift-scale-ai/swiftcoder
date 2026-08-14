@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test"
-import type { PermissionRequest } from "@opencode-ai/sdk/v2/client"
+import type { PermissionRequest } from "@swiftscale/sdk/v2/client"
 import { approvalModeAutoRespond } from "./permission-mode"
 
 const request = (permission: string, patterns: string[] = ["*"]) =>

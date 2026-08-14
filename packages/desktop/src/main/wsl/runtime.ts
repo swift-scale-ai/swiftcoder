@@ -2,7 +2,7 @@ import { spawn } from "node:child_process"
 import { existsSync } from "node:fs"
 import { join } from "node:path"
 import * as pty from "@lydell/node-pty"
-import type { WslDistroProbe, WslInstalledDistro, WslOnlineDistro, WslRuntimeCheck } from "@opencode-ai/app/wsl/types"
+import type { WslDistroProbe, WslInstalledDistro, WslOnlineDistro, WslRuntimeCheck } from "@swiftscale/coder-app/wsl/types"
 import { wslTerminalArgs } from "./policy"
 import { nativeT } from "../native-translations"
 

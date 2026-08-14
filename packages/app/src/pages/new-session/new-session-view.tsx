@@ -1,7 +1,7 @@
-import { useDialog } from "@opencode-ai/ui/context/dialog"
-import { Tooltip } from "@opencode-ai/ui/tooltip"
-import { Icon as IconV2 } from "@opencode-ai/ui/v2/icon"
-import { TooltipV2 } from "@opencode-ai/ui/v2/tooltip-v2"
+import { useDialog } from "@swiftscale/ui/context/dialog"
+import { Tooltip } from "@swiftscale/ui/tooltip"
+import { Icon as IconV2 } from "@swiftscale/ui/v2/icon"
+import { TooltipV2 } from "@swiftscale/ui/v2/tooltip-v2"
 import { Show, createMemo, createSignal, type Accessor } from "solid-js"
 import { createStore } from "solid-js/store"
 import { Portal } from "solid-js/web"
@@ -20,7 +20,7 @@ import { useProviders } from "@/hooks/use-providers"
 import { Persist, persisted } from "@/utils/persist"
 import type { NewSessionDraftController } from "./new-session-draft-controller"
 import type { NewSessionWorkspaceController } from "./new-session-workspace-controller"
-import { getFilename } from "@opencode-ai/core/util/path"
+import { getFilename } from "@swiftscale/core/util/path"
 
 const providerTipDismissalDuration = 30 * 24 * 60 * 60 * 1000
 

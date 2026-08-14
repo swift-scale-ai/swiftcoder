@@ -1,8 +1,14 @@
-@import "@opencode-ai/ui/styles/tailwind";
-@import "@opencode-ai/session-ui/styles";
-@import "@opencode-ai/ui/v2/styles/tailwind.css";
+@import "@swiftscale/ui/styles/tailwind";
+@import "@swiftscale/session-ui/styles";
+@import "@swiftscale/ui/v2/styles/tailwind.css";
 @import "tw-animate-css";
 @import "./styles/swiftcoder-workbench.css";
+
+/* SwiftCore's shared Tailwind entry scans SwiftCore itself. SwiftCoder lives
+   in a sibling repository, so its application and desktop sources must be
+   registered explicitly or production builds omit app-specific utilities. */
+@source "./";
+@source "../../desktop/src/renderer";
 
 @media (max-width: 980px) {
   [data-component="session-new-design"] {

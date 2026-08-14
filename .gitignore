@@ -1,4 +1,4 @@
-# macOS and editors
+# Operating systems and editors
 .DS_Store
 .AppleDouble
 ._*
@@ -11,11 +11,10 @@ Thumbs.db
 *~
 Session.vim
 
-# Dependencies and local tooling
+# Dependencies, linked SwiftCore packages, and local tools
 node_modules/
 .tools/
 .direnv/
-.scripts/
 .worktrees/
 .sst/
 .codex/
@@ -23,8 +22,10 @@ node_modules/
 **/.serena/
 .omo/
 **/.omo/
+/packages/plugin/
+/packages/sdk/
 
-# Environment and credentials
+# Environment, credentials, signing, and notarization material
 .env
 .env.*
 !.env.example
@@ -43,7 +44,7 @@ release.env
 *.mobileprovision
 *.provisionprofile
 
-# Build, cache, and test output
+# Build and generated output
 dist/
 dist-ssr/
 out/
@@ -53,46 +54,37 @@ target/
 .cache/
 .vite/
 .parcel-cache/
-.wrangler/
 .output/
-.vercel/
-.netlify/
-.eslintcache
-.stylelintcache
-.nyc_output/
-coverage/
-test-results/
-playwright-report/
-blob-report/
 *.tsbuildinfo
 *.bun-build
-*.profraw
-*.lcov
 *.blockmap
 *.dmg
 *.pkg
 a.out
 
-# Logs
-logs/
+# Tests, coverage, and diagnostics
+coverage/
+test-results/
+playwright-report/
+blob-report/
+.nyc_output/
+*.profraw
+*.lcov
 *.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
+logs/
 
-# Local runtime and development files
+# SwiftCoder local state and generated release inputs
+.swiftcoder/
+swiftcoder.json
+swiftcoder.jsonc
+swiftcoder-dev
+UPCOMING_CHANGELOG.md
 playground/
 tmp/
 .tmp/
 .artifacts/
-.swiftcoder/
-refs/
 /result/
-/swiftcoder.json
-swiftcoder-dev
-UPCOMING_CHANGELOG.md
+refs/
 
 # Temporary merge and backup files
 *.tmp

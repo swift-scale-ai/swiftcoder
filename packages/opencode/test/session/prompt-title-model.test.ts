@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test"
-import { ModelV2 } from "@opencode-ai/core/model"
+import { ModelV2 } from "@swiftscale/core/model"
 import { shouldReuseModelForTitle } from "@/session/prompt"
 
 test("title generation reuses SwiftLite but keeps small-model selection for other models", () => {

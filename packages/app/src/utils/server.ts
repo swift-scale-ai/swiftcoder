@@ -1,4 +1,4 @@
-import { createSwiftCoderClient } from "@opencode-ai/sdk/v2/client"
+import { createSwiftCoderClient } from "@swiftscale/sdk/v2/client"
 import { SwiftCoder, type SwiftCoderClient } from "./client-brand-compat"
 import type { ServerConnection } from "@/context/server"
 import { decode64 } from "@/utils/base64"

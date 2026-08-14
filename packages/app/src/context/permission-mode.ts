@@ -1,4 +1,4 @@
-import type { PermissionRequest } from "@opencode-ai/sdk/v2/client"
+import type { PermissionRequest } from "@swiftscale/sdk/v2/client"
 
 export type ApprovalMode = "ask" | "agent" | "full"
 

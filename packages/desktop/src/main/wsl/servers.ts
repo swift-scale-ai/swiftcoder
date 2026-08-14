@@ -10,7 +10,7 @@ import type {
   WslServerRuntime,
   WslServersEvent,
   WslServersState,
-} from "@opencode-ai/app/wsl/types"
+} from "@swiftscale/coder-app/wsl/types"
 import { WSL_SERVERS_KEY } from "../store-keys"
 import { getStore } from "../store"
 import { expectSwiftCoderVersion, pendingRestartAfterWslInstall, wslServerIdsToStartOnInitialize } from "./startup"

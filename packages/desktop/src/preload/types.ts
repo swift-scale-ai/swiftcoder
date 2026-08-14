@@ -1,6 +1,6 @@
-import type { DesktopMenuAction } from "@opencode-ai/app/desktop-menu"
-import type { UpdaterState } from "@opencode-ai/app/updater"
-import type { DesktopNativeBundle } from "@opencode-ai/app/i18n/desktop-native"
+import type { DesktopMenuAction } from "@swiftscale/coder-app/desktop-menu"
+import type { UpdaterState } from "@swiftscale/coder-app/updater"
+import type { DesktopNativeBundle } from "@swiftscale/coder-app/i18n/desktop-native"
 import type { SwiftScaleAuthStatus, SwiftScaleEntitlements } from "../main/swiftscale-auth-contract"
 
 export type ServerReadyData = {

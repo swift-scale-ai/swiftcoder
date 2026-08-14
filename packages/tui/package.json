@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
-  "name": "@opencode-ai/tui",
+  "name": "@swiftscale/coder-tui",
   "version": "1.18.15",
   "private": true,
   "type": "module",
@@ -48,10 +48,10 @@
     "./component/register-spinner": "./src/component/register-spinner.ts"
   },
   "dependencies": {
-    "@opencode-ai/core": "workspace:*",
-    "@opencode-ai/plugin": "workspace:*",
-    "@opencode-ai/sdk": "workspace:*",
-    "@opencode-ai/ui": "workspace:*",
+    "@swiftscale/core": "file:../../../swiftcore/packages/core",
+    "@swiftscale/plugin": "file:../../../swiftcore/packages/plugin",
+    "@swiftscale/sdk": "file:../../../swiftcore/packages/sdk/js",
+    "@swiftscale/ui": "file:../../../swiftcore/packages/ui",
     "@opentui/core": "catalog:",
     "@opentui/keymap": "catalog:",
     "@opentui/solid": "catalog:",

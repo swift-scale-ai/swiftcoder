@@ -1,8 +1,8 @@
-import { Database } from "@opencode-ai/core/database/database"
+import { Database } from "@swiftscale/core/database/database"
 import { inArray } from "drizzle-orm"
-import { EventSequenceTable } from "@opencode-ai/core/event/sql"
+import { EventSequenceTable } from "@swiftscale/core/event/sql"
 import { Workspace } from "@/control-plane/workspace"
-import type { WorkspaceV2 } from "@opencode-ai/core/workspace"
+import type { WorkspaceV2 } from "@swiftscale/core/workspace"
 import { Effect } from "effect"
 
 export const HEADER = "x-swiftcoder-sync"

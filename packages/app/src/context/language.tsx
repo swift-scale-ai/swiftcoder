@@ -1,11 +1,11 @@
 import * as i18n from "@solid-primitives/i18n"
 import { createEffect, createMemo, createResource } from "solid-js"
 import { createStore } from "solid-js/store"
-import { createSimpleContext } from "@opencode-ai/ui/context"
-import { pluralCategory, type UiI18nPluralKey } from "@opencode-ai/ui/context/i18n"
+import { createSimpleContext } from "@swiftscale/ui/context"
+import { pluralCategory, type UiI18nPluralKey } from "@swiftscale/ui/context/i18n"
 import { Persist, persisted } from "@/utils/persist"
 import { dict as en } from "@/i18n/en"
-import { dict as uiEn } from "@opencode-ai/ui/i18n/en"
+import { dict as uiEn } from "@swiftscale/ui/i18n/en"
 import {
   createDesktopNativeBundle,
   detectDesktopNativeLocale,
@@ -50,15 +50,15 @@ const merge = (app: Promise<Source>, ui: Promise<Source>) =>
   Promise.all([app, ui]).then(([a, b]) => ({ ...base, ...i18n.flatten({ ...a.dict, ...b.dict }) }) as Dictionary)
 
 const loaders: Record<Exclude<Locale, "en">, () => Promise<Dictionary>> = {
-  zh: () => merge(import("@/i18n/zh"), import("@opencode-ai/ui/i18n/zh")),
-  zht: () => merge(import("@/i18n/zht"), import("@opencode-ai/ui/i18n/zht")),
-  ko: () => merge(import("@/i18n/ko"), import("@opencode-ai/ui/i18n/ko")),
-  de: () => merge(import("@/i18n/de"), import("@opencode-ai/ui/i18n/de")),
-  es: () => merge(import("@/i18n/es"), import("@opencode-ai/ui/i18n/es")),
-  fr: () => merge(import("@/i18n/fr"), import("@opencode-ai/ui/i18n/fr")),
-  ja: () => merge(import("@/i18n/ja"), import("@opencode-ai/ui/i18n/ja")),
-  ru: () => merge(import("@/i18n/ru"), import("@opencode-ai/ui/i18n/ru")),
-  br: () => merge(import("@/i18n/br"), import("@opencode-ai/ui/i18n/br")),
+  zh: () => merge(import("@/i18n/zh"), import("@swiftscale/ui/i18n/zh")),
+  zht: () => merge(import("@/i18n/zht"), import("@swiftscale/ui/i18n/zht")),
+  ko: () => merge(import("@/i18n/ko"), import("@swiftscale/ui/i18n/ko")),
+  de: () => merge(import("@/i18n/de"), import("@swiftscale/ui/i18n/de")),
+  es: () => merge(import("@/i18n/es"), import("@swiftscale/ui/i18n/es")),
+  fr: () => merge(import("@/i18n/fr"), import("@swiftscale/ui/i18n/fr")),
+  ja: () => merge(import("@/i18n/ja"), import("@swiftscale/ui/i18n/ja")),
+  ru: () => merge(import("@/i18n/ru"), import("@swiftscale/ui/i18n/ru")),
+  br: () => merge(import("@/i18n/br"), import("@swiftscale/ui/i18n/br")),
 }
 
 function loadDict(locale: Locale) {

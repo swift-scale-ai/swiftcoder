@@ -8,6 +8,7 @@ import { join } from "node:path"
 import { getCACertificates, setDefaultCACertificates } from "node:tls"
 import type { Event } from "electron"
 import { app, BrowserWindow, dialog, shell } from "electron"
+import { channelProduct, createDeepLinkRouter, createDeferredRestartCoordinator } from "@swiftscale/desktop-kit"
 
 import { Deferred, Effect, Fiber } from "effect"
 import contextMenu from "electron-context-menu"
@@ -51,17 +52,7 @@ import { startBackgroundCli } from "./background-cli"
 import { setNativeTranslations } from "./native-translations"
 import { createSwiftScaleAuthController, type SwiftScaleAuthController } from "./swiftscale-auth"
 import { DELETE_LOCAL_DATA_ARG, deleteLocalData } from "./local-data"
-
-const APP_NAMES: Record<string, string> = {
-  dev: "SwiftCoder_Dev",
-  beta: "SwiftCoder Beta",
-  prod: "SwiftCoder",
-}
-const APP_IDS: Record<string, string> = {
-  dev: "com.swift-scale.swiftcoder.dev",
-  beta: "com.swift-scale.swiftcoder.beta",
-  prod: "com.swift-scale.swiftcoder",
-}
+import { SWIFTCODER_DESKTOP_PRODUCT } from "./product"
 const TEST_ONBOARDING = process.env.SWIFTCODER_TEST_ONBOARDING === "1"
 const SIDECAR_VERSION = process.env.SWIFTCODER_SIDECAR_V2 === "1" ? "v2" : "v1"
 const jsCallStackFeature = "DocumentPolicyIncludeJSCallStacksInCrashReports"
@@ -70,7 +61,7 @@ let logger: ReturnType<typeof initLogging>
 let server: SidecarListener | null = null
 let swiftScaleAuth: SwiftScaleAuthController | null = null
 
-const pendingDeepLinks: string[] = []
+const deepLinks = createDeepLinkRouter(SWIFTCODER_DESKTOP_PRODUCT.protocol)
 
 function useEnvProxy() {
   try {
@@ -82,15 +73,9 @@ function useEnvProxy() {
 }
 
 function emitDeepLinks(urls: string[]) {
-  if (urls.length === 0) return
-  const forward = () => {
-    pendingDeepLinks.push(...urls)
+  void deepLinks.receive(urls).then((remaining) => {
     const win = getLastFocusedWindow()
-    if (win) sendDeepLinks(win, urls)
-  }
-  if (!swiftScaleAuth) return forward()
-  void swiftScaleAuth.handleDeepLinks(urls).then((consumed) => {
-    if (!consumed) forward()
+    if (win && remaining.length) sendDeepLinks(win, remaining)
   })
 }
 
@@ -131,7 +116,8 @@ const main = Effect.gen(function* () {
 
   process.env.SWIFTCODER_DISABLE_EMBEDDED_WEB_UI = "true"
 
-  const appId = app.isPackaged ? APP_IDS[CHANNEL] : "com.swift-scale.swiftcoder.dev"
+  const productChannel = channelProduct(SWIFTCODER_DESKTOP_PRODUCT, CHANNEL)
+  const appId = app.isPackaged ? productChannel.appId : SWIFTCODER_DESKTOP_PRODUCT.channels.dev.appId
   const onboardingTestRoot = ((): string | undefined => {
     if (!TEST_ONBOARDING) return
 
@@ -147,10 +133,10 @@ const main = Effect.gen(function* () {
     process.env.XDG_STATE_HOME = join(root, "state")
     return root
   })()
-  app.setName(app.isPackaged ? APP_NAMES[CHANNEL] : "SwiftCoder_Dev")
+  app.setName(app.isPackaged ? productChannel.name : SWIFTCODER_DESKTOP_PRODUCT.channels.dev.name)
   if (process.platform === "darwin") {
     app.setAboutPanelOptions({
-      applicationName: app.isPackaged ? APP_NAMES[CHANNEL] : "SwiftCoder_Dev",
+      applicationName: app.isPackaged ? productChannel.name : SWIFTCODER_DESKTOP_PRODUCT.channels.dev.name,
       applicationVersion: app.getVersion(),
       version: "",
     })
@@ -180,27 +166,15 @@ const main = Effect.gen(function* () {
   initCrashReporter()
 
   let suppressAuthCredentialRelaunch = false
-  let restartAgentRuntime: ((reason: "login" | "logout") => Promise<void>) | undefined
-  let agentRuntimeRestart = Promise.resolve()
-  let pendingAgentRuntimeRestart: "login" | "logout" | undefined
+  const agentRuntimeRestarts = createDeferredRestartCoordinator<"login" | "logout">({
+    onError: (error, reason) =>
+      logger.error("failed to restart agent runtime after credential change", { reason, error }),
+  })
   const queueAgentRuntimeRestart = (reason: "login" | "logout") => {
-    if (!restartAgentRuntime) {
-      pendingAgentRuntimeRestart = reason
-      logger.log("agent runtime restart queued until initialization completes", { reason })
-      return
+    if (agentRuntimeRestarts.pending() === undefined) {
+      logger.log("agent runtime restart requested after SwiftScale credential change", { reason })
     }
-    agentRuntimeRestart = agentRuntimeRestart
-      .then(async () => {
-        await restartAgentRuntime!(reason)
-        logger.log("agent runtime restarted after SwiftScale credential change", { reason })
-      })
-      .catch((error) => logger.error("failed to restart agent runtime after credential change", { reason, error }))
-  }
-  const flushPendingAgentRuntimeRestart = () => {
-    if (!pendingAgentRuntimeRestart) return
-    const reason = pendingAgentRuntimeRestart
-    pendingAgentRuntimeRestart = undefined
-    queueAgentRuntimeRestart(reason)
+    agentRuntimeRestarts.request(reason)
   }
   const stopSidecars = async () => {
     await killSidecar()
@@ -259,7 +233,7 @@ const main = Effect.gen(function* () {
   preferAppEnv(app.getPath("userData"), Boolean(onboardingTestRoot))
 
   app.on("second-instance", (_event: Event, argv: string[]) => {
-    const urls = argv.filter((arg: string) => arg.startsWith("swiftcoder://"))
+    const urls = argv.filter((arg: string) => deepLinks.accepts(arg))
     if (urls.length) {
       logger.log("deep link received via second-instance", { urls })
       emitDeepLinks(urls)
@@ -372,6 +346,7 @@ const main = Effect.gen(function* () {
       queueAgentRuntimeRestart(reason)
     },
   })
+  deepLinks.registerHandler((urls) => swiftScaleAuth!.handleDeepLinks(urls))
 
   if (!TEST_ONBOARDING) migrate()
   yield* Effect.promise(() => cleanupStoreFiles(app.getPath("userData"))).pipe(
@@ -387,7 +362,7 @@ const main = Effect.gen(function* () {
       }),
     ),
   )
-  app.setAsDefaultProtocolClient("swiftcoder")
+  app.setAsDefaultProtocolClient(SWIFTCODER_DESKTOP_PRODUCT.protocol)
   registerRendererProtocol()
   setDockIcon()
   const updater = setupAutoUpdater(stopSidecars)
@@ -411,7 +386,7 @@ const main = Effect.gen(function* () {
       },
       (e) => Effect.runPromise(e),
     ),
-    consumeInitialDeepLinks: () => pendingDeepLinks.splice(0),
+    consumeInitialDeepLinks: () => deepLinks.consumePending(),
     swiftScaleAuthStatus: () => swiftScaleAuth!.status(),
     swiftScaleAuthLogin: () => swiftScaleAuth!.login(),
     swiftScaleAuthLogout: () => swiftScaleAuth!.logout(),
@@ -477,13 +452,13 @@ const main = Effect.gen(function* () {
         username: sidecar.username,
         password: sidecar.password,
       })
-      restartAgentRuntime = async () => {
+      agentRuntimeRestarts.bind(async () => {
         const nextAuthContent = await swiftScaleAuth!.credentialForSidecar()
         if (nextAuthContent) process.env.SWIFTCODER_AUTH_CONTENT = nextAuthContent
         else delete process.env.SWIFTCODER_AUTH_CONTENT
         await startBackgroundCli(logger, process.env.XDG_STATE_HOME, true)
-      }
-      flushPendingAgentRuntimeRestart()
+        logger.log("agent runtime restarted after SwiftScale credential change")
+      })
 
       logger.log("loading task finished")
       return
@@ -542,7 +517,7 @@ const main = Effect.gen(function* () {
       ),
     )
 
-    restartAgentRuntime = async () => {
+    agentRuntimeRestarts.bind(async () => {
       await killSidecar()
       const nextAuthContent = await swiftScaleAuth!.credentialForSidecar()
       if (nextAuthContent) process.env.SWIFTCODER_AUTH_CONTENT = nextAuthContent
@@ -556,8 +531,8 @@ const main = Effect.gen(function* () {
       })
       server = next.listener
       await next.health.wait
-    }
-    flushPendingAgentRuntimeRestart()
+      logger.log("agent runtime restarted after SwiftScale credential change")
+    })
 
     logger.log("loading task finished")
   }).pipe(forwardInitializationFailure(serverReady), Effect.forkChild)

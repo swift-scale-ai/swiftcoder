@@ -2,7 +2,7 @@ import { app } from "electron"
 import type { IpcMainInvokeEvent } from "electron"
 import type { WslServersController } from "./servers"
 import { requireWslIpcString, requireWslIpcStrings } from "./policy"
-import type { WslServersState } from "@opencode-ai/app/wsl/types"
+import type { WslServersState } from "@swiftscale/coder-app/wsl/types"
 import { nativeT } from "../native-translations"
 import { handleTrustedIpc } from "../ipc-security"
 

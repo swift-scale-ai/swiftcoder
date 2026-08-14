@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test"
-import type { SessionStatus } from "@opencode-ai/sdk/v2"
+import type { SessionStatus } from "@swiftscale/sdk/v2"
 import { goUpsellKeys } from "./usage-exceeded-dialogs"
 
 const retry = (reason: "free_tier_limit" | "account_rate_limit", provider = "swiftcoder") =>

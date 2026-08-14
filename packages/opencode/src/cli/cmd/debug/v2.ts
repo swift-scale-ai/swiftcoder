@@ -1,9 +1,9 @@
 import { EOL } from "os"
 import { Effect } from "effect"
-import { Catalog } from "@opencode-ai/core/catalog"
-import { LocationServiceMap, locationServiceMapLayer } from "@opencode-ai/core/location-services"
-import { Location } from "@opencode-ai/core/location"
-import { AbsolutePath } from "@opencode-ai/core/schema"
+import { Catalog } from "@swiftscale/core/catalog"
+import { LocationServiceMap, locationServiceMapLayer } from "@swiftscale/core/location-services"
+import { Location } from "@swiftscale/core/location"
+import { AbsolutePath } from "@swiftscale/core/schema"
 import { effectCmd } from "../../effect-cmd"
 
 export const V2Command = effectCmd({

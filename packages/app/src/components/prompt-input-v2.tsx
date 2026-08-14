@@ -1,6 +1,6 @@
-import { ImagePreview } from "@opencode-ai/ui/image-preview"
-import { useDialog } from "@opencode-ai/ui/context/dialog"
-import type { ReferenceInfo } from "@opencode-ai/sdk/v2/client"
+import { ImagePreview } from "@swiftscale/ui/image-preview"
+import { useDialog } from "@swiftscale/ui/context/dialog"
+import type { ReferenceInfo } from "@swiftscale/sdk/v2/client"
 import { createEffect, createMemo, createSignal, For, on, Show } from "solid-js"
 import type { PromptInputProps } from "@/components/prompt-input/contracts"
 import { normalizePromptHistoryEntry, promptLength, type PromptHistoryComment } from "@/components/prompt-input/history"
@@ -22,20 +22,20 @@ import { createSessionTabs } from "@/pages/session/helpers"
 import { showToast } from "@/utils/toast"
 import { useSwiftScaleModelEntitlements } from "@/hooks/use-swiftscale-model-entitlements"
 import type { ApprovalMode } from "@/context/permission-mode"
-import { ButtonV2 } from "@opencode-ai/ui/v2/button-v2"
-import { Icon } from "@opencode-ai/ui/icon"
-import { MenuV2 } from "@opencode-ai/ui/v2/menu-v2"
+import { ButtonV2 } from "@swiftscale/ui/v2/button-v2"
+import { Icon } from "@swiftscale/ui/icon"
+import { MenuV2 } from "@swiftscale/ui/v2/menu-v2"
 import {
   PromptInputV2,
   PromptInputV2Select,
   type PromptInputV2Option,
   type PromptInputV2Suggestion,
-} from "@opencode-ai/session-ui/v2/prompt-input"
+} from "@swiftscale/session-ui/v2/prompt-input"
 import {
   createPromptInputV2Controller,
   createPromptInputV2State,
   type PromptInputV2Interaction,
-} from "@opencode-ai/session-ui/v2/prompt-input/interaction"
+} from "@swiftscale/session-ui/v2/prompt-input/interaction"
 import {
   connectedProviderModelFamily,
   preferredSwiftScaleModel,

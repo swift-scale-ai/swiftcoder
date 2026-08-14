@@ -2,7 +2,7 @@
 
 import path from "path"
 import { pathToFileURL } from "bun"
-import { createSwiftCoder } from "@opencode-ai/sdk"
+import { createSwiftCoder } from "@swiftscale/sdk"
 import { parseArgs } from "util"
 
 async function main() {

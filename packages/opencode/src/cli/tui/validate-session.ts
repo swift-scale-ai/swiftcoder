@@ -1,4 +1,4 @@
-import { createSwiftCoderClient } from "@opencode-ai/sdk/v2"
+import { createSwiftCoderClient } from "@swiftscale/sdk/v2"
 import { SessionID } from "@/session/schema"
 import { Schema } from "effect"
 

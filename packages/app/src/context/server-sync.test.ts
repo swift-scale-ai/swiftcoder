@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test"
-import type { SwiftCoderClient } from "@opencode-ai/sdk/v2/client"
+import type { SwiftCoderClient } from "@swiftscale/sdk/v2/client"
 import type {
   McpListInput,
   McpResourceCatalogInput,

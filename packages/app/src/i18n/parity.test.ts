@@ -32,8 +32,8 @@ const domains = [
   },
   {
     name: "ui",
-    source: "../../../ui/src/i18n/en.ts",
-    target: (locale: string) => `../../../ui/src/i18n/${locale}.ts`,
+    source: "../../node_modules/@swiftscale/ui/src/i18n/en.ts",
+    target: (locale: string) => `../../node_modules/@swiftscale/ui/src/i18n/${locale}.ts`,
     locales: appLocales,
   },
   {
@@ -102,13 +102,13 @@ describe("i18n parity", () => {
   })
 
   test("changed-file summary keys preserve rendered English copy and localize complete phrases", async () => {
-    const source = await dictionary("../../../ui/src/i18n/en.ts")
+    const source = await dictionary("../../node_modules/@swiftscale/ui/src/i18n/en.ts")
     expect(source["ui.sessionTurn.diffs.changed.one"].replace("{{count}}", "1")).toBe("1 Changed file")
     expect(source["ui.sessionTurn.diffs.changed.other"].replace("{{count}}", "2")).toBe("2 Changed files")
     expect(source["ui.sessionTurn.diffs.changed"]).toBeUndefined()
 
     for (const locale of appLocales) {
-      const target = await dictionary(`../../../ui/src/i18n/${locale}.ts`)
+      const target = await dictionary(`../../node_modules/@swiftscale/ui/src/i18n/${locale}.ts`)
       for (const key of ["ui.sessionTurn.diffs.changed.one", "ui.sessionTurn.diffs.changed.other"]) {
         expect(target[key].trim()).not.toBe("")
         expect(placeholders(target[key])).toEqual(["count"])

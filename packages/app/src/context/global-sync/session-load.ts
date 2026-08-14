@@ -1,6 +1,6 @@
 import type { SessionApi } from "@opencode-ai/client/promise"
 import { normalizeSessionInfo } from "@/utils/session"
-import type { SwiftCoderClient } from "@opencode-ai/sdk/v2/client"
+import type { SwiftCoderClient } from "@swiftscale/sdk/v2/client"
 
 export async function loadRootSessions(input: { api: Pick<SessionApi, "list">; directory: string; limit: number }) {
   const result = await input.api.list({

@@ -10,9 +10,9 @@ import type {
   SessionConfigSelectOption,
   SetSessionConfigOptionResponse,
 } from "@agentclientprotocol/sdk"
-import type { AssistantMessage, Event, SwiftCoderClient } from "@opencode-ai/sdk/v2"
-import { ProviderV2 } from "@opencode-ai/core/provider"
-import { ModelV2 } from "@opencode-ai/core/model"
+import type { AssistantMessage, Event, SwiftCoderClient } from "@swiftscale/sdk/v2"
+import { ProviderV2 } from "@swiftscale/core/provider"
+import { ModelV2 } from "@swiftscale/core/model"
 import { Effect } from "effect"
 import * as ACPService from "@/acp/service"
 import * as ACPError from "@/acp/error"

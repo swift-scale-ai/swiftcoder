@@ -27,7 +27,7 @@ if pgrep -f "$RUNNING_APP_PATTERN" >/dev/null 2>&1; then
 fi
 
 export SWIFTCODER_CHANNEL="dev"
-export SWIFTCODER_VERSION="0.2.4-dev"
+export SWIFTCODER_VERSION="0.2.5-dev"
 export SWIFTCODER_SKIP_NOTARIZE="1"
 export CSC_IDENTITY_AUTO_DISCOVERY="false"
 

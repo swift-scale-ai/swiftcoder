@@ -1,6 +1,6 @@
 import { contextBridge, ipcRenderer, webUtils } from "electron"
 import type { ElectronAPI } from "./types"
-import type { UpdaterState } from "@opencode-ai/app/updater"
+import type { UpdaterState } from "@swiftscale/coder-app/updater"
 
 const updaterCallbacks = new Set<(state: UpdaterState) => void>()
 let updaterState: UpdaterState | undefined
