@@ -12,8 +12,40 @@ jobs:
   source-and-dependencies:
     runs-on: macos-14
     timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: source/swiftcoder
     steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Check out SwiftCoder
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          path: source/swiftcoder
+
+      - name: Read pinned SwiftCore revision
+        id: swiftcore
+        run: |
+          set -euo pipefail
+          ref="$(tr -d '[:space:]' < .swiftcore-ref)"
+          if [[ ! "$ref" =~ ^[0-9a-f]{40}$ ]]; then
+            echo ".swiftcore-ref must contain one full 40-character Git commit SHA" >&2
+            exit 1
+          fi
+          echo "ref=$ref" >> "$GITHUB_OUTPUT"
+
+      - name: Check out pinned SwiftCore
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          repository: swiftscalecloud/swiftcore
+          ref: ${{ steps.swiftcore.outputs.ref }}
+          path: source/swiftcore
+
+      - name: Verify SwiftCore revision and sibling layout
+        run: |
+          set -euo pipefail
+          expected="$(tr -d '[:space:]' < .swiftcore-ref)"
+          actual="$(git -C ../swiftcore rev-parse HEAD)"
+          test "$actual" = "$expected"
+
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 22.22.2
