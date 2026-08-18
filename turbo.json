@@ -1,0 +1,33 @@
+{
+  "$schema": "https://v2-8-13.turborepo.dev/schema.json",
+  "globalEnv": ["CI", "SWIFTCODER_DISABLE_SHARE"],
+  "globalPassThroughEnv": ["CI", "SWIFTCODER_DISABLE_SHARE"],
+  "tasks": {
+    "typecheck": {},
+    "build": {
+      "dependsOn": [],
+      "outputs": ["dist/**"]
+    },
+    "opencode#test": {
+      "dependsOn": ["^build"],
+      "outputs": [],
+      "passThroughEnv": ["*"]
+    },
+    "@swiftscale/core#test": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "@swiftscale/app#test": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "@swiftscale/ui#test": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "@swiftscale/session-ui#test": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    }
+  }
+}
