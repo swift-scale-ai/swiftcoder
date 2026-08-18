@@ -100,7 +100,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/swiftscale/swiftcore"
+    "url": "https://github.com/swiftscalecloud/swiftcore"
   },
   "license": "MIT",
   "engines": {
