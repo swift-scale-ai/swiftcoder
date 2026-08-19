@@ -92,6 +92,7 @@
         "@swiftscale/llm": "workspace:*",
         "@swiftscale/plugin": "workspace:*",
         "@swiftscale/schema": "workspace:*",
+        "@swiftscale/sdk": "workspace:*",
         "ai-gateway-provider": "3.1.2",
         "bun-pty": "0.4.8",
         "cross-spawn": "catalog:",
@@ -130,6 +131,7 @@
         "@tsconfig/bun": "catalog:",
         "@types/bun": "catalog:",
         "@types/cross-spawn": "catalog:",
+        "@types/mime-types": "3.0.1",
         "@types/node": "catalog:",
         "@types/npm-package-arg": "6.1.4",
         "@types/npmcli__arborist": "6.3.3",
@@ -138,6 +140,14 @@
         "@types/which": "3.0.4",
         "@typescript/native": "catalog:",
         "drizzle-kit": "catalog:",
+      },
+    },
+    "packages/desktop-kit": {
+      "name": "@swiftscale/desktop-kit",
+      "version": "0.1.0",
+      "devDependencies": {
+        "@types/node": "catalog:",
+        "typescript": "catalog:",
       },
     },
     "packages/effect-drizzle-sqlite": {
@@ -1169,6 +1179,8 @@
     "@swiftscale/client": ["@swiftscale/client@workspace:packages/client"],
 
     "@swiftscale/core": ["@swiftscale/core@workspace:packages/core"],
+
+    "@swiftscale/desktop-kit": ["@swiftscale/desktop-kit@workspace:packages/desktop-kit"],
 
     "@swiftscale/effect-drizzle-sqlite": ["@swiftscale/effect-drizzle-sqlite@workspace:packages/effect-drizzle-sqlite"],
 
