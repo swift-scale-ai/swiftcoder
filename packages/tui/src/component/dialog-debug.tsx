@@ -10,6 +10,25 @@ import { useToast } from "../ui/toast"
 import { useBindings } from "../keymap"
 import { describeOS, describeTerminal } from "../util/system"
 
+export function createDebugEntries(input: {
+  version: string
+  channel: string
+  date: string
+  os: string
+  terminal: string
+  sessionID?: string
+  model?: { providerID: string; modelID: string }
+}) {
+  return [
+    { label: "Version", value: `${input.version} (${input.channel})` },
+    { label: "Date", value: input.date },
+    { label: "OS", value: input.os },
+    { label: "Terminal", value: input.terminal },
+    { label: "Session ID", value: input.sessionID ?? "n/a" },
+    { label: "Model", value: input.model ? `${input.model.providerID}/${input.model.modelID}` : "n/a" },
+  ]
+}
+
 export function DialogDebug() {
   const { theme } = useTheme()
   const dialog = useDialog()
@@ -23,14 +42,15 @@ export function DialogDebug() {
 
   const entries = createMemo(() => {
     const model = local.model.current()
-    return [
-      { label: "Version", value: `${InstallationVersion} (${InstallationChannel})` },
-      { label: "Date", value: new Date().toISOString() },
-      { label: "OS", value: describeOS() },
-      { label: "Terminal", value: describeTerminal() },
-      { label: "Session ID", value: route.data.type === "session" ? route.data.sessionID : "n/a" },
-      { label: "Model", value: model ? `${model.providerID}/${model.modelID}` : "n/a" },
-    ]
+    return createDebugEntries({
+      version: InstallationVersion,
+      channel: InstallationChannel,
+      date: new Date().toISOString(),
+      os: describeOS(),
+      terminal: describeTerminal(),
+      sessionID: route.data.type === "session" ? route.data.sessionID : undefined,
+      model,
+    })
   })
 
   const copy = () => {

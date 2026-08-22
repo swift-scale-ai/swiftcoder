@@ -1,5 +1,9 @@
 import { describe, expect, test } from "bun:test"
-import { normalizeCustomProviderID, providerOptions } from "../../../../src/component/dialog-provider"
+import {
+  consoleManagedProviderAction,
+  normalizeCustomProviderID,
+  providerOptions,
+} from "../../../../src/component/dialog-provider"
 
 describe("providerOptions", () => {
   test("includes a synthetic Other option for custom providers", () => {
@@ -37,5 +41,13 @@ describe("providerOptions", () => {
     expect(normalizeCustomProviderID("@ai-sdk/custom-provider")).toBe("custom-provider")
     expect(normalizeCustomProviderID("-custom-provider")).toBeUndefined()
     expect(normalizeCustomProviderID("Custom Provider")).toBeUndefined()
+  })
+})
+
+describe("consoleManagedProviderAction", () => {
+  test("opens models only for connected, onboarded accounts", () => {
+    expect(consoleManagedProviderAction({ connected: true, onboarded: true })).toBe("models")
+    expect(consoleManagedProviderAction({ connected: false, onboarded: true })).toBe("login")
+    expect(consoleManagedProviderAction({ connected: true, onboarded: false })).toBe("login")
   })
 })

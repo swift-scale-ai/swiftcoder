@@ -18,6 +18,9 @@ import { useClipboard } from "../context/clipboard"
 
 const PROVIDER_PRIORITY: Record<string, number> = {
   swiftcoder: 0,
+  openai: 1,
+  anthropic: 2,
+  google: 3,
 }
 
 const CUSTOM_PROVIDER_OPTION_VALUE = "__opencode_custom_provider__"
@@ -42,7 +45,7 @@ type ProviderOption =
 export function providerOptions(list: { id: string; name: string }[]): ProviderOption[] {
   return [
     ...pipe(
-      list.filter((provider) => provider.id === "swiftcoder"),
+      list,
       sortBy(
         (x) => PROVIDER_PRIORITY[x.id] ?? 99,
         (x) => x.name.toLowerCase(),
@@ -59,6 +62,13 @@ export function providerOptions(list: { id: string; name: string }[]): ProviderO
         category: provider.id in PROVIDER_PRIORITY ? "Popular" : "Providers",
       })),
     ),
+    {
+      type: "custom" as const,
+      title: "Other",
+      value: CUSTOM_PROVIDER_OPTION_VALUE,
+      description: "Custom provider",
+      category: "Providers",
+    },
   ]
 }
 
@@ -66,6 +76,10 @@ export function normalizeCustomProviderID(value: string) {
   const providerID = value.trim().replace(/^@ai-sdk\//, "")
   if (!CUSTOM_PROVIDER_ID.test(providerID)) return
   return providerID
+}
+
+export function consoleManagedProviderAction(input: { connected: boolean; onboarded: boolean }) {
+  return input.connected && input.onboarded ? ("models" as const) : ("login" as const)
 }
 
 export function createDialogProviderOptions() {
@@ -128,7 +142,19 @@ export function createDialogProviderOptions() {
           category: provider.category,
           gutter: connected && onboarded() ? () => <text fg={theme.success}>✓</text> : undefined,
           async onSelect() {
-            if (consoleManaged) return
+            if (consoleManaged) {
+              if (consoleManagedProviderAction({ connected, onboarded: onboarded() }) === "models") {
+                dialog.replace(() => <DialogModel providerID={providerID} />)
+                return
+              }
+              toast.show({
+                variant: "info",
+                title: "SwiftScale account required",
+                message: "This provider is managed by your SwiftScale account. Run `swiftcoder login`, then try again.",
+              })
+              dialog.clear()
+              return
+            }
 
             const methods = sync.data.provider_auth[providerID] ?? [
               {
@@ -356,8 +382,7 @@ function ApiMethod(props: ApiMethodProps) {
           swiftcoder: (
             <box gap={1}>
               <text fg={theme.textMuted}>
-                SwiftCoder gives you access to all the best coding models at the cheapest prices with a single API
-                key.
+                SwiftCoder gives you access to all the best coding models at the cheapest prices with a single API key.
               </text>
               <text fg={theme.text}>
                 Go to <span style={{ fg: theme.primary }}>https://swift-scale.com/account/api-keys</span> to get a key

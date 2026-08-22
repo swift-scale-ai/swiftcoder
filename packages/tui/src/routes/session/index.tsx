@@ -43,7 +43,7 @@ import { webSearchProviderLabel } from "../../util/tool-display"
 import { useRenderer, useTerminalDimensions, type JSX } from "@opentui/solid"
 import { useSDK } from "../../context/sdk"
 import { useEditorContext } from "../../context/editor"
-import { openEditor } from "../../editor"
+import { openEditor, resolveEditorCommand } from "../../editor"
 import { useDialog } from "../../ui/dialog"
 import { DialogAlert } from "../../ui/dialog-alert"
 import { TodoItem } from "../../component/todo-item"
@@ -82,6 +82,7 @@ import { getRevertDiffFiles } from "../../util/revert-diff"
 import { SWIFTCODER_BASE_MODE, useBindings, useCommandShortcut, useSwiftCoderKeymap } from "../../keymap"
 import { usePathFormatter } from "../../context/path-format"
 import { LocationProvider } from "../../context/location"
+import { copySessionTranscript, exportSessionTranscript, requestSessionCompaction } from "./actions"
 
 addDefaultParsers(parsers.parsers)
 
@@ -567,7 +568,7 @@ export function Session() {
         name: "compact",
         aliases: ["summarize"],
       },
-      run: () => {
+      run: async () => {
         const selectedModel = local.model.current()
         if (!selectedModel) {
           toast.show({
@@ -577,11 +578,18 @@ export function Session() {
           })
           return
         }
-        void sdk.client.session.summarize({
-          sessionID: route.sessionID,
-          modelID: selectedModel.modelID,
-          providerID: selectedModel.providerID,
+        await requestSessionCompaction({
+          summarize: () =>
+            sdk.client.session.summarize({
+              sessionID: route.sessionID,
+              modelID: selectedModel.modelID,
+              providerID: selectedModel.providerID,
+            }),
         })
+          .then(() => toast.show({ message: "Session compaction started.", variant: "success" }))
+          .catch((error) =>
+            toast.show({ message: `Failed to compact session: ${errorMessage(error)}`, variant: "error" }),
+          )
         dialog.clear()
       },
     },
@@ -936,10 +944,10 @@ export function Session() {
               providers: sync.data.provider,
             },
           )
-          await clipboard.write?.(transcript)
+          await copySessionTranscript({ transcript, write: clipboard.write })
           toast.show({ message: "Session transcript copied to clipboard!", variant: "success" })
-        } catch {
-          toast.show({ message: "Failed to copy session transcript", variant: "error" })
+        } catch (error) {
+          toast.show({ message: `Failed to copy session transcript: ${errorMessage(error)}`, variant: "error" })
         }
         dialog.clear()
       },
@@ -981,40 +989,34 @@ export function Session() {
             },
           )
 
-          if (options.openWithoutSaving) {
-            // Just open in editor without saving
-            await openEditor({
-              renderer,
-              value: transcript,
-              cwd:
-                (project.instance.path().worktree === "/" ? undefined : project.instance.path().worktree) ||
-                project.instance.directory() ||
-                paths.cwd,
-            })
-          } else {
-            const exportDir = paths.cwd
-            const filename = options.filename.trim()
-            const filepath = path.join(exportDir, filename)
+          const filename = options.filename.trim()
+          const filepath = path.join(paths.cwd, filename)
+          const cwd =
+            (project.instance.path().worktree === "/" ? undefined : project.instance.path().worktree) ||
+            project.instance.directory() ||
+            paths.cwd
+          const editor = resolveEditorCommand()
 
-            await writeExport(filepath, transcript)
+          const result = await exportSessionTranscript({
+            transcript,
+            openWithoutSaving: options.openWithoutSaving,
+            filepath,
+            write: writeExport,
+            openEditor: editor
+              ? (value) =>
+                  openEditor({
+                    renderer,
+                    value,
+                    cwd,
+                  })
+              : undefined,
+          })
 
-            // Open with EDITOR if available
-            const result = await openEditor({
-              renderer,
-              value: transcript,
-              cwd:
-                (project.instance.path().worktree === "/" ? undefined : project.instance.path().worktree) ||
-                project.instance.directory() ||
-                paths.cwd,
-            })
-            if (result !== undefined) {
-              await writeExport(filepath, result)
-            }
-
+          if (result.kind === "saved") {
             toast.show({ message: `Session exported to ${filename}`, variant: "success" })
           }
-        } catch {
-          toast.show({ message: "Failed to export session", variant: "error" })
+        } catch (error) {
+          toast.show({ message: `Failed to export session: ${errorMessage(error)}`, variant: "error" })
         }
         dialog.clear()
       },

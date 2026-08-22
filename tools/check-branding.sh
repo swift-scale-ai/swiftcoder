@@ -20,7 +20,14 @@ RUNTIME_PATHS=(
   packages/tui/src
 )
 
-FORBIDDEN='\bOpenCode\b|opencode[.]ai|models[.]opencode[.]ai|opncd[.]ai|swiftcoder[.]ai|OPENCODE_|x-opencode|oc://|opencode-go|opencode[.]json|[.]opencode|opencode-cli|opencode[.]local|opencode[.]db|opencode-root|opencode-instance|/bin/opencode|anomalyco/opencode|discord[.]com/invite/opencode'
+EXISTING_RUNTIME_PATHS=()
+for runtime_path in "${RUNTIME_PATHS[@]}"; do
+  if [[ -e "$runtime_path" ]]; then
+    EXISTING_RUNTIME_PATHS+=("$runtime_path")
+  fi
+done
+
+FORBIDDEN='\bOpenCode\b|<b>Open</b>|opencode[.]ai|models[.]opencode[.]ai|opncd[.]ai|swiftcoder[.]ai|OPENCODE_|x-opencode|oc://|opencode-go|opencode[.]json|[.]opencode|opencode-cli|opencode[.]local|opencode[.]db|opencode-root|opencode-instance|/bin/opencode|anomalyco/opencode|discord[.]com/invite/opencode'
 
 if rg -n \
   --glob '!**/node_modules/**' \
@@ -28,7 +35,7 @@ if rg -n \
   --glob '!**/out/**' \
   --glob '!packages/app/src/utils/client-brand-compat.ts' \
   --glob '!packages/opencode/src/mcp/index.ts' \
-  "$FORBIDDEN" "${RUNTIME_PATHS[@]}"; then
+  "$FORBIDDEN" "${EXISTING_RUNTIME_PATHS[@]}"; then
   echo "Legacy OpenCode product branding found in a runtime surface." >&2
   exit 1
 fi

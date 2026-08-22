@@ -23,9 +23,14 @@ export function normalizePromptContent(content: string) {
   return content
 }
 
+export function resolveEditorCommand(env: Record<string, string | undefined> = process.env) {
+  const command = env.VISUAL?.trim() || env.EDITOR?.trim()
+  return command || undefined
+}
+
 export async function openEditor(input: { value: string; renderer: CliRenderer; cwd?: string; stdin?: EditorStdio }) {
-  const editor = process.env.VISUAL || process.env.EDITOR
-  if (!editor) return
+  const editor = resolveEditorCommand()
+  if (!editor) throw new Error("No external editor configured. Set $VISUAL or $EDITOR and try again.")
   const file = path.join(os.tmpdir(), `${Date.now()}.md`)
   await writeFile(file, input.value)
   input.renderer.suspend()

@@ -274,7 +274,9 @@ export const run = Effect.fn("Tui.run")(function* (input: TuiInput) {
                     >
                       <TuiStartupProvider
                         value={{
-                          initialRoute: process.env.SWIFTCODER_ROUTE ? JSON.parse(process.env.SWIFTCODER_ROUTE) : undefined,
+                          initialRoute: process.env.SWIFTCODER_ROUTE
+                            ? JSON.parse(process.env.SWIFTCODER_ROUTE)
+                            : undefined,
                           skipInitialLoading: Boolean(process.env.SWIFTCODER_FAST_BOOT),
                         }}
                       >
@@ -680,6 +682,10 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
         category: "Agent",
         slashName: "agents",
         run: () => {
+          if (local.agent.list().length === 0) {
+            toast.show({ variant: "warning", message: "No agents are available for this workspace." })
+            return
+          }
           dialog.replace(() => <DialogAgent />)
         },
       },

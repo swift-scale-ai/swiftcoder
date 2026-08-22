@@ -26,7 +26,7 @@ import { useProject } from "../../context/project"
 import { useSync } from "../../context/sync"
 import { useEvent } from "../../context/event"
 import { editorSelectionKey, useEditorContext, type EditorSelection } from "../../context/editor"
-import { normalizePromptContent, openEditor } from "../../editor"
+import { normalizePromptContent, openEditor, resolveEditorCommand } from "../../editor"
 import { useExit } from "../../context/exit"
 import { promptOffsetWidth } from "../../prompt/display"
 import { createStore, produce, unwrap } from "solid-js/store"
@@ -51,7 +51,13 @@ import { createFadeIn } from "../../util/signal"
 import { DialogSkill } from "../dialog-skill"
 import { DialogWorkspaceUnavailable } from "../dialog-workspace-unavailable"
 import { useArgs } from "../../context/args"
-import { SWIFTCODER_BASE_MODE, useBindings, useCommandShortcut, useLeaderActive, useSwiftCoderKeymap } from "../../keymap"
+import {
+  SWIFTCODER_BASE_MODE,
+  useBindings,
+  useCommandShortcut,
+  useLeaderActive,
+  useSwiftCoderKeymap,
+} from "../../keymap"
 import { useTuiConfig } from "../../config"
 import { usePromptWorkspace } from "./workspace"
 import { usePromptMove } from "./move"
@@ -427,6 +433,13 @@ export function Prompt(props: PromptProps) {
         slashName: "editor",
         run: async () => {
           dialog.clear()
+          if (!resolveEditorCommand()) {
+            toast.show({
+              variant: "warning",
+              message: "No external editor configured. Set $VISUAL or $EDITOR and try again.",
+            })
+            return
+          }
 
           // replace summarized text parts with the actual text
           const text = store.prompt.parts
@@ -446,6 +459,12 @@ export function Prompt(props: PromptProps) {
               (project.instance.path().worktree === "/" ? undefined : project.instance.path().worktree) ||
               project.instance.directory() ||
               paths.cwd,
+          }).catch((error) => {
+            toast.show({
+              variant: "error",
+              message: `Failed to open editor: ${errorMessage(error)}`,
+            })
+            return undefined
           })
           if (!content) return
           const normalized = normalizePromptContent(content)
