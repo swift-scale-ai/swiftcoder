@@ -2,13 +2,16 @@
 
 **A shared, local-first agent runtime for building inspectable AI applications.**
 
+[![Verify](https://github.com/swift-scale-ai/swiftcore/actions/workflows/verify.yml/badge.svg)](https://github.com/swift-scale-ai/swiftcore/actions/workflows/verify.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-0b7285.svg)](LICENSE)
 [![TypeScript](https://img.shields.io/badge/language-TypeScript-3178c6.svg)](https://www.typescriptlang.org/)
 [![Bun](https://img.shields.io/badge/runtime-Bun-000000.svg)](https://bun.sh/)
 [![SwiftScale](https://img.shields.io/badge/by-SwiftScale-2563eb.svg)](https://swift-scale.com)
 
+[Architecture](#architecture) · [Packages](#package-map) · [Quick Start](#quick-start) · [Contributing](CONTRIBUTING.md)
+
 SwiftCore is the product-neutral foundation behind
-[SwiftCoder](https://github.com/swiftscalecloud/swiftcoder) and SwiftWorks. It
+[SwiftCoder](https://github.com/swift-scale-ai/swiftcoder) and SwiftWorks. It
 provides reusable schemas, protocols, sessions, permissions, tools, model
 integration, plugins, storage, server APIs, desktop lifecycle primitives, and
 interface components for agent-powered applications.
@@ -90,7 +93,7 @@ integration, and repository automation.
 - Git
 
 ```bash
-git clone https://github.com/swiftscalecloud/swiftcore.git
+git clone https://github.com/swift-scale-ai/swiftcore.git
 cd swiftcore
 bun install
 
