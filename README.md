@@ -1,5 +1,24 @@
-# SwiftCoder
+<p align="center">
+  <img src="packages/app/public/swiftcoder-logo-128.png" width="96" alt="SwiftCoder logo">
+</p>
 
+<h1 align="center">SwiftCoder</h1>
+
+<p align="center"><strong>A local-first AI coding agent for macOS and the terminal.</strong></p>
+
+<p align="center">
+  <a href="https://swiftscale.app/swiftcoder/">Download for macOS</a> ·
+  <a href="docs/cli.md">CLI Guide</a> ·
+  <a href="https://github.com/swift-scale-ai/swiftcoder/issues">Issues</a> ·
+  <a href="CONTRIBUTING.md">Contribute</a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/swift-scale-ai/swiftcoder/actions/workflows/verify.yml"><img src="https://github.com/swift-scale-ai/swiftcoder/actions/workflows/verify.yml/badge.svg" alt="Verify"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-0b7285.svg" alt="MIT License"></a>
+  <img src="https://img.shields.io/badge/macOS-13%2B-111827.svg" alt="macOS 13+">
+  <img src="https://img.shields.io/badge/TypeScript-3178c6.svg" alt="TypeScript">
+</p>
 English | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md) | [日本語](README.ja.md) | [한국어](README.ko.md) | [Français](README.fr.md) | [Deutsch](README.de.md)
 
 SwiftCoder is a lightweight AI coding agent for macOS, powered by
