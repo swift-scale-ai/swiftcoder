@@ -1,0 +1,99 @@
+name: Release CLI
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-cli-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    defaults:
+      run:
+        working-directory: source/swiftcoder
+    steps:
+      - name: Check out SwiftCoder release tag
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+          path: source/swiftcoder
+      - name: Read pinned SwiftCore revision
+        id: swiftcore
+        run: |
+          set -euo pipefail
+          ref="$(tr -d '[:space:]' < .swiftcore-ref)"
+          [[ "$ref" =~ ^[0-9a-f]{40}$ ]]
+          echo "ref=$ref" >> "$GITHUB_OUTPUT"
+      - name: Check out pinned SwiftCore
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          repository: swift-scale-ai/swiftcore
+          ref: ${{ steps.swiftcore.outputs.ref }}
+          path: source/swiftcore
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+        with:
+          bun-version: 1.3.14
+      - name: Validate release version
+        run: |
+          set -euo pipefail
+          version="${GITHUB_REF_NAME#v}"
+          [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?$ ]]
+          echo "SWIFTCODER_VERSION=$version" >> "$GITHUB_ENV"
+          if [[ "$version" == *-* ]]; then echo "SWIFTCODER_CHANNEL=beta" >> "$GITHUB_ENV"; else echo "SWIFTCODER_CHANNEL=prod" >> "$GITHUB_ENV"; fi
+      - run: bun install --frozen-lockfile
+      - name: Link shared dependency tree
+        run: |
+          test ! -e ../node_modules
+          ln -s swiftcoder/node_modules ../node_modules
+      - name: Build cross-platform CLI archives
+        env:
+          SWIFTCODER_RELEASE: "1"
+        run: bun run --cwd packages/opencode build -- --skip-embed-web-ui
+      - name: Rename archives and generate checksums
+        run: |
+          set -euo pipefail
+          cd packages/opencode/dist
+          shopt -s nullglob
+          archives=(swiftcoder-*.zip swiftcoder-*.tar.gz)
+          (( ${#archives[@]} > 0 ))
+          for archive in "${archives[@]}"; do mv "$archive" "swiftcoder-cli-${archive#swiftcoder-}"; done
+          sha256sum swiftcoder-cli-*.zip swiftcoder-cli-*.tar.gz > swiftcoder-cli-checksums.txt
+          cp ../../../install.sh ../../../install.ps1 .
+      - name: Verify release archives
+        run: |
+          set -euo pipefail
+          test -f packages/opencode/dist/swiftcoder-cli-darwin-arm64.zip
+          test -f packages/opencode/dist/swiftcoder-cli-darwin-x64.zip
+          test -f packages/opencode/dist/swiftcoder-cli-linux-arm64.tar.gz
+          test -f packages/opencode/dist/swiftcoder-cli-linux-x64.tar.gz
+          test -f packages/opencode/dist/swiftcoder-cli-windows-x64.zip
+          test -s packages/opencode/dist/swiftcoder-cli-checksums.txt
+          test -f packages/opencode/dist/install.sh
+          test -f packages/opencode/dist/install.ps1
+      - name: Publish CLI archives to GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          tag="$GITHUB_REF_NAME"
+          if ! gh release view "$tag" >/dev/null 2>&1; then
+            args=(--verify-tag --generate-notes --title "SwiftCoder $SWIFTCODER_VERSION")
+            [[ "$SWIFTCODER_CHANNEL" != "beta" ]] || args+=(--prerelease)
+            gh release create "$tag" "${args[@]}" || true
+          fi
+          for _ in {1..30}; do gh release view "$tag" >/dev/null 2>&1 && break; sleep 2; done
+          gh release upload "$tag" \
+            packages/opencode/dist/swiftcoder-cli-*.zip \
+            packages/opencode/dist/swiftcoder-cli-*.tar.gz \
+            packages/opencode/dist/swiftcoder-cli-checksums.txt \
+            packages/opencode/dist/install.sh \
+            packages/opencode/dist/install.ps1 \
+            --clobber

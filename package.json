@@ -8,6 +8,10 @@
   "scripts": {
     "dev": "bun --cwd packages/desktop dev",
     "dev:agent": "bun run --cwd packages/opencode --conditions=browser src/index.ts",
+    "cli:dev": "bun --conditions=browser packages/opencode/src/index.ts",
+    "cli:build": "./tools/build-cli.sh",
+    "cli:install": "./tools/install-cli.sh",
+    "cli:check": "./tools/check-cli.sh",
     "build": "bun --cwd packages/desktop build",
     "package:mac": "bun --cwd packages/desktop package:mac",
     "package:mac:alpha": "./tools/package-mac-alpha.sh",
