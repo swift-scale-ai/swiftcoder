@@ -56,7 +56,7 @@ export interface Settings {
 }
 
 export const monoDefault = "System Mono"
-export const sansDefault = "System Sans"
+export const sansDefault = "Plus Jakarta Sans"
 export const terminalDefault = "JetBrainsMono Nerd Font Mono"
 const legacyNewLayoutDesignsDefault = import.meta.env.VITE_SWIFTCODER_CHANNEL !== "prod"
 export const newLayoutDesignsDefault = true
@@ -134,7 +134,8 @@ export function resolveNewLayoutDesigns(retired: boolean, preference: boolean | 
 
 const monoFallback =
   'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace'
-const sansFallback = 'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif'
+const sansFallback =
+  '"Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "PingFang TC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", "Helvetica Neue", "Segoe UI", sans-serif'
 const terminalFallback =
   '"JetBrainsMono Nerd Font Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace'
 

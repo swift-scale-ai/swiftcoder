@@ -4,6 +4,11 @@
 
 Copyright (c) 2016 The Inter Project Authors (<https://github.com/rsms/inter>)
 
+## Plus Jakarta Sans
+
+Copyright 2020 The Plus Jakarta Sans Project Authors
+(<https://github.com/tokotype/PlusJakartaSans>)
+
 ## JetBrains Mono
 
 Copyright 2020 The JetBrains Mono Project Authors

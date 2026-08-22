@@ -36,10 +36,11 @@ at `legal/models.dev-LICENSE.txt`. The source project is available at
 
 ## Fonts
 
-SwiftCoder distributes Inter and a patched JetBrains Mono Nerd Font supplied by
-SwiftCore's shared UI package. These font files remain under the SIL Open Font
-License 1.1 and are not relicensed under SwiftCoder's MIT License. Copyright
-notices and the complete OFL text are in `legal/FONT-LICENSES.md`.
+SwiftCoder distributes Plus Jakarta Sans, Inter, and a patched JetBrains Mono
+Nerd Font supplied by SwiftCore's shared UI package. These font files remain
+under the SIL Open Font License 1.1 and are not relicensed under SwiftCoder's
+MIT License. Copyright notices and the complete OFL text are in
+`legal/FONT-LICENSES.md`.
 
 ## Upstream Media And Test Assets
 
