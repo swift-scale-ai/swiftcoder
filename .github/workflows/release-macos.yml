@@ -42,7 +42,7 @@ jobs:
       - name: Check out pinned SwiftCore
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
-          repository: swiftscalecloud/swiftcore
+          repository: swift-scale-ai/swiftcore
           ref: ${{ steps.swiftcore.outputs.ref }}
           path: source/swiftcore
 
@@ -121,6 +121,11 @@ jobs:
 
       - name: Install dependencies
         run: bun install --frozen-lockfile
+
+      - name: Link shared dependency tree
+        run: |
+          test ! -e ../node_modules
+          ln -s swiftcoder/node_modules ../node_modules
 
       - name: Build, sign, notarize, and verify
         env:
