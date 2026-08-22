@@ -240,7 +240,13 @@ if (Script.release) {
       await $`zip -r ../../${key}.zip *`.cwd(`dist/${key}/bin`)
     }
   }
-  await $`gh release upload v${Script.version} ./dist/*.zip ./dist/*.tar.gz --clobber --repo ${process.env.GH_REPO}`
+  // Release workflows own publication so a single build can be validated,
+  // renamed, checksummed, and uploaded atomically. Keep the old direct-upload
+  // behavior available for explicit local release jobs only.
+  if (process.env.SWIFTCODER_UPLOAD_RELEASE === "1") {
+    if (!process.env.GH_REPO) throw new Error("GH_REPO is required when SWIFTCODER_UPLOAD_RELEASE=1")
+    await $`gh release upload v${Script.version} ./dist/*.zip ./dist/*.tar.gz --clobber --repo ${process.env.GH_REPO}`
+  }
 }
 
 export { binaries }

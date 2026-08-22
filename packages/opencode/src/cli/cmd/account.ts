@@ -235,8 +235,9 @@ export const OpenCommand = effectCmd({
 })
 
 export const ConsoleCommand = cmd({
-  command: "console",
-  describe: false,
+  command: "account",
+  aliases: ["console"],
+  describe: "manage SwiftScale accounts and organizations",
   builder: (yargs) =>
     yargs
       .command({
