@@ -63,6 +63,6 @@
     "@lydell/node-pty-darwin-arm64": "1.2.0-beta.15",
     "@lydell/node-pty-darwin-x64": "1.2.0-beta.15",
     "@parcel/watcher-darwin-arm64": "2.5.1",
-    "@parcel/watcher-darwin-x64": "2.5.1"
+    "@parcel/watcher-darwin-x64": "2.6.0"
   }
 }
