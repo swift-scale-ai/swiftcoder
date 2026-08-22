@@ -19,7 +19,16 @@
   <img src="https://img.shields.io/badge/macOS-13%2B-111827.svg" alt="macOS 13+">
   <img src="https://img.shields.io/badge/TypeScript-3178c6.svg" alt="TypeScript">
 </p>
-English | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md) | [日本語](README.ja.md) | [한국어](README.ko.md) | [Français](README.fr.md) | [Deutsch](README.de.md)
+
+<p align="center">
+  <strong>English</strong> ·
+  <a href="README.zh-CN.md">简体中文</a> ·
+  <a href="README.zh-TW.md">繁體中文</a> ·
+  <a href="README.ja.md">日本語</a> ·
+  <a href="README.ko.md">한국어</a> ·
+  <a href="README.fr.md">Français</a> ·
+  <a href="README.de.md">Deutsch</a>
+</p>
 
 SwiftCoder is a lightweight AI coding agent for macOS, powered by
 [SwiftScale](https://swift-scale.com). It turns a natural-language task into a
