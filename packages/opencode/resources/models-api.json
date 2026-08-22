@@ -89608,7 +89608,7 @@
         "temperature": true,
         "release_date": "2026-08-01",
         "modalities": { "input": ["text"], "output": ["text"] },
-        "limit": { "context": 65536, "output": 8192 },
+        "limit": { "context": 1032000, "input": 1000000, "output": 32000 },
         "cost": { "input": 0, "output": 0 }
       },
       "swiftlite.auto": {
@@ -89621,7 +89621,7 @@
         "temperature": true,
         "release_date": "2026-08-01",
         "modalities": { "input": ["text"], "output": ["text"] },
-        "limit": { "context": 32768, "output": 4096 },
+        "limit": { "context": 1016000, "input": 1000000, "output": 16000 },
         "cost": { "input": 0, "output": 0 }
       },
       "swiftpro.auto": {
@@ -89634,7 +89634,7 @@
         "temperature": true,
         "release_date": "2026-08-01",
         "modalities": { "input": ["text"], "output": ["text"] },
-        "limit": { "context": 32768, "output": 4096 },
+        "limit": { "context": 1032000, "input": 1000000, "output": 32000 },
         "cost": { "input": 0, "output": 0 }
       },
       "swiftreason.auto": {
@@ -89647,7 +89647,7 @@
         "temperature": true,
         "release_date": "2026-08-01",
         "modalities": { "input": ["text"], "output": ["text"] },
-        "limit": { "context": 65536, "output": 8192 },
+        "limit": { "context": 1064000, "input": 1000000, "output": 64000 },
         "cost": { "input": 0, "output": 0 }
       },
       "swiftagent.auto": {
@@ -89660,7 +89660,7 @@
         "temperature": true,
         "release_date": "2026-08-01",
         "modalities": { "input": ["text"], "output": ["text"] },
-        "limit": { "context": 65536, "output": 8192 },
+        "limit": { "context": 1064000, "input": 1000000, "output": 64000 },
         "cost": { "input": 0, "output": 0 }
       },
       "swiftmax.auto": {
@@ -89673,7 +89673,7 @@
         "temperature": true,
         "release_date": "2026-08-01",
         "modalities": { "input": ["text"], "output": ["text"] },
-        "limit": { "context": 1176576, "output": 128000 },
+        "limit": { "context": 1050000, "input": 922000, "output": 128000 },
         "cost": { "input": 0, "output": 0 }
       },
       "swiftmaxflash.auto": {
@@ -89686,7 +89686,7 @@
         "temperature": true,
         "release_date": "2026-08-01",
         "modalities": { "input": ["text"], "output": ["text"] },
-        "limit": { "context": 1114112, "output": 65536 },
+        "limit": { "context": 1050000, "input": 922000, "output": 128000 },
         "cost": { "input": 0, "output": 0 }
       },
       "ring-2.6-1t-free": {

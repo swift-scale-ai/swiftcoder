@@ -62,6 +62,7 @@ export type PromptInputV2ComposerController = PromptInputV2Interaction & {
   readonly productMode: PromptInputV2ModelHierarchyControl
   readonly modelFamily: PromptInputV2ModelHierarchyControl
   readonly modelVersion: PromptInputV2ModelHierarchyControl
+  readonly outputTokens: PromptInputV2ModelHierarchyControl
 }
 
 type PromptInputV2ModelHierarchyControl = {
@@ -126,6 +127,12 @@ export function PromptInputV2Composer(props: PromptInputV2ComposerProps) {
               options={props.controller.modelVersion.options()}
               current={props.controller.modelVersion.current()}
               onSelect={props.controller.modelVersion.onSelect}
+            />
+            <PromptInputV2Select
+              title={language.t("prompt.outputLimit.title")}
+              options={props.controller.outputTokens.options()}
+              current={props.controller.outputTokens.current()}
+              onSelect={props.controller.outputTokens.onSelect}
             />
             <MenuV2 gutter={6} modal={false} placement="top-start">
               <MenuV2.Trigger
@@ -298,6 +305,16 @@ export function usePromptInputV2Controller(props: PromptInputV2ControllerProps):
     if (!id) return permission.isAutoAcceptingDirectory(sdk().directory)
     return permission.isAutoAccepting(id, sdk().directory)
   })
+  const [outputTokenMax, setOutputTokenMax] = createSignal(8_000)
+  const outputTokenOptions = createMemo(() => {
+    const maximum = props.controls.model.selection.current()?.limit.output ?? 32_000
+    return [8_000, 16_000, 32_000].filter((value) => value <= maximum)
+  })
+  createEffect(() => {
+    const options = outputTokenOptions()
+    if (options.includes(outputTokenMax())) return
+    setOutputTokenMax(options.at(-1) ?? 8_000)
+  })
   const submission = createPromptSubmit({
     prompt,
     info,
@@ -322,6 +339,7 @@ export function usePromptInputV2Controller(props: PromptInputV2ControllerProps):
     onAbort: props.onAbort,
     onSubmit: props.onSubmit,
     model: props.controls.model.selection,
+    outputTokenMax,
   })
 
   const referenceDescription = (reference: ReferenceInfo) =>
@@ -551,6 +569,20 @@ export function usePromptInputV2Controller(props: PromptInputV2ControllerProps):
     },
     onSelect: (value) => selectModel(value, true),
   }
+  const outputTokens: PromptInputV2ModelHierarchyControl = {
+    options: () =>
+      outputTokenOptions().map((value) => ({
+        id: String(value),
+        label:
+          value === 32_000
+            ? language.t("prompt.outputLimit.32k")
+            : value === 16_000
+              ? language.t("prompt.outputLimit.16k")
+              : language.t("prompt.outputLimit.8k"),
+      })),
+    current: () => String(outputTokenMax()),
+    onSelect: (value) => setOutputTokenMax(Number(value)),
+  }
   const controller = createPromptInputV2Controller({
     store: () => prompt.capture().store,
     state: interaction,
@@ -646,6 +678,7 @@ export function usePromptInputV2Controller(props: PromptInputV2ControllerProps):
     productMode: { get: () => productMode },
     modelFamily: { get: () => modelFamily },
     modelVersion: { get: () => modelVersion },
+    outputTokens: { get: () => outputTokens },
   })
 
   command.register("prompt-input", () => [

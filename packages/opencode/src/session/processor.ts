@@ -72,6 +72,7 @@ interface ProcessorContext extends Input {
   needsCompaction: boolean
   currentText: SessionV1.TextPart | undefined
   reasoningMap: Record<string, SessionV1.ReasoningPart>
+  outputTokenMax: number | undefined
 }
 
 type StreamEvent = LLMEvent
@@ -111,6 +112,7 @@ const layer = Layer.effect(
         needsCompaction: false,
         currentText: undefined,
         reasoningMap: {},
+        outputTokenMax: undefined,
       }
       let aborted = false
 
@@ -476,7 +478,12 @@ const layer = Layer.effect(
               .pipe(Effect.ignore, Effect.forkIn(scope))
             if (
               !ctx.assistantMessage.summary &&
-              isOverflow({ cfg: yield* config.get(), tokens: usage.tokens, model: ctx.model })
+              isOverflow({
+                cfg: yield* config.get(),
+                tokens: usage.tokens,
+                model: ctx.model,
+                outputTokenMax: ctx.outputTokenMax,
+              })
             ) {
               ctx.needsCompaction = true
             }
@@ -630,6 +637,7 @@ const layer = Layer.effect(
           messageID: input.assistantMessage.id,
         })
         ctx.needsCompaction = false
+        ctx.outputTokenMax = streamInput.user.model.outputTokenMax
         ctx.shouldBreak = (yield* config.get()).experimental?.continue_loop_on_deny !== true
         let receivedStreamEvent = false
 

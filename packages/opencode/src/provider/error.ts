@@ -99,6 +99,8 @@ export function swiftScaleErrorMessage(input: unknown, statusCode?: number) {
       return `SwiftScale fair-use capacity is temporarily limited. Wait briefly and retry.${suffix}`
     case "budget_exhausted":
       return `Your SwiftScale usage budget is exhausted. Review your plan and billing.${suffix}`
+    case "output_length_exceeded":
+      return `The requested output limit exceeds the available model route. Lower the output token limit and try again.${suffix}`
     case "service_degraded":
       return `SwiftScale is operating in a degraded mode. Responses may be slower or use reduced context.${suffix}`
     case "service_unavailable":
@@ -191,6 +193,16 @@ export function parseStreamError(input: unknown): ParsedStreamError | undefined 
       return {
         type: "api_error",
         message: typeof body?.error?.message === "string" ? body?.error?.message : "Invalid prompt.",
+        isRetryable: false,
+        responseBody,
+      }
+    case "output_length_exceeded":
+      return {
+        type: "api_error",
+        message:
+          typeof body?.error?.message === "string"
+            ? body.error.message
+            : "The requested output limit exceeds the available model route.",
         isRetryable: false,
         responseBody,
       }

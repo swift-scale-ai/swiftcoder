@@ -79,13 +79,20 @@ export function retryable(error: Err, provider: string) {
   if (SessionV1.ContextOverflowError.isInstance(error)) return undefined
   if (SessionV1.APIError.isInstance(error)) {
     const status = error.data.statusCode
+    const responseBody = error.data.responseBody?.toLowerCase()
+    // Output reservations that cannot be satisfied are request validation
+    // failures. Never keep the session in exponential backoff for them, even
+    // if an SDK or intermediary incorrectly marks the response as retryable.
+    if (responseBody?.includes("output_length_exceeded") || responseBody?.includes("output_token_limit")) {
+      return undefined
+    }
     // 5xx errors are transient server failures and should always be retried,
     // even when the provider SDK doesn't explicitly mark them as retryable.
     if (
       !error.data.isRetryable &&
       !(status !== undefined && status >= 500) &&
       !matchesRetryableMessage(error.data.message) &&
-      !matchesRetryableMessage(error.data.responseBody)
+      !matchesRetryableMessage(responseBody)
     )
       return undefined
     if (error.data.responseBody?.includes("FreeUsageLimitError")) {

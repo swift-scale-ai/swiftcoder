@@ -7,6 +7,28 @@ import { ModelV2 } from "@swiftscale/core/model"
 import { ModelsDev } from "@swiftscale/core/models-dev"
 import { jsonSchema } from "ai"
 
+describe("ProviderTransform.maxOutputTokens", () => {
+  const model = {
+    limit: {
+      context: 1_000_000,
+      output: 32_000,
+    },
+  } as any
+
+  test("uses an 8K reservation for normal requests without changing the model limit", () => {
+    expect(ProviderTransform.maxOutputTokens(model)).toBe(8_000)
+    expect(model.limit.output).toBe(32_000)
+  })
+
+  test("allows an explicit 32K request when the selected model supports it", () => {
+    expect(ProviderTransform.maxOutputTokens(model, 32_000)).toBe(32_000)
+  })
+
+  test("never exceeds the selected model output limit", () => {
+    expect(ProviderTransform.maxOutputTokens({ ...model, limit: { ...model.limit, output: 4_096 } })).toBe(4_096)
+  })
+})
+
 describe("ProviderTransform.options - setCacheKey", () => {
   const sessionID = "test-session-123"
 

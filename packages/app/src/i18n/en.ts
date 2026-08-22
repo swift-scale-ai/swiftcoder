@@ -313,6 +313,10 @@ export const dict = {
   "prompt.menu.shellCommand": "Shell command",
   "prompt.attachment.remove": "Remove attachment",
   "prompt.action.send": "Send",
+  "prompt.outputLimit.title": "Choose output limit",
+  "prompt.outputLimit.8k": "8K output",
+  "prompt.outputLimit.16k": "16K output",
+  "prompt.outputLimit.32k": "32K output",
   "prompt.action.stop": "Stop",
 
   "prompt.toast.pasteUnsupported.title": "Unsupported attachment",

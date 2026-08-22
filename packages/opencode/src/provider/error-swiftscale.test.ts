@@ -12,6 +12,7 @@ describe("SwiftScale provider errors", () => {
     expect(swiftScaleErrorMessage({ error: { code: "token_refresh_failed" } }, 401)).toContain("could not be refreshed")
     expect(swiftScaleErrorMessage({ error: { code: "fair_use_limited" } }, 429)).toContain("fair-use")
     expect(swiftScaleErrorMessage({ error: { code: "budget_exhausted" } }, 403)).toContain("budget")
+    expect(swiftScaleErrorMessage({ error: { code: "output_length_exceeded" } }, 400)).toContain("output limit")
     expect(swiftScaleErrorMessage({ error: { code: "service_degraded" }, request_id: "req_2" }, 503)).toContain(
       "Request ID: req_2",
     )

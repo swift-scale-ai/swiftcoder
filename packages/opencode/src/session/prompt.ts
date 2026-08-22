@@ -667,6 +667,7 @@ const layer = Layer.effect(
           providerID: model.providerID,
           modelID: model.modelID,
           variant,
+          outputTokenMax: input.outputTokenMax,
         },
         system: input.system,
         format: input.format,
@@ -1164,7 +1165,11 @@ const layer = Layer.effect(
           if (
             lastFinished &&
             lastFinished.summary !== true &&
-            (yield* compaction.isOverflow({ tokens: lastFinished.tokens, model }))
+            (yield* compaction.isOverflow({
+              tokens: lastFinished.tokens,
+              model,
+              outputTokenMax: lastUser.model.outputTokenMax,
+            }))
           ) {
             yield* compaction.create({ sessionID, agent: lastUser.agent, model: lastUser.model, auto: true })
             continue
@@ -1512,6 +1517,7 @@ export const PromptInput = Schema.Struct({
   format: Schema.optional(SessionV1.Format),
   system: Schema.optional(Schema.String),
   variant: Schema.optional(Schema.String),
+  outputTokenMax: Schema.optional(Schema.Int.check(Schema.isGreaterThan(0), Schema.isLessThanOrEqualTo(32_000))),
   parts: Schema.Array(
     Schema.Union([
       SessionV1.TextPartInput,

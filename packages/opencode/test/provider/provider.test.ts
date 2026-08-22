@@ -14,7 +14,12 @@ import { Auth } from "@/auth"
 import { Config } from "@/config/config"
 import { Env } from "../../src/env"
 import { Plugin } from "../../src/plugin/index"
-import { applySwiftScaleCatalog, Provider, swiftScaleCatalogModelIDs } from "@/provider/provider"
+import {
+  applySwiftScaleCatalog,
+  applySwiftScaleCatalogLimits,
+  Provider,
+  swiftScaleCatalogModelIDs,
+} from "@/provider/provider"
 import { resolveSwiftScaleBaseURL } from "@/provider/swiftscale-base-url"
 
 import { RuntimeFlags } from "@/effect/runtime-flags"
@@ -2099,6 +2104,24 @@ test("Coding Plan catalog exposes one SwiftScale model", () => {
   expect(models["swiftlite.auto"].name).toBe("SwiftScale")
 })
 
+test("SwiftScale catalog applies the Gateway effective context limit", () => {
+  const models = {
+    "swiftlite.auto": { limit: { context: 1_000_000, input: 1_000_000, output: 32_000 } },
+  } as any
+
+  applySwiftScaleCatalogLimits(models, [
+    {
+      id: "swiftlite.auto",
+      max_input_tokens: 1_000_000,
+      max_output_tokens: 32_000,
+      max_context_tokens: 32_768,
+      effective_context_token_limit: 32_768,
+    },
+  ])
+
+  expect(models["swiftlite.auto"].limit).toEqual({ context: 32_768, input: 32_768, output: 32_000 })
+})
+
 test("account OAuth catalog excludes API Services commercial models", () => {
   const modelIDs = ["swiftlite.auto", "swiftpro.auto", "gpt-5.4", "claude-sonnet-4-6", "gemini-3.1-pro"]
 
@@ -2117,6 +2140,31 @@ test("SwiftScale catalog gives discovered product models distinct names", () => 
   expect(models["swiftcustom.auto"].name).toBe("Swift Custom")
   expect(models["swiftlong-context.auto"].name).toBe("Swift Long Context")
   expect(new Set(Object.values(models).map((model: any) => model.name)).size).toBe(3)
+})
+
+test("SwiftScale routed products do not expose inherited reasoning variants", () => {
+  const models = {
+    "swiftlite.auto": {
+      name: "SwiftScale",
+      api: { id: "swiftlite.auto" },
+      variants: {
+        low: { reasoningEffort: "low" },
+        medium: { reasoningEffort: "medium" },
+        high: { reasoningEffort: "high" },
+      },
+    },
+    "gpt-5.4": {
+      name: "GPT-5.4",
+      api: { id: "gpt-5.4" },
+      variants: { high: { reasoningEffort: "high" } },
+    },
+  } as any
+
+  applySwiftScaleCatalog(models, ["swiftlite.auto", "swiftcustom.auto", "gpt-5.4"])
+
+  expect(models["swiftlite.auto"].variants).toEqual({})
+  expect(models["swiftcustom.auto"].variants).toEqual({})
+  expect(models["gpt-5.4"].variants).toEqual({ high: { reasoningEffort: "high" } })
 })
 
 test("SwiftScale Gateway URL supports dev without changing production defaults", () => {

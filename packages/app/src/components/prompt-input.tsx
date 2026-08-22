@@ -1190,6 +1190,16 @@ export const PromptInput: Component<PromptInputProps> = (props) => {
   )
 
   const variants = createMemo(() => ["default", ...props.controls.model.selection.variant.list()])
+  const [outputTokenMax, setOutputTokenMax] = createSignal(8_000)
+  const outputTokenOptions = createMemo(() => {
+    const maximum = props.controls.model.selection.current()?.limit.output ?? 32_000
+    return [8_000, 16_000, 32_000].filter((value) => value <= maximum).map(String)
+  })
+  createEffect(() => {
+    const options = outputTokenOptions()
+    if (options.includes(String(outputTokenMax()))) return
+    setOutputTokenMax(Number(options.at(-1) ?? 8_000))
+  })
   // Check provider variants directly: `variants` also includes the UI-only default option.
   const showVariantControl = createMemo(() => props.controls.model.selection.variant.list().length > 0)
   const accepting = createMemo(() => {
@@ -1227,6 +1237,7 @@ export const PromptInput: Component<PromptInputProps> = (props) => {
       onAbort: props.onAbort,
       onSubmit: props.onSubmit,
       model: props.controls.model.selection,
+      outputTokenMax,
     })
 
   const handleKeyDown = (event: KeyboardEvent) => {
@@ -1781,6 +1792,27 @@ export const PromptInput: Component<PromptInputProps> = (props) => {
                         </TooltipKeybind>
                       </div>
                     </Show>
+                    <Select
+                      size="normal"
+                      options={outputTokenOptions()}
+                      current={String(outputTokenMax())}
+                      label={(value) =>
+                        value === "32000"
+                          ? language.t("prompt.outputLimit.32k")
+                          : value === "16000"
+                            ? language.t("prompt.outputLimit.16k")
+                            : language.t("prompt.outputLimit.8k")
+                      }
+                      onSelect={(value) => {
+                        setOutputTokenMax(Number(value))
+                        restoreFocus()
+                      }}
+                      class="max-w-[110px] text-text-base"
+                      valueClass="truncate text-13-regular text-text-base"
+                      triggerStyle={control()}
+                      triggerProps={{ "data-action": "prompt-output-limit" }}
+                      variant="ghost"
+                    />
                   </Show>
                 </Show>
               </div>

@@ -52,6 +52,31 @@ const isSwiftScaleDirectModel = (id: string) => /^(?:gpt|claude|gemini)-[a-z0-9]
 export const swiftScaleCatalogModelIDs = (modelIDs: string[] | undefined, apiServicesKey: boolean) =>
   apiServicesKey ? modelIDs : modelIDs?.filter((id) => isSwiftScaleProductModel(id))
 
+type SwiftScaleCatalogEntry = {
+  id?: unknown
+  max_input_tokens?: unknown
+  max_output_tokens?: unknown
+  max_context_tokens?: unknown
+  effective_context_token_limit?: unknown
+}
+
+const positiveLimit = (value: unknown) =>
+  typeof value === "number" && Number.isFinite(value) && value > 0 ? Math.floor(value) : undefined
+
+export function applySwiftScaleCatalogLimits(models: Record<string, Model>, entries: SwiftScaleCatalogEntry[] | undefined) {
+  for (const entry of entries ?? []) {
+    if (typeof entry.id !== "string") continue
+    const model = models[entry.id.toLowerCase()]
+    if (!model) continue
+    const context = positiveLimit(entry.effective_context_token_limit) ?? positiveLimit(entry.max_context_tokens)
+    const input = positiveLimit(entry.max_input_tokens)
+    const output = positiveLimit(entry.max_output_tokens)
+    if (context) model.limit.context = context
+    if (input) model.limit.input = context ? Math.min(input, context) : input
+    if (output) model.limit.output = output
+  }
+}
+
 const inferredSwiftScaleModelName = (id: string) => {
   const slug = id.replace(/^swift/, "").replace(/\.auto$/, "")
   const words = slug
@@ -98,7 +123,12 @@ export function applySwiftScaleCatalog(models: Record<string, Model>, modelIDs?:
     "swiftmaxflash.auto": "Swift Max Flash",
   }
   for (const [id, model] of Object.entries(models)) {
-    model.name = names[id] ?? (isSwiftScaleProductModel(id) ? inferredSwiftScaleModelName(id) : model.name)
+    const routed = isSwiftScaleProductModel(id)
+    model.name = names[id] ?? (routed ? inferredSwiftScaleModelName(id) : model.name)
+    // Swift product IDs are virtual routing targets rather than fixed upstream
+    // models. They must not inherit reasoning-effort variants from the catalog
+    // template because the selected upstream may not support those controls.
+    if (routed) model.variants = {}
   }
 }
 
@@ -269,20 +299,22 @@ function custom(dep: CustomDep): Record<string, CustomLoader> {
           environment: env.SWIFTCODER_GATEWAY_BASE_URL,
           catalog: Object.values(input.models)[0]?.api.url,
         })
-        const modelIDs = yield* Effect.promise(async () => {
+        const catalog = yield* Effect.promise(async () => {
           try {
             const response = await fetch(`${baseURL.replace(/\/$/, "")}/models`, {
               headers: { Authorization: `Bearer ${key}` },
               signal: AbortSignal.timeout(10_000),
             })
             if (!response.ok) return undefined
-            const body = (await response.json()) as { data?: Array<{ id?: unknown }> }
-            return body.data?.flatMap((item) => (typeof item.id === "string" ? [item.id.toLowerCase()] : []))
+            const body = (await response.json()) as { data?: SwiftScaleCatalogEntry[] }
+            return body.data
           } catch {
             return undefined
           }
         })
+        const modelIDs = catalog?.flatMap((item) => (typeof item.id === "string" ? [item.id.toLowerCase()] : []))
         applySwiftScaleCatalog(input.models, swiftScaleCatalogModelIDs(modelIDs, apiServicesKey))
+        applySwiftScaleCatalogLimits(input.models, catalog)
       } else {
         applySwiftScaleCatalog(input.models)
       }

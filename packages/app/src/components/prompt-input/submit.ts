@@ -39,6 +39,7 @@ export type FollowupDraft = {
   agent: string
   model: { providerID: string; modelID: string }
   variant?: string
+  outputTokenMax?: number
 }
 
 type FollowupSendInput = {
@@ -171,6 +172,7 @@ export async function sendFollowupDraft(input: FollowupSendInput) {
       agent: input.draft.agent,
       model: input.draft.model,
       variant: input.draft.variant,
+      outputTokenMax: input.draft.outputTokenMax,
       legacyParts: requestParts,
       text: requestParts.flatMap((part) => (part.type === "text" ? [part.text] : [])).join("\n"),
       files: requestParts.flatMap((part) => {
@@ -229,6 +231,7 @@ type PromptSubmitInput = {
   onAbort?: () => void
   onSubmit?: () => void
   model?: ModelSelection
+  outputTokenMax?: Accessor<number>
 }
 
 export function createPromptSubmit(input: PromptSubmitInput) {
@@ -454,6 +457,7 @@ export function createPromptSubmit(input: PromptSubmitInput) {
       agent,
       model,
       variant,
+      outputTokenMax: input.outputTokenMax?.(),
     }
 
     const clearInput = () => {

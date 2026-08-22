@@ -167,6 +167,7 @@ export interface Interface {
   readonly isOverflow: (input: {
     tokens: SessionV1.Assistant["tokens"]
     model: Provider.Model
+    outputTokenMax?: number
   }) => Effect.Effect<boolean>
   readonly prune: (input: { sessionID: SessionID }) => Effect.Effect<void>
   readonly process: (input: {
@@ -204,12 +205,13 @@ const layer = Layer.effect(
     const isOverflow = Effect.fn("SessionCompaction.isOverflow")(function* (input: {
       tokens: SessionV1.Assistant["tokens"]
       model: Provider.Model
+      outputTokenMax?: number
     }) {
       return overflow({
         cfg: yield* config.get(),
         tokens: input.tokens,
         model: input.model,
-        outputTokenMax: flags.outputTokenMax,
+        outputTokenMax: input.outputTokenMax ?? flags.outputTokenMax,
       })
     })
 
@@ -443,8 +445,8 @@ const layer = Layer.effect(
       if (result === "compact") {
         processor.message.error = new SessionV1.ContextOverflowError({
           message: replay
-            ? "Conversation history too large to compact - exceeds model context limit"
-            : "Session too large to compact - context exceeds model limit even after stripping media",
+            ? "Conversation history is still over the effective context limit after compaction. Start a new session to continue."
+            : "Session is still over the effective context limit after summarizing history and removing large media. Start a new session to continue.",
         }).toObject()
         processor.message.finish = "error"
         yield* session.updateMessage(processor.message)

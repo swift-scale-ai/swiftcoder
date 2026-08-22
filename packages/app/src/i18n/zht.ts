@@ -401,6 +401,10 @@ export const dict = {
   "prompt.menu.shellCommand": "shell 命令",
   "prompt.attachment.remove": "移除附件",
   "prompt.action.send": "傳送",
+  "prompt.outputLimit.title": "選擇輸出上限",
+  "prompt.outputLimit.8k": "輸出 8K",
+  "prompt.outputLimit.16k": "輸出 16K",
+  "prompt.outputLimit.32k": "輸出 32K",
   "prompt.action.stop": "停止",
 
   "prompt.toast.pasteUnsupported.title": "不支援的附件",
