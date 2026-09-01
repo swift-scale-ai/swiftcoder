@@ -7,7 +7,7 @@
 <p align="center"><strong>A local-first AI coding agent for macOS and the terminal.</strong></p>
 
 <p align="center">
-  <a href="https://swiftscale.app/swiftcoder/">Download for macOS</a> ·
+  <a href="https://swiftcoder.io">Download for macOS</a> ·
   <a href="docs/cli.md">CLI Guide</a> ·
   <a href="https://github.com/swift-scale-ai/swiftcoder/issues">Issues</a> ·
   <a href="CONTRIBUTING.md">Contribute</a>

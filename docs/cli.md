@@ -52,20 +52,20 @@ export PATH="$HOME/.local/bin:$PATH"
 Install the latest macOS or Linux release with the public installer:
 
 ```bash
-curl -fsSL https://swiftscale.app/swiftcoder/install.sh | sh
+curl -fsSL https://swiftcoder.io/install.sh | sh
 ```
 
 Install a specific version or choose another destination:
 
 ```bash
-curl -fsSL https://swiftscale.app/swiftcoder/install.sh | \
+curl -fsSL https://swiftcoder.io/install.sh | \
   SWIFTCODER_VERSION=0.3.0 SWIFTCODER_INSTALL_DIR="$HOME/bin" sh
 ```
 
 On Windows PowerShell:
 
 ```powershell
-irm https://swiftscale.app/swiftcoder/install.ps1 | iex
+irm https://swiftcoder.io/install.ps1 | iex
 ```
 
 The installers detect the operating system, CPU architecture, AVX2 support,
