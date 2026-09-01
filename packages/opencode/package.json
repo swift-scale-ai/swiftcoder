@@ -46,9 +46,9 @@
     "@types/yargs": "17.0.33",
     "@typescript/native": "catalog:",
     "drizzle-orm": "catalog:",
-    "prettier": "3.6.2",
+    "prettier": "3.9.6",
     "typescript": "catalog:",
-    "vscode-languageserver-types": "3.17.5",
+    "vscode-languageserver-types": "3.18.3",
     "why-is-node-running": "3.2.2"
   },
   "dependencies": {
