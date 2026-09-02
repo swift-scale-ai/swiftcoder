@@ -89590,12 +89590,35 @@
       }
     }
   },
+  "openswiftscale": {
+    "id": "openswiftscale",
+    "env": ["OPEN_SWIFT_SCALE_KEY"],
+    "npm": "@ai-sdk/openai-compatible",
+    "api": "http://127.0.0.1:8080/v1",
+    "name": "OpenSwiftScale",
+    "doc": "https://github.com/swift-scale-ai/OpenSwiftScale",
+    "models": {
+      "gpt-5.6-luna": {
+        "id": "gpt-5.6-luna",
+        "name": "GPT-5.6 Luna",
+        "description": "OpenSwiftScale gateway model",
+        "family": "gpt-5.6",
+        "reasoning": true,
+        "tool_call": true,
+        "temperature": true,
+        "release_date": "2026-01-01",
+        "modalities": { "input": ["text", "image"], "output": ["text"] },
+        "limit": { "context": 1048576, "output": 131072 },
+        "cost": { "input": 0, "output": 0 }
+      }
+    }
+  },
   "swiftcoder": {
     "id": "swiftcoder",
     "env": ["SWIFTCODER_API_KEY"],
     "npm": "@ai-sdk/openai-compatible",
     "api": "https://api.swift-scale.com/v1",
-    "name": "SwiftScale",
+    "name": "SwiftScaleCloud",
     "doc": "https://swift-scale.com/docs/swiftcoder",
     "models": {
       "swift.auto": {
@@ -89613,7 +89636,7 @@
       },
       "swiftlite.auto": {
         "id": "swiftlite.auto",
-        "name": "SwiftScale",
+        "name": "SwiftScaleCloud",
         "description": "SwiftScale coding model for Coding Plan accounts",
         "family": "swift-lite",
         "reasoning": true,

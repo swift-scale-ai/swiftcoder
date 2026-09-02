@@ -5,7 +5,7 @@ import { Iterable, pipe } from "effect"
 import { createEffect, createMemo, type Accessor } from "solid-js"
 import { selectProviderCatalog } from "./provider-catalog"
 
-export const popularProviders = ["swiftcoder", "anthropic", "openai", "google"]
+export const popularProviders = ["swiftcoder", "openswiftscale", "anthropic", "openai", "google"]
 const popularProviderSet = new Set(popularProviders)
 const supportedProviderSet = new Set(popularProviders)
 

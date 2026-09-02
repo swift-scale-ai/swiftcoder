@@ -61,6 +61,26 @@ const inferredSwiftScaleModelName = (id: string) => {
   return words.length > 0 ? `Swift ${words.join(" ")}` : "Swift Auto"
 }
 
+export function applyOpenSwiftScaleCatalog(models: Record<string, Model>, modelIDs?: string[]) {
+  if (!modelIDs?.length) return
+  const template = Object.values(models)[0]
+  if (!template) return
+  const allowed = new Set(modelIDs)
+  for (const id of allowed) {
+    if (models[id]) continue
+    models[id] = {
+      ...template,
+      id: ModelV2.ID.make(id),
+      name: inferredSwiftScaleModelName(id).replace(/^Swift /, ""),
+      api: { ...template.api, id },
+      family: id.split(/[./_-]/, 1)[0] || id,
+    }
+  }
+  for (const id of Object.keys(models)) {
+    if (!allowed.has(id)) delete models[id]
+  }
+}
+
 export function applySwiftScaleCatalog(models: Record<string, Model>, modelIDs?: string[]) {
   const allowed = new Set(
     (modelIDs ?? [SWIFTSCALE_FALLBACK_MODEL]).filter((id) => {
@@ -90,7 +110,7 @@ export function applySwiftScaleCatalog(models: Record<string, Model>, modelIDs?:
   const codingPlan = allowed.size === 1 && allowed.has(SWIFTSCALE_FALLBACK_MODEL)
   const names: Record<string, string> = {
     "swift.auto": "Swift Auto",
-    "swiftlite.auto": codingPlan ? "SwiftScale" : "Swift Lite",
+    "swiftlite.auto": codingPlan ? "SwiftScaleCloud" : "Swift Lite",
     "swiftpro.auto": "Swift Pro",
     "swiftreason.auto": "Swift Reason",
     "swiftagent.auto": "Swift Agent",
@@ -157,6 +177,12 @@ function timeoutController(ms: number) {
     signal: ctl.signal,
     clear: () => clearTimeout(id),
   }
+}
+
+function googleVertexEndpoint(location: string) {
+  if (location === "global") return "aiplatform.googleapis.com"
+  if (location === "eu" || location === "us") return `aiplatform.${location}.rep.googleapis.com`
+  return `${location}-aiplatform.googleapis.com`
 }
 
 function googleVertexAnthropicBaseURL(project: string | undefined, location: string | undefined) {
@@ -244,6 +270,48 @@ function custom(dep: CustomDep): Record<string, CustomLoader> {
           },
         },
       }),
+    openswiftscale: Effect.fnUntraced(function* (input: Info) {
+      const env = yield* dep.env()
+      const stored = yield* dep.auth(input.id)
+      const cfg = yield* dep.config()
+      const configuredKey = cfg.provider?.["openswiftscale"]?.options?.apiKey
+      const key =
+        env.OPEN_SWIFT_SCALE_KEY ??
+        (stored?.type === "api" ? stored.key : undefined) ??
+        (typeof configuredKey === "string" ? configuredKey : undefined)
+      const configuredURL = cfg.provider?.["openswiftscale"]?.options?.baseURL
+      const baseURL = (
+        (typeof configuredURL === "string" ? configuredURL : undefined) ??
+        env.OPEN_SWIFT_SCALE_BASE_URL ??
+        Object.values(input.models)[0]?.api.url ??
+        "http://127.0.0.1:8080/v1"
+      ).replace(/\/$/, "")
+
+      if (key) {
+        const modelIDs = yield* Effect.promise(async () => {
+          try {
+            const response = await fetch(`${baseURL}/models`, {
+              headers: { Authorization: `Bearer ${key}` },
+              signal: AbortSignal.timeout(10_000),
+            })
+            if (!response.ok) return undefined
+            const body = (await response.json()) as { data?: Array<{ id?: unknown }> }
+            return body.data?.flatMap((item) => (typeof item.id === "string" ? [item.id] : []))
+          } catch {
+            return undefined
+          }
+        })
+        applyOpenSwiftScaleCatalog(input.models, modelIDs)
+      }
+
+      return {
+        autoload: Object.keys(input.models).length > 0,
+        options: {
+          ...(key ? { apiKey: key } : {}),
+          baseURL,
+        },
+      }
+    }),
     swiftcoder: Effect.fnUntraced(function* (input: Info) {
       const env = yield* dep.env()
       const stored = yield* dep.auth(input.id)
@@ -644,7 +712,7 @@ function custom(dep: CustomDep): Record<string, CustomLoader> {
       return {
         autoload: true,
         vars(_options: Record<string, any>) {
-          const endpoint = location === "global" ? "aiplatform.googleapis.com" : `${location}-aiplatform.googleapis.com`
+          const endpoint = googleVertexEndpoint(location)
           return {
             ...(project && { GOOGLE_VERTEX_PROJECT: project }),
             GOOGLE_VERTEX_LOCATION: location,

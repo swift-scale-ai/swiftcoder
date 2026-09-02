@@ -21,6 +21,7 @@ type ProviderItem = ReturnType<ReturnType<typeof useProviders>["connected"]>[num
 const PROVIDER_NOTES = [
   { match: (id: string) => id === "swiftcoder", key: "dialog.provider.swiftcoder.note" },
   { match: (id: string) => id === "swiftcoder", key: "dialog.provider.swiftcoderGo.tagline" },
+  { match: (id: string) => id === "openswiftscale", key: "dialog.provider.openswiftscale.note" },
   { match: (id: string) => id === "anthropic", key: "dialog.provider.anthropic.note" },
   { match: (id: string) => id.startsWith("github-copilot"), key: "dialog.provider.copilot.note" },
   { match: (id: string) => id === "openai", key: "dialog.provider.openai.note" },

@@ -14,7 +14,12 @@ import { Auth } from "@/auth"
 import { Config } from "@/config/config"
 import { Env } from "../../src/env"
 import { Plugin } from "../../src/plugin/index"
-import { applySwiftScaleCatalog, Provider, swiftScaleCatalogModelIDs } from "@/provider/provider"
+import {
+  applyOpenSwiftScaleCatalog,
+  applySwiftScaleCatalog,
+  Provider,
+  swiftScaleCatalogModelIDs,
+} from "@/provider/provider"
 import { resolveSwiftScaleBaseURL } from "@/provider/swiftscale-base-url"
 
 import { RuntimeFlags } from "@/effect/runtime-flags"
@@ -2077,6 +2082,22 @@ test("SwiftScale catalog keeps entitled Swift, GPT, Claude, and Gemini models", 
   expect(models["swiftlite.auto"].name).toBe("Swift Lite")
 })
 
+test("OpenSwiftScale catalog follows the gateway model list", () => {
+  const models = {
+    "gpt-5.6-luna": {
+      id: "gpt-5.6-luna",
+      name: "GPT-5.6 Luna",
+      family: "gpt-5.6",
+      api: { id: "gpt-5.6-luna" },
+    },
+  } as any
+
+  applyOpenSwiftScaleCatalog(models, ["gpt-5.6-luna", "claude-sonnet-5"])
+
+  expect(Object.keys(models)).toEqual(["gpt-5.6-luna", "claude-sonnet-5"])
+  expect(models["claude-sonnet-5"].api.id).toBe("claude-sonnet-5")
+})
+
 test("SwiftScale catalog does not invent unknown direct model metadata", () => {
   const models = {
     "swiftlite.auto": { name: "SwiftScale" },
@@ -2096,7 +2117,7 @@ test("Coding Plan catalog exposes one SwiftScale model", () => {
   applySwiftScaleCatalog(models, ["swiftlite.auto"])
 
   expect(Object.keys(models)).toEqual(["swiftlite.auto"])
-  expect(models["swiftlite.auto"].name).toBe("SwiftScale")
+  expect(models["swiftlite.auto"].name).toBe("SwiftScaleCloud")
 })
 
 test("account OAuth catalog excludes API Services commercial models", () => {
