@@ -29,11 +29,11 @@ describe("SwiftScale desktop OAuth contract", () => {
   test("uses the public consent page and account API in production", () => {
     expect(authEndpoints()).toEqual({
       authorize: "https://swift-scale.com/swiftcoder/authorize/",
-      token: "https://admin-api.swift-scale.com/v1/auth/desktop/token",
-      revoke: "https://admin-api.swift-scale.com/v1/auth/desktop/revoke",
+      token: "https://swift-scale.com/v1/auth/desktop/token",
+      revoke: "https://swift-scale.com/v1/auth/desktop/revoke",
     })
-    expect(accountEndpoints().entitlements).toBe("https://admin-api.swift-scale.com/v1/account/entitlements")
-    expect(accountEndpoints().profile).toBe("https://admin-api.swift-scale.com/v1/auth/me")
+    expect(accountEndpoints().entitlements).toBe("https://swift-scale.com/v1/account/entitlements")
+    expect(accountEndpoints().profile).toBe("https://swift-scale.com/v1/auth/me")
   })
 
   test("reads the latest cloud display name without changing the product plan", () => {

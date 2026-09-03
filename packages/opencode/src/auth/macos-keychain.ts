@@ -5,7 +5,7 @@ const execFile = promisify(execFileCallback)
 const service = "com.swiftscale.swiftcoder.oauth"
 const account = "swiftcoder"
 const common = ["-a", account, "-s", service]
-const defaultAuthBaseURL = "https://admin-api.swift-scale.com/v1/auth/desktop"
+const defaultAuthBaseURL = "https://swift-scale.com/v1/auth/desktop"
 
 export const enabled = () => process.platform === "darwin" && process.env.SWIFTCODER_CLIENT === "desktop"
 
@@ -13,6 +13,17 @@ export const tokenEndpoint = (baseURL = process.env.SWIFTCODER_AUTH_BASE_URL ?? 
   `${baseURL.replace(/\/$/, "")}/token`
 
 let refreshing: Promise<unknown | undefined> | undefined
+
+export const tolerateRefreshFailure = async <T>(operation: Promise<T>) => {
+  try {
+    return await operation
+  } catch {
+    // SwiftScaleCloud authentication is optional for local project access.
+    // The desktop process reports the account error and lets a new login
+    // replace the preserved Keychain credential.
+    return undefined
+  }
+}
 
 export const read = async (options: { forceRefresh?: boolean } = {}): Promise<unknown | undefined> => {
   try {
@@ -31,7 +42,7 @@ export const read = async (options: { forceRefresh?: boolean } = {}): Promise<un
       refreshing ??= refresh(envelope).finally(() => {
         refreshing = undefined
       })
-      return await refreshing
+      return await tolerateRefreshFailure(refreshing)
     }
     return envelope.auth
   } catch (error) {

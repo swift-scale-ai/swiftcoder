@@ -20,7 +20,6 @@ import type { AsyncStorage } from "@solid-primitives/storage"
 import { createMemoryHistory, MemoryRouter, type BaseRouterProps } from "@solidjs/router"
 import { createEffect, createMemo, createResource, createSignal, onCleanup, Show } from "solid-js"
 import { render } from "solid-js/web"
-import pkg from "../../package.json"
 import { t } from "./i18n"
 import { initializationData } from "./initialization"
 import { DesktopFirstLaunchOnboarding } from "./onboarding"
@@ -39,7 +38,7 @@ if (import.meta.env.VITE_SENTRY_DSN) {
   Sentry.init({
     dsn: import.meta.env.VITE_SENTRY_DSN,
     environment: import.meta.env.VITE_SENTRY_ENVIRONMENT ?? import.meta.env.MODE,
-    release: import.meta.env.VITE_SENTRY_RELEASE ?? `desktop@${pkg.version}`,
+    release: import.meta.env.VITE_SENTRY_RELEASE ?? `desktop@${import.meta.env.SWIFTCODER_VERSION}`,
     initialScope: {
       tags: {
         platform: "desktop",
@@ -158,7 +157,7 @@ const createPlatform = (windowState: DesktopWindowState): Platform => {
   return {
     platform: "desktop",
     os,
-    version: pkg.version,
+    version: import.meta.env.SWIFTCODER_VERSION,
     windowID: windowState.id,
 
     async openDirectoryPickerDialog(opts) {

@@ -27,7 +27,20 @@ if pgrep -f "$RUNNING_APP_PATTERN" >/dev/null 2>&1; then
 fi
 
 export SWIFTCODER_CHANNEL="dev"
-export SWIFTCODER_VERSION="0.2.5-dev"
+if [[ -z "${SWIFTCODER_VERSION:-}" ]]; then
+  LATEST_TAG="$(git describe --tags --match 'v[0-9]*' --abbrev=0 2>/dev/null || true)"
+  if [[ -n "$LATEST_TAG" ]]; then
+    SWIFTCODER_VERSION="${LATEST_TAG#v}-dev"
+  else
+    PACKAGE_VERSION="$(bun -e 'console.log(require("./packages/desktop/package.json").version)')"
+    SWIFTCODER_VERSION="${PACKAGE_VERSION}-dev"
+  fi
+fi
+if [[ ! "$SWIFTCODER_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?(\+[0-9A-Za-z.-]+)?$ ]]; then
+  echo "Invalid SWIFTCODER_VERSION: $SWIFTCODER_VERSION" >&2
+  exit 1
+fi
+export SWIFTCODER_VERSION
 export SWIFTCODER_SKIP_NOTARIZE="1"
 export CSC_IDENTITY_AUTO_DISCOVERY="false"
 

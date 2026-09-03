@@ -235,7 +235,7 @@ const main = Effect.gen(function* () {
   app.on("second-instance", (_event: Event, argv: string[]) => {
     const urls = argv.filter((arg: string) => deepLinks.accepts(arg))
     if (urls.length) {
-      logger.log("deep link received via second-instance", { urls })
+      logger.log("deep link received via second-instance", { count: urls.length })
       emitDeepLinks(urls)
     }
     const win = getLastFocusedWindow()
@@ -247,7 +247,7 @@ const main = Effect.gen(function* () {
 
   app.on("open-url", (event: Event, url: string) => {
     event.preventDefault()
-    logger.log("deep link received via open-url", { url })
+    logger.log("deep link received via open-url", { protocol: new URL(url).protocol })
     emitDeepLinks([url])
   })
 

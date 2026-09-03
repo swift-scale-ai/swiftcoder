@@ -208,11 +208,20 @@ export const createSwiftScaleAuthController = (input?: {
       return true
     },
     async credentialForSidecar() {
-      const current = await read()
-      const saved = current ? await fresh(current) : undefined
-      if (!saved) return undefined
-      if (saved.auth.expires <= now()) return undefined
-      return JSON.stringify({ swiftcoder: saved.auth })
+      try {
+        const current = await read()
+        const saved = current ? await fresh(current) : undefined
+        if (!saved) return undefined
+        if (saved.auth.expires <= now()) return undefined
+        return JSON.stringify({ swiftcoder: saved.auth })
+      } catch (error) {
+        // An expired or temporarily unavailable cloud session must not prevent
+        // the local server from starting. Keep the credential so a successful
+        // sign-in can replace it and expose the failure through account status.
+        lastError = error instanceof Error ? error.message : "SwiftScale authentication failed"
+        input?.onChanged?.({ state: "error", message: lastError })
+        return undefined
+      }
     },
   }
 }

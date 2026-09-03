@@ -6,8 +6,8 @@ export const SWIFTSCALE_KEYCHAIN_ACCOUNT = "swiftcoder"
 export const SWIFTSCALE_CALLBACK_URL = "swiftcoder://auth/callback"
 
 const DEFAULT_AUTHORIZATION_URL = "https://swift-scale.com/swiftcoder/authorize/"
-const DEFAULT_AUTH_BASE_URL = "https://admin-api.swift-scale.com/v1/auth/desktop"
-const DEFAULT_ACCOUNT_BASE_URL = "https://admin-api.swift-scale.com/v1"
+const DEFAULT_AUTH_BASE_URL = "https://swift-scale.com/v1/auth/desktop"
+const DEFAULT_ACCOUNT_BASE_URL = "https://swift-scale.com/v1"
 
 export type SwiftScaleAccount = {
   id: string
