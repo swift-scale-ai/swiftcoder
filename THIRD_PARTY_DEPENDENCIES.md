@@ -475,7 +475,7 @@ Package-specific license and notice files remain authoritative.
 | @ungap/structured-clone | 1.3.3 | ISC | LICENSE | <https://github.com/ungap/structured-clone> |
 | @valibot/to-json-schema | 1.6.0 | MIT | LICENSE.md | <https://github.com/open-circle/valibot> |
 | @vercel/oidc | 3.2.0 | Apache-2.0 | LICENSE | <https://github.com/vercel/vercel> |
-| @xmldom/xmldom | 0.9.12 | MIT | LICENSE | <git://github.com/xmldom/xmldom> |
+| @xmldom/xmldom | 0.8.15 | MIT | LICENSE | <git://github.com/xmldom/xmldom> |
 | @zip.js/zip.js | 2.7.62 | BSD-3-Clause | LICENSE | <https://github.com/gildas-lormeau/zip.js> |
 | abbrev | 4.0.0 | ISC | LICENSE | <https://github.com/npm/abbrev-js> |
 | abstract-logging | 2.0.1 | MIT |  | <https://github.com/jsumners/abstract-logging> |

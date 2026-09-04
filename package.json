@@ -156,7 +156,7 @@
     "@opentelemetry/core": "2.10.0",
     "@types/bun": "catalog:",
     "@types/node": "catalog:",
-    "@xmldom/xmldom": "0.9.12",
+    "@xmldom/xmldom": "0.8.15",
     "app-builder-lib": "26.15.3",
     "body-parser": "2.3.0",
     "builder-util-runtime": "9.7.0",
