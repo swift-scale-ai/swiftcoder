@@ -2,11 +2,12 @@
 set -euo pipefail
 
 ROOT="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
+CORE_ROOT="$ROOT/../swiftcore"
 BUN="$ROOT/.tools/bun"
 
 "$ROOT/tools/check-phase1.sh"
 
-(cd "$ROOT/packages/core" && "$BUN" test test/filesystem/filesystem.test.ts)
+(cd "$CORE_ROOT/packages/core" && "$BUN" test test/filesystem/filesystem.test.ts)
 
 (cd "$ROOT/packages/opencode" && "$BUN" test \
   test/agent/agent.test.ts \

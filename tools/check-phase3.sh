@@ -11,6 +11,8 @@ BUN="$ROOT/.tools/bun"
   src/main/ipc-contract.test.ts \
   src/main/local-data.test.ts \
   src/main/renderer-security.test.ts \
+  src/main/server-url.test.ts \
+  src/main/sidecar-idle.test.ts \
   src/main/local-server-security.test.ts)
 (cd "$ROOT/packages/opencode" && "$BUN" test test/config/product-policy.test.ts)
 (cd "$ROOT/packages/opencode" && "$BUN" test test/session/messages-pagination.test.ts)

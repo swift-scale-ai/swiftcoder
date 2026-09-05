@@ -1,7 +1,7 @@
 {
   "name": "@swiftscale/swiftcoder-desktop",
   "private": true,
-  "version": "0.2.5",
+  "version": "0.3.0",
   "description": "SwiftScale-powered AI coding agent for macOS",
   "type": "module",
   "license": "MIT",
@@ -50,7 +50,7 @@
     "@types/node": "catalog:",
     "@typescript/native": "catalog:",
     "@valibot/to-json-schema": "1.6.0",
-    "electron": "42.8.1",
+    "electron": "42.11.1",
     "electron-builder": "26.15.3",
     "electron-vite": "^5",
     "solid-js": "catalog:",

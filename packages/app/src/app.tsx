@@ -3,7 +3,6 @@ import * as Sentry from "@sentry/solid"
 import { I18nProvider } from "@swiftscale/ui/context"
 import { DialogProvider } from "@swiftscale/ui/context/dialog"
 import { FileComponentProvider } from "@swiftscale/ui/context/file"
-import { File } from "@swiftscale/session-ui/file"
 import { Font } from "@swiftscale/ui/font"
 import { Splash } from "@swiftscale/ui/logo"
 import { ThemeProvider } from "@swiftscale/ui/theme/context"
@@ -58,17 +57,18 @@ import { TabsProvider, useTabs, type DraftTab } from "@/context/tabs"
 import { SDKProvider, useSDK } from "@/context/sdk"
 import { WslServersProvider } from "@/wsl/context"
 import DirectoryLayout, { DirectoryDataProvider } from "@/pages/directory-layout"
-import LegacyLayout from "@/pages/layout"
 import { ErrorPage } from "./pages/error"
 import { useCheckServerHealth } from "./utils/server-health"
 import { legacySessionHref, legacySessionServer, parseServerKey, requireServerKey, sessionHref } from "./utils/session-route"
 import { createSessionLineage } from "@/pages/session/session-lineage"
 
 import { SessionPage, SessionRouteErrorBoundary, TargetSessionRouteContent } from "@/pages/session"
-import { NewHome } from "@/pages/home"
-import { LegacyHome } from "@/pages/home/legacy-home"
 
 const NewSession = lazy(() => import("@/pages/new-session"))
+const File = lazy(() => import("@swiftscale/session-ui/file").then((module) => ({ default: module.File })))
+const LegacyLayout = lazy(() => import("@/pages/layout"))
+const NewHome = lazy(() => import("@/pages/home").then((module) => ({ default: module.NewHome })))
+const LegacyHome = lazy(() => import("@/pages/home/legacy-home").then((module) => ({ default: module.LegacyHome })))
 
 const SessionRoute = () => {
   const settings = useSettings()

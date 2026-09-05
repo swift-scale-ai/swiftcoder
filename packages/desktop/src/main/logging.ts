@@ -1,7 +1,8 @@
 import { MainLogger } from "electron-log"
 import log from "electron-log/main.js"
 import { app, crashReporter, netLog, shell } from "electron"
-import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from "node:fs"
+import { existsSync, mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from "node:fs"
+import { readdir, rm, stat } from "node:fs/promises"
 import { ZipWriter, BlobWriter, BlobReader } from "@zip.js/zip.js"
 import { dirname, join } from "node:path"
 import { homedir } from "node:os"
@@ -29,7 +30,7 @@ export function initLogging() {
     )
   log.initialize({ preload: false, spyRendererConsole: true })
   initConsoleTransport()
-  cleanup()
+  void cleanup().catch((error) => log.warn("failed to clean old logs", error))
   return (logger = log)
 }
 
@@ -130,15 +131,15 @@ function safeLogName(name: string) {
   return name.replace(/[^a-z0-9_.-]/gi, "_") || "main"
 }
 
-function cleanup() {
+async function cleanup() {
   const dir = root || dirname(log.transports.file.getFile().path)
   const cutoff = Date.now() - MAX_LOG_AGE_DAYS * 24 * 60 * 60 * 1000
 
-  for (const entry of readdirSync(dir)) {
+  for (const entry of await readdir(dir)) {
     const file = join(dir, entry)
     try {
-      const info = statSync(file)
-      if (info.mtimeMs < cutoff) rmSync(file, { recursive: true, force: true })
+      const info = await stat(file)
+      if (info.mtimeMs < cutoff) await rm(file, { recursive: true, force: true })
     } catch {
       continue
     }

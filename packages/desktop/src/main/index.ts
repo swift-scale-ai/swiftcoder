@@ -60,6 +60,7 @@ const jsCallStackFeature = "DocumentPolicyIncludeJSCallStacksInCrashReports"
 let logger: ReturnType<typeof initLogging>
 let server: SidecarListener | null = null
 let swiftScaleAuth: SwiftScaleAuthController | null = null
+let idleShutdownTimer: NodeJS.Timeout | undefined
 
 const deepLinks = createDeepLinkRouter(SWIFTCODER_DESKTOP_PRODUCT.protocol)
 
@@ -84,6 +85,37 @@ async function killSidecar() {
   const current = server
   server = null
   await current.stop()
+}
+
+function cancelIdleShutdown() {
+  if (!idleShutdownTimer) return
+  clearInterval(idleShutdownTimer)
+  idleShutdownTimer = undefined
+}
+
+function scheduleIdleShutdown() {
+  if (process.platform !== "darwin" || idleShutdownTimer) return
+  if (SIDECAR_VERSION === "v2") {
+    app.quit()
+    return
+  }
+
+  const check = async () => {
+    if (BrowserWindow.getAllWindows().length > 0) {
+      cancelIdleShutdown()
+      return
+    }
+    const current = server
+    if (!current || !(await current.isIdle())) return
+    cancelIdleShutdown()
+    setAppQuitting()
+    await killSidecar()
+    app.quit()
+  }
+
+  idleShutdownTimer = setInterval(() => void check(), 15_000)
+  idleShutdownTimer.unref()
+  void check()
 }
 
 function ensureLoopbackNoProxy() {
@@ -230,7 +262,7 @@ const main = Effect.gen(function* () {
   app.commandLine.appendSwitch("enable-features", features ? `${jsCallStackFeature},${features}` : jsCallStackFeature)
   if (!app.isPackaged && !TEST_ONBOARDING) app.commandLine.appendSwitch("remote-debugging-port", "9222")
 
-  preferAppEnv(app.getPath("userData"), Boolean(onboardingTestRoot))
+  const appEnvReady = preferAppEnv(app.getPath("userData"), Boolean(onboardingTestRoot))
 
   app.on("second-instance", (_event: Event, argv: string[]) => {
     const urls = argv.filter((arg: string) => deepLinks.accepts(arg))
@@ -252,11 +284,13 @@ const main = Effect.gen(function* () {
   })
 
   app.on("before-quit", () => {
+    cancelIdleShutdown()
     setAppQuitting()
     void stopSidecars()
   })
 
   app.on("will-quit", () => {
+    cancelIdleShutdown()
     setAppQuitting()
     void stopSidecars()
   })
@@ -438,6 +472,8 @@ const main = Effect.gen(function* () {
   const loadingTask = yield* Effect.gen(function* () {
     logger.log("sidecar connection started", { version: SIDECAR_VERSION })
 
+    yield* Effect.promise(() => appEnvReady)
+
     ensureLoopbackNoProxy()
     useEnvProxy()
     const authContent = yield* Effect.promise(() => swiftScaleAuth!.credentialForSidecar())
@@ -537,19 +573,23 @@ const main = Effect.gen(function* () {
     logger.log("loading task finished")
   }).pipe(forwardInitializationFailure(serverReady), Effect.forkChild)
 
-  yield* Fiber.await(loadingTask)
-
   app.on("window-all-closed", () => {
-    if (process.platform === "darwin") return
+    if (process.platform === "darwin") {
+      scheduleIdleShutdown()
+      return
+    }
     app.quit()
   })
   app.on("activate", () => {
+    cancelIdleShutdown()
     if (BrowserWindow.getAllWindows().length > 0) return
     restoreMainWindows()
   })
 
   const windows = restoreMainWindows()
   if (windows.length) createMenu(menuDeps)
+
+  yield* Fiber.await(loadingTask)
 })
 
 Effect.runFork(main)

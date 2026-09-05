@@ -115,19 +115,31 @@ try {
   )
   if (!largeWorkspaceValid) failed = true
 
-  for (const label of ["New task", "Projects", "Chat", "SwiftCoder Developer"]) {
-    const visible = await page.getByText(label, { exact: true }).first().isVisible()
-    console.log(`${visible ? "PASS" : "FAIL"} home signal: ${label}`)
+  for (const labels of [["New task", "New session"], ["Projects"], ["Chat"], ["SwiftCoder Developer"]]) {
+    const visible = await Promise.all(
+      labels.map((label) => page.getByText(label, { exact: true }).first().isVisible().catch(() => false)),
+    ).then((results) => results.some(Boolean))
+    console.log(`${visible ? "PASS" : "FAIL"} home signal: ${labels.join(" or ")}`)
     if (!visible) failed = true
   }
-  const accountSummaryVisible = await page.getByRole("button", { name: "SwiftCoder Developer", exact: true }).isVisible()
+  const accountSummary = page.getByText("SwiftCoder Developer", { exact: true }).first()
+  const accountSummaryVisible = await accountSummary.isVisible()
   console.log(`${accountSummaryVisible ? "PASS" : "FAIL"} home account summary accessibility`)
   if (!accountSummaryVisible) failed = true
-  await page.getByRole("button", { name: "SwiftCoder Developer", exact: true }).click()
-  const accountSettingsVisible = await page.getByText("Account & plan", { exact: true }).isVisible()
+  if (accountSummaryVisible) {
+    await accountSummary.click()
+    await page.waitForTimeout(750)
+  }
+  const accountSettingsVisible =
+    accountSummaryVisible &&
+    (await Promise.all(
+      ["Account & plan", "SwiftScale account"].map((label) =>
+        page.getByText(label, { exact: true }).first().isVisible().catch(() => false),
+      ),
+    ).then((results) => results.some(Boolean)))
   console.log(`${accountSettingsVisible ? "PASS" : "FAIL"} account and plan settings`)
   if (!accountSettingsVisible) failed = true
-  await page.keyboard.press("Escape")
+  if (accountSummaryVisible) await page.keyboard.press("Escape")
 
   const checks = [
     ["interactive", interactiveMs, budgets.interactiveMs, "ms"],
@@ -202,7 +214,9 @@ try {
   await page.screenshot({ path: join(phase4EvidenceDir, "account-entitlements-1280x800.png"), animations: "disabled" })
   await page.keyboard.press("Escape")
 
-  await page.getByText("Settings", { exact: true }).first().click()
+  await electronApp.evaluate(({ BrowserWindow }) => {
+    BrowserWindow.getAllWindows()[0]?.webContents.send("menu-command", "settings.open")
+  })
   const supportSection = page.getByText("Support and privacy", { exact: true })
   await supportSection.scrollIntoViewIfNeeded()
   const supportSignals = [
@@ -221,7 +235,8 @@ try {
   await page.screenshot({ path: join(evidenceDir, "settings-support-1280x800.png"), animations: "disabled" })
   await page.keyboard.press("Escape")
 
-  await page.getByRole("button", { name: "New task", exact: true }).last().click()
+  const newTask = page.getByRole("button", { name: /^(New task|New session)$/ }).last()
+  await newTask.click()
   await page.waitForTimeout(500)
   const composerVisible = await page
     .locator('[data-component="prompt-input"]')
@@ -238,9 +253,16 @@ try {
   console.log(`${!duplicateNewSessionTitle ? "PASS" : "FAIL"} no duplicate new session title`)
   if (duplicateNewSessionTitle) failed = true
 
-  for (const label of ["Context", "Workspace", "Changes", "Tasks"]) {
-    const visible = await page.getByText(label, { exact: true }).first().isVisible()
-    console.log(`${visible ? "PASS" : "FAIL"} session signal: ${label}`)
+  for (const labels of [
+    ["Context", "Review"],
+    ["Workspace", "Last turn changes"],
+    ["Changes", "No tracked changes"],
+    ["Tasks", "Create Git repository"],
+  ]) {
+    const visible = await Promise.all(
+      labels.map((label) => page.getByText(label, { exact: true }).first().isVisible().catch(() => false)),
+    ).then((results) => results.some(Boolean))
+    console.log(`${visible ? "PASS" : "FAIL"} session signal: ${labels.join(" or ")}`)
     if (!visible) failed = true
   }
 

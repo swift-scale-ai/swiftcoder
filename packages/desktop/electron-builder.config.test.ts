@@ -22,6 +22,16 @@ for (const channel of channels) {
     expect(config.productName).toBe(channel.productName)
     expect(config.mac?.hardenedRuntime).toBe(true)
     expect(config.mac?.target).toEqual(["dmg", "zip"])
+    expect(config.electronFuses).toEqual({
+      runAsNode: false,
+      enableCookieEncryption: true,
+      enableNodeOptionsEnvironmentVariable: false,
+      enableNodeCliInspectArguments: false,
+      enableEmbeddedAsarIntegrityValidation: true,
+      onlyLoadAppFromAsar: true,
+      loadBrowserProcessSpecificV8Snapshot: false,
+      grantFileProtocolExtraPrivileges: false,
+    })
     expect(config.protocols).toMatchObject({ schemes: ["swiftcoder"] })
     expect(config.publish).toEqual({
       provider: "generic",

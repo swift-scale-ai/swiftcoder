@@ -42,6 +42,16 @@ const getBase = (appId: string): Configuration => ({
     "!resources/linux/**",
     "!resources/*.metainfo.xml",
   ],
+  electronFuses: {
+    runAsNode: false,
+    enableCookieEncryption: true,
+    enableNodeOptionsEnvironmentVariable: false,
+    enableNodeCliInspectArguments: false,
+    enableEmbeddedAsarIntegrityValidation: true,
+    onlyLoadAppFromAsar: true,
+    loadBrowserProcessSpecificV8Snapshot: false,
+    grantFileProtocolExtraPrivileges: false,
+  },
   extraResources: [
     { from: path.join(packageDir, "../../LICENSE"), to: "legal/LICENSE.txt" },
     { from: path.join(packageDir, "../../THIRD_PARTY_NOTICES.md"), to: "legal/THIRD_PARTY_NOTICES.md" },

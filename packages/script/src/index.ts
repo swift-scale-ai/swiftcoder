@@ -35,12 +35,11 @@ const IS_PREVIEW = CHANNEL !== "latest"
 const VERSION = await (async () => {
   if (env.SWIFTCODER_VERSION) return env.SWIFTCODER_VERSION
   if (IS_PREVIEW) return `0.0.0-${CHANNEL}-${new Date().toISOString().slice(0, 16).replace(/[-:T]/g, "")}`
-  const version = await fetch("https://registry.npmjs.org/opencode-ai/latest")
-    .then((res) => {
-      if (!res.ok) throw new Error(res.statusText)
-      return res.json()
-    })
-    .then((data: any) => data.version)
+  const baseline = (await Bun.file(path.resolve(import.meta.dir, "../../desktop/package.json")).json()).version
+  const tags = await $`git tag --merged HEAD --list ${"v*"}`.cwd(path.dirname(rootPkgPath)).text()
+  const version = [baseline, ...tags.trim().split(/\s+/).map((tag) => tag.replace(/^v/, ""))]
+    .filter((version) => semver.valid(version) && !semver.prerelease(version))
+    .sort(semver.rcompare)[0]
   const [major, minor, patch] = version.split(".").map((x: string) => Number(x) || 0)
   const t = env.SWIFTCODER_BUMP?.toLowerCase()
   if (t === "major") return `${major + 1}.0.0`
