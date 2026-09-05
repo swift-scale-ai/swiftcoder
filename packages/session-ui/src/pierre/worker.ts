@@ -14,12 +14,10 @@ function createPool(lineDiffType: "none" | "word-alt") {
   const pool = new WorkerPoolManager(
     {
       workerFactory,
-      // poolSize defaults to 8. More workers = more parallelism but
-      // also more memory. Too many can actually slow things down.
-      // NOTE: 2 is probably better for SwiftCoder, as I think 8 might be
-      // a bit overkill, especially because Safari has a significantly slower
-      // boot up time for workers
-      poolSize: 2,
+      // Diff work is bursty and each worker owns a Shiki WASM/highlighter
+      // instance. One worker keeps idle memory bounded; queued work still
+      // preserves correctness and large files are virtualized by the viewer.
+      poolSize: 1,
     },
     {
       theme: "SwiftCoder",
