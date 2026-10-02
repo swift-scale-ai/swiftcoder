@@ -1135,7 +1135,7 @@ describe("SessionRunnerLLM", () => {
 
       expect(requests).toHaveLength(2)
       expect(userTexts(requests[0])[0]).toContain(
-        "<previous-summary>\n## Objective\n- Preserve the task\n</previous-summary>",
+        "<prior-summary>\n## Objective\n- Preserve the task\n</prior-summary>",
       )
       expect(userTexts(requests[0])[0]).toContain("Recent exact request")
       expect((yield* (yield* SessionStore.Service).context(sessionID))[0]).toMatchObject({
@@ -2481,6 +2481,29 @@ describe("SessionRunnerLLM", () => {
       expect(keys).toEqual([longSessionID.slice(4), otherLongSessionID.slice(4)])
       expect(keys.every((key) => typeof key === "string" && key.length === 64)).toBe(true)
       expect(keys[0]).not.toBe(keys[1])
+      expect(requests.map((request) => request.http?.headers?.["x-swiftcoder-session-id"])).toEqual([
+        longSessionID,
+        otherLongSessionID,
+      ])
+      expect(requests.every((request) => request.http?.headers?.["x-swiftcoder-parent-session-id"] === undefined)).toBe(true)
+    }),
+  )
+
+  it.effect("adds parent identity headers to native child session requests", () =>
+    Effect.gen(function* () {
+      yield* setup
+      yield* insertSession(otherSessionID)
+      const { db } = yield* Database.Service
+      yield* db.update(SessionTable).set({ parent_id: otherSessionID }).where(eq(SessionTable.id, sessionID)).run()
+      const session = yield* SessionV2.Service
+      yield* session.prompt({ sessionID, prompt: Prompt.make({ text: "Run child" }), resume: false })
+      requests.length = 0
+      yield* session.resume(sessionID)
+      expect(requests[0].http?.headers).toMatchObject({
+        "x-swiftcoder-session-id": sessionID,
+        "x-swiftcoder-parent-session-id": otherSessionID,
+        "x-parent-session-id": otherSessionID,
+      })
     }),
   )
 

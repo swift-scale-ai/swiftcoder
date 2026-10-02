@@ -11,10 +11,10 @@
 [Architecture](#architecture) · [Packages](#package-map) · [Quick Start](#quick-start) · [Contributing](CONTRIBUTING.md)
 
 SwiftCore is the product-neutral foundation behind
-[SwiftCoder](https://github.com/swift-scale-ai/swiftcoder) and SwiftWorks. It
-provides reusable schemas, protocols, sessions, permissions, tools, model
-integration, plugins, storage, server APIs, desktop lifecycle primitives, and
-interface components for agent-powered applications.
+[SwiftCoder](https://github.com/swift-scale-ai/swiftcoder). It provides reusable
+schemas, protocols, sessions, permissions, tools, model integration, plugins,
+storage, server APIs, desktop lifecycle primitives, and interface components
+for agent-powered applications.
 
 SwiftCore exists so products can share a reliable agent platform without
 sharing product workflows or branding.
@@ -37,7 +37,7 @@ sharing product workflows or branding.
 
 ```mermaid
 flowchart TB
-    products["Product applications<br/>SwiftCoder · SwiftWorks"]
+    products["Product applications<br/>SwiftCoder"]
     experience["Reusable experience<br/>desktop-kit · ui · session-ui"]
     api["Application contracts<br/>client · sdk · protocol · server · schema"]
     runtime["Agent runtime<br/>core · llm · plugin"]
@@ -55,11 +55,9 @@ flowchart TB
 The boundary is intentional:
 
 ```text
-SwiftCoder ─┐
-            ├──> SwiftCore
-SwiftWorks ─┘
+SwiftCoder ──> SwiftCore
 
-SwiftCore -X-> SwiftCoder / SwiftWorks
+SwiftCore -X-> SwiftCoder
 ```
 
 Product-specific workflows, copy, branding, and release logic stay in their
