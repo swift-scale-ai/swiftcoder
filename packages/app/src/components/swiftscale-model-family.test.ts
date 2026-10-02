@@ -10,6 +10,15 @@ import {
 } from "./swiftscale-model-family"
 
 describe("SwiftScale model families", () => {
+  test("keeps open and commercial direct models outside the SwiftScale family", () => {
+    const models = [
+      { id: "deepseek-v4-flash", name: "DeepSeek V4 Flash" },
+      { id: "Qwen/Qwen3-Coder", name: "Qwen3 Coder" },
+      { id: "grok-code", name: "Grok Code" },
+    ]
+    expect(models.map(swiftScaleModelFamily)).toEqual(["DeepSeek", "Qwen", "Grok"])
+    expect(groupSwiftScaleModelsByFamily(models)).toHaveLength(3)
+  })
   test("classifies commercial and SwiftScale product models", () => {
     expect(swiftScaleModelFamily({ id: "gpt-5.4", name: "GPT-5.4" })).toBe("GPT")
     expect(swiftScaleModelFamily({ id: "claude-sonnet-4-6", name: "Claude Sonnet 4.6" })).toBe("Claude")

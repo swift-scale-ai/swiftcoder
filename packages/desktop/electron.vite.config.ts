@@ -2,7 +2,7 @@ import { sentryVitePlugin } from "@sentry/vite-plugin"
 import { defineConfig } from "electron-vite"
 import appPlugin from "@swiftscale/coder-app/vite"
 import * as fs from "node:fs/promises"
-import desktopPackage from "./package.json"
+import { resolveBuildVersion } from "./scripts/build-version"
 
 const SWIFTCODER_SERVER_DIST = "../opencode/dist/node"
 const SWIFTCODER_SERVER_ENTRY = "./chunks/swiftcoder-server.js"
@@ -14,7 +14,7 @@ const channel = (() => {
   return "dev"
 })()
 
-const version = process.env.SWIFTCODER_VERSION?.trim() || desktopPackage.version
+const version = resolveBuildVersion(channel)
 
 const nodePtyPkg = `@lydell/node-pty-${process.platform}-${process.arch}`
 

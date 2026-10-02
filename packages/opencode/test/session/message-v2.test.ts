@@ -494,6 +494,56 @@ describe("session.message-v2.toModelMessage", () => {
     })
   })
 
+  for (const [id, direct] of [
+    ["anthropic.claude-sonnet-4-6", true],
+    ["amazon.nova-pro-v1:0", true],
+    ["meta.llama4-maverick-17b-instruct-v1:0", true],
+    ["qwen.qwen3-vl-235b-a22b", false],
+  ] as const) {
+    test(`bedrock ${id} ${direct ? "retains" : "hoists"} tool-result images`, async () => {
+      const bedrockModel: Provider.Model = {
+        ...model,
+        api: { ...model.api, id, npm: "@ai-sdk/amazon-bedrock" },
+      }
+      const userID = "m-bedrock-image-user"
+      const assistantID = "m-bedrock-image-assistant"
+      const input: SessionV1.WithParts[] = [
+        { info: userInfo(userID), parts: [{ ...basePart(userID, "text"), type: "text", text: "Read image" }] },
+        {
+          info: assistantInfo(assistantID, userID),
+          parts: [
+            {
+              ...basePart(assistantID, "tool"),
+              type: "tool",
+              callID: "read-image",
+              tool: "read",
+              state: {
+                status: "completed",
+                input: {},
+                output: "Image read",
+                title: "Read",
+                metadata: {},
+                time: { start: 0, end: 1 },
+                attachments: [
+                  {
+                    ...basePart(assistantID, "image"),
+                    type: "file",
+                    mime: "image/png",
+                    url: "data:image/png;base64,Zm9v",
+                  },
+                ],
+              },
+            },
+          ],
+        },
+      ]
+      const messages = await MessageV2.toModelMessages(input, bedrockModel)
+      expect(messages.map((message) => message.role)).toEqual(
+        direct ? ["user", "assistant", "tool"] : ["user", "assistant", "tool", "user"],
+      )
+    })
+  }
+
   test("moves bedrock pdf tool-result media into a separate user message", async () => {
     const bedrockModel: Provider.Model = {
       ...model,
@@ -1390,7 +1440,7 @@ describe("session.message-v2.fromError", () => {
       },
       {
         code: "usage_not_included",
-        message: "To use Codex with your ChatGPT plan, upgrade to Plus: https://chatgpt.com/explore/plus.",
+        message: "This request is not included in your SwiftScale plan. Review your plan at https://swift-scale.com.",
       },
       {
         code: "invalid_prompt",

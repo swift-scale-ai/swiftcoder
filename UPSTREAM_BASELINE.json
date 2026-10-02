@@ -17,6 +17,71 @@
     "solidJs": "1.9.10"
   },
   "strategy": "controlled-fork",
+  "latestSelectiveSync": {
+    "appliedAt": "2026-10-02",
+    "upstreamCommit": "1ddb0873aee50d209d1a8d7f91b89c5daf692d49",
+    "upstreamPackageVersion": "1.18.34",
+    "mode": "selective-port-not-full-merge",
+    "features": [
+      "debug config secret redaction",
+      "Node npm file URL resolution and filesystem runtime cycle fix",
+      "macOS CLI ad-hoc signing before smoke tests",
+      "GPT-6 family OAuth compatibility and system prompt",
+      "numeric GPT major/minor eligibility checks",
+      "Gemini and Gemma thinking variants",
+      "Copilot interaction identity and adaptive thinking summary",
+      "Bedrock model-specific tool image handling",
+      "provider and Cloudflare gateway header/chunk timeout defaults",
+      "parent and child session identity headers in both LLM paths",
+      "ACP durable agent/model/variant restore and config option updates",
+      "MCP browser opener already-exited process handling"
+    ],
+    "upstreamCommits": [
+      "82d4c89031",
+      "ba341c6cac",
+      "f5ce4f881e",
+      "9b4882db54",
+      "500c46ec79",
+      "02a167e048",
+      "3a35b45db8",
+      "610df0b566",
+      "c0f09afef5",
+      "a9a6fad0fa",
+      "c10134729d",
+      "5cd8e68fdd",
+      "35fc7a776c",
+      "b04697366f",
+      "4eb29a64f0",
+      "e9f8a210b9",
+      "611cc73d84",
+      "0033bb3559",
+      "95daf90670",
+      "b471c2b449"
+    ],
+    "bundledCatalogUpdate": {
+      "source": "https://models.dev/api.json",
+      "models": ["gpt-6.1-sol", "gpt-6-astra", "gpt-6-luna", "gpt-6-sol"],
+      "scope": "openai-only-existing-catalog-preserved"
+    },
+    "localAdaptations": [
+      "SwiftCoder branding and SwiftScale model catalog preserved",
+      "explicitly configured providers allowed without broadening the default provider list",
+      "active product aliases no longer inherit deprecated legacy model status",
+      "native LLM headers use the existing request.http transport contract"
+    ],
+    "releaseStatus": "source-prepared-for-v0.3.1",
+    "validation": {
+      "swiftcoderRelatedTests": { "passed": 723, "failed": 0, "files": 13 },
+      "swiftcoreRelatedTests": { "passed": 90, "failed": 0, "files": 3 },
+      "swiftcoderWorkspaceTypecheck": "passed",
+      "swiftcoreTypecheck": "passed",
+      "repositoryBoundariesAndBranding": "passed",
+      "macOSArm64CliBuildSignatureAndVersionSmoke": "passed",
+      "desktopProductionBuild": "passed",
+      "electronSidecarIsolatedStartStopSmoke": "passed"
+    },
+    "corePinStatus": "pinned-in-.swiftcore-ref"
+  },
   "retainedWorkspaces": [
     "packages/app",
     "packages/client",
@@ -39,13 +104,5 @@
     "packages/tui",
     "packages/ui"
   ],
-  "excludedProductAreas": [
-    "console",
-    "enterprise",
-    "github-app",
-    "slack",
-    "stats",
-    "storybook",
-    "web-site"
-  ]
+  "excludedProductAreas": ["console", "enterprise", "github-app", "slack", "stats", "storybook", "web-site"]
 }

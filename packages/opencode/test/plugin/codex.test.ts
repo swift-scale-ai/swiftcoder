@@ -155,7 +155,7 @@ describe("plugin.codex", () => {
     const provider = {
       models: {
         ...Object.fromEntries(
-          ["gpt-5.4", "gpt-5.5", "gpt-5.6-sol", "gpt-5.6-terra", "gpt-5.6-luna", "gpt-5.7-pro"].map((id) => [
+          ["gpt-5.4", "gpt-5.5", "gpt-5.6-sol", "gpt-5.6-terra", "gpt-5.6-luna", "gpt-5.7-pro", "gpt-6-sol", "gpt-6-luna", "gpt-6", "gpt-5.10", "gpt-5.3", "gpt-4.9"].map((id) => [
             id,
             { id, api: { id }, limit, cost: {}, options: {} },
           ]),
@@ -184,6 +184,8 @@ describe("plugin.codex", () => {
     expect(models["gpt-5.6-sol"]?.limit).toEqual({ context: 500_000, input: 372_000, output: 128_000 })
     expect(models["gpt-5.6-terra"]?.limit).toEqual({ context: 500_000, input: 372_000, output: 128_000 })
     expect(models["gpt-5.6-luna"]?.limit).toEqual({ context: 500_000, input: 372_000, output: 128_000 })
+    for (const id of ["gpt-6-sol", "gpt-6-luna", "gpt-6", "gpt-5.10"]) expect(models[id]).toBeDefined()
+    for (const id of ["gpt-5.3", "gpt-4.9"]) expect(models[id]).toBeUndefined()
     expect(models["gpt-5.4-pro"]).toBeUndefined()
     expect(models["gpt-5.7-pro"]).toBeDefined()
     expect(models["gpt-5.6-sol-high"]).toBeDefined()

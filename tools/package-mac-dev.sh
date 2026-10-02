@@ -28,13 +28,7 @@ fi
 
 export SWIFTCODER_CHANNEL="dev"
 if [[ -z "${SWIFTCODER_VERSION:-}" ]]; then
-  LATEST_TAG="$(git describe --tags --match 'v[0-9]*' --abbrev=0 2>/dev/null || true)"
-  if [[ -n "$LATEST_TAG" ]]; then
-    SWIFTCODER_VERSION="${LATEST_TAG#v}-dev"
-  else
-    PACKAGE_VERSION="$(bun -e 'console.log(require("./packages/desktop/package.json").version)')"
-    SWIFTCODER_VERSION="${PACKAGE_VERSION}-dev"
-  fi
+  SWIFTCODER_VERSION="$(bun -e 'import { resolveBuildVersion } from "./packages/desktop/scripts/build-version.ts"; console.log(resolveBuildVersion("dev"))')"
 fi
 if [[ ! "$SWIFTCODER_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?(\+[0-9A-Za-z.-]+)?$ ]]; then
   echo "Invalid SWIFTCODER_VERSION: $SWIFTCODER_VERSION" >&2

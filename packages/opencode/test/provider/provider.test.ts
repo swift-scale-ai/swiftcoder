@@ -752,13 +752,16 @@ it.instance("getSmallModel returns appropriate small model", () =>
   }),
 )
 
-it.instance("getSmallModel prefers Gemini for Google Vertex", () =>
-  Effect.gen(function* () {
-    yield* set("GOOGLE_VERTEX_PROJECT", "test-project")
-    const model = yield* Provider.use.getSmallModel(ProviderV2.ID.googleVertex)
-    expect(model).toBeDefined()
-    expect(model?.id).toContain("gemini")
-  }),
+it.instance(
+  "getSmallModel prefers Gemini for Google Vertex",
+  () =>
+    Effect.gen(function* () {
+      yield* set("GOOGLE_VERTEX_PROJECT", "test-project")
+      const model = yield* Provider.use.getSmallModel(ProviderV2.ID.googleVertex)
+      expect(model).toBeDefined()
+      expect(model?.id).toContain("gemini")
+    }),
+  { config: { provider: { "google-vertex": {} } } },
 )
 
 it.instance(
@@ -1873,62 +1876,74 @@ it.instance(
   },
 )
 
-it.instance("Google Vertex: uses REP endpoint for Claude continental multi-regions", () =>
-  Effect.gen(function* () {
-    yield* set("GOOGLE_CLOUD_PROJECT", "test-project")
-    yield* set("VERTEX_LOCATION", "eu")
-    const provider = yield* Provider.Service
-    const model = yield* provider.getModel(
-      ProviderV2.ID.make("google-vertex"),
-      ModelV2.ID.make("claude-sonnet-4-6@default"),
-    )
-    const language = yield* provider.getLanguage(model)
-    expect(languageBaseURL(language)).toBe(
-      "https://aiplatform.eu.rep.googleapis.com/v1/projects/test-project/locations/eu/publishers/anthropic/models",
-    )
-  }),
+it.instance(
+  "Google Vertex: uses REP endpoint for Claude continental multi-regions",
+  () =>
+    Effect.gen(function* () {
+      yield* set("GOOGLE_CLOUD_PROJECT", "test-project")
+      yield* set("VERTEX_LOCATION", "eu")
+      const provider = yield* Provider.Service
+      const model = yield* provider.getModel(
+        ProviderV2.ID.make("google-vertex"),
+        ModelV2.ID.make("claude-sonnet-4-6@default"),
+      )
+      const language = yield* provider.getLanguage(model)
+      expect(languageBaseURL(language)).toBe(
+        "https://aiplatform.eu.rep.googleapis.com/v1/projects/test-project/locations/eu/publishers/anthropic/models",
+      )
+    }),
+  { config: { provider: { "google-vertex": {} } } },
 )
 
-it.instance("Google Vertex Anthropic: uses REP endpoint for continental multi-regions", () =>
-  Effect.gen(function* () {
-    yield* set("GOOGLE_CLOUD_PROJECT", "test-project")
-    yield* set("VERTEX_LOCATION", "us")
-    const provider = yield* Provider.Service
-    const model = yield* provider.getModel(
-      ProviderV2.ID.make("google-vertex-anthropic"),
-      ModelV2.ID.make("claude-sonnet-4-6@default"),
-    )
-    const language = yield* provider.getLanguage(model)
-    expect(languageBaseURL(language)).toBe(
-      "https://aiplatform.us.rep.googleapis.com/v1/projects/test-project/locations/us/publishers/anthropic/models",
-    )
-  }),
+it.instance(
+  "Google Vertex Anthropic: uses REP endpoint for continental multi-regions",
+  () =>
+    Effect.gen(function* () {
+      yield* set("GOOGLE_CLOUD_PROJECT", "test-project")
+      yield* set("VERTEX_LOCATION", "us")
+      const provider = yield* Provider.Service
+      const model = yield* provider.getModel(
+        ProviderV2.ID.make("google-vertex-anthropic"),
+        ModelV2.ID.make("claude-sonnet-4-6@default"),
+      )
+      const language = yield* provider.getLanguage(model)
+      expect(languageBaseURL(language)).toBe(
+        "https://aiplatform.us.rep.googleapis.com/v1/projects/test-project/locations/us/publishers/anthropic/models",
+      )
+    }),
+  { config: { provider: { "google-vertex-anthropic": {} } } },
 )
 
-it.instance("Google Vertex: keeps regional Claude endpoints unchanged", () =>
-  Effect.gen(function* () {
-    yield* set("GOOGLE_CLOUD_PROJECT", "test-project")
-    yield* set("VERTEX_LOCATION", "europe-west1")
-    const provider = yield* Provider.Service
-    const model = yield* provider.getModel(
-      ProviderV2.ID.make("google-vertex"),
-      ModelV2.ID.make("claude-sonnet-4-6@default"),
-    )
-    const language = yield* provider.getLanguage(model)
-    expect(languageBaseURL(language)).toBe(
-      "https://europe-west1-aiplatform.googleapis.com/v1/projects/test-project/locations/europe-west1/publishers/anthropic/models",
-    )
-  }),
+it.instance(
+  "Google Vertex: keeps regional Claude endpoints unchanged",
+  () =>
+    Effect.gen(function* () {
+      yield* set("GOOGLE_CLOUD_PROJECT", "test-project")
+      yield* set("VERTEX_LOCATION", "europe-west1")
+      const provider = yield* Provider.Service
+      const model = yield* provider.getModel(
+        ProviderV2.ID.make("google-vertex"),
+        ModelV2.ID.make("claude-sonnet-4-6@default"),
+      )
+      const language = yield* provider.getLanguage(model)
+      expect(languageBaseURL(language)).toBe(
+        "https://europe-west1-aiplatform.googleapis.com/v1/projects/test-project/locations/europe-west1/publishers/anthropic/models",
+      )
+    }),
+  { config: { provider: { "google-vertex": {} } } },
 )
 
-it.instance("cloudflare-ai-gateway loads with env variables", () =>
-  Effect.gen(function* () {
-    yield* set("CLOUDFLARE_ACCOUNT_ID", "test-account")
-    yield* set("CLOUDFLARE_GATEWAY_ID", "test-gateway")
-    yield* set("CLOUDFLARE_API_TOKEN", "test-token")
-    const providers = yield* list
-    expect(providers[ProviderV2.ID.make("cloudflare-ai-gateway")]).toBeDefined()
-  }),
+it.instance(
+  "cloudflare-ai-gateway loads with env variables",
+  () =>
+    Effect.gen(function* () {
+      yield* set("CLOUDFLARE_ACCOUNT_ID", "test-account")
+      yield* set("CLOUDFLARE_GATEWAY_ID", "test-gateway")
+      yield* set("CLOUDFLARE_API_TOKEN", "test-token")
+      const providers = yield* list
+      expect(providers[ProviderV2.ID.make("cloudflare-ai-gateway")]).toBeDefined()
+    }),
+  { config: { provider: { "cloudflare-ai-gateway": {} } } },
 )
 
 it.instance(
@@ -2078,6 +2093,7 @@ test("SwiftScale catalog keeps entitled Swift, GPT, Claude, and Gemini models", 
     "claude-sonnet-4-6",
     "gemini-3.1-pro",
     "gemini-3.6-flash",
+    "deepseek-v4-flash",
   ])
   expect(models["swiftlite.auto"].name).toBe("Swift Lite")
 })
@@ -2108,6 +2124,29 @@ test("SwiftScale catalog does not invent unknown direct model metadata", () => {
   expect(Object.keys(models)).toEqual([])
 })
 
+test("SwiftScale catalog discovers entitled direct text models from gateway metadata", () => {
+  const models = {
+    "swiftlite.auto": { name: "SwiftScale", api: { id: "swiftlite.auto" }, capabilities: {} },
+  } as any
+  applySwiftScaleCatalog(
+    models,
+    ["Qwen/Qwen3-Coder", "image-model"],
+    [
+      {
+        id: "Qwen/Qwen3-Coder",
+        capabilities: ["chat", "tool-use"],
+        max_context_tokens: 32000,
+        max_output_tokens: 4096,
+      },
+      { id: "image-model", capabilities: ["image"] },
+    ],
+  )
+  expect(Object.keys(models)).toEqual(["Qwen/Qwen3-Coder"])
+  expect(models["Qwen/Qwen3-Coder"].api.id).toBe("Qwen/Qwen3-Coder")
+  expect(models["Qwen/Qwen3-Coder"].capabilities.toolcall).toBe(true)
+  expect(models["Qwen/Qwen3-Coder"].limit.context).toBe(32000)
+})
+
 test("Coding Plan catalog exposes one SwiftScale model", () => {
   const models = {
     "swiftlite.auto": { name: "Swift Lite" },
@@ -2120,11 +2159,30 @@ test("Coding Plan catalog exposes one SwiftScale model", () => {
   expect(models["swiftlite.auto"].name).toBe("SwiftScaleCloud")
 })
 
-test("account OAuth catalog excludes API Services commercial models", () => {
+test("product aliases do not inherit deprecated legacy catalog status", () => {
+  const models = { legacy: { status: "deprecated", api: { id: "legacy" } } } as any
+  applySwiftScaleCatalog(models)
+  expect(Object.keys(models)).toEqual(["swiftlite.auto"])
+  expect(models["swiftlite.auto"].status).toBe("active")
+})
+
+test("bundled production catalog contains the GPT-6 family and current provider names", async () => {
+  const snapshot = await Bun.file(new URL("../../resources/models-api.json", import.meta.url)).json()
+  expect(Provider.fromModelsDevProvider(snapshot.openswiftscale).name).toBe("OpenScaler")
+  expect(Provider.fromModelsDevProvider(snapshot.swiftcoder).name).toBe("SwiftScale")
+  const provider = Provider.fromModelsDevProvider(snapshot.openai)
+  for (const id of ["gpt-6.1-sol", "gpt-6-astra", "gpt-6-luna", "gpt-6-sol"]) {
+    expect(provider.models[id]).toBeDefined()
+    expect(provider.models[id].capabilities.toolcall).toBe(true)
+    expect(provider.models[id].limit.context).toBeGreaterThan(0)
+  }
+})
+
+test("account OAuth catalog preserves entitled API Services direct models", () => {
   const modelIDs = ["swiftlite.auto", "swiftpro.auto", "gpt-5.4", "claude-sonnet-4-6", "gemini-3.1-pro"]
 
-  expect(swiftScaleCatalogModelIDs(modelIDs, false)).toEqual(["swiftlite.auto", "swiftpro.auto"])
-  expect(swiftScaleCatalogModelIDs(modelIDs, true)).toEqual(modelIDs)
+  expect(swiftScaleCatalogModelIDs(modelIDs)).toEqual(modelIDs)
+  expect(swiftScaleCatalogModelIDs(["swiftlite.auto"])).toEqual(["swiftlite.auto"])
 })
 
 test("SwiftScale catalog gives discovered product models distinct names", () => {

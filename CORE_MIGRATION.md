@@ -9,8 +9,7 @@ The expected checkout layout is:
 ```text
 swiftscale-agent/
 ├── swiftcore/
-├── swiftcoder/
-└── swiftworks/
+└── swiftcoder/
 ```
 
 Once `@swiftscale/*` packages are published, release builds should replace the

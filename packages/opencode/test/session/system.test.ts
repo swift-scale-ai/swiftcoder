@@ -36,6 +36,16 @@ const skills: Skill.Info[] = [
   },
 ]
 
+test("GPT-6 models use the SwiftCoder Astra prompt", () => {
+  for (const id of ["gpt-6-astra", "gpt-6-sol", "gpt-6-luna"]) {
+    const prompt = SystemPrompt.provider({ api: { id } } as Provider.Model)[0]
+    expect(prompt).toContain("powered by SwiftCoder")
+    expect(prompt).toContain("## Autonomy")
+    expect(prompt).not.toContain("powered by OpenCode")
+  }
+  expect(SystemPrompt.provider({ api: { id: "gpt-5.4" } } as Provider.Model)[0]).not.toContain("# Harness")
+})
+
 const build: Agent.Info = {
   name: "build",
   mode: "primary",

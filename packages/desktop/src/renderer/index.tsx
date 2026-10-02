@@ -4,6 +4,7 @@ import {
   ACCEPTED_FILE_EXTENSIONS,
   AppBaseProviders,
   AppInterface,
+  SwiftCoderSplash,
   loadLocaleDict,
   normalizeLocale,
   type Locale,
@@ -26,7 +27,6 @@ import { DesktopFirstLaunchOnboarding } from "./onboarding"
 import { resetZoom, setPinchZoomEnabled, webviewZoom, zoomIn, zoomOut } from "./webview-zoom"
 import { windowFullscreen } from "./window-fullscreen"
 import "./styles.css"
-import { Splash } from "@swiftscale/ui/logo"
 import { useTheme } from "@swiftscale/ui/theme/context"
 
 const root = document.getElementById("root")
@@ -308,7 +308,7 @@ listenForDeepLinks()
 function LoadingSplash() {
   return (
     <div class="h-dvh w-screen flex flex-col items-center justify-center bg-background-base">
-      <Splash class="w-16 h-20 opacity-50 animate-pulse" />
+      <SwiftCoderSplash class="size-16 rounded-lg object-cover opacity-50 animate-pulse" />
     </div>
   )
 }

@@ -1,6 +1,6 @@
 export const SWIFTSCALE_MODEL_FAMILIES = ["GPT", "Claude", "Gemini", "SwiftScale"] as const
 
-export type SwiftScaleModelFamily = (typeof SWIFTSCALE_MODEL_FAMILIES)[number]
+export type SwiftScaleModelFamily = string
 
 const SWIFTSCALE_MODEL_FAMILY_PROVIDER_IDS: Record<SwiftScaleModelFamily, string> = {
   GPT: "openai",
@@ -14,7 +14,9 @@ export function swiftScaleModelFamily(model: { id: string; name: string }): Swif
   if (/(^|[\s/._-])gpt([\s/._-]|$)/.test(value)) return "GPT"
   if (/(^|[\s/._-])claude([\s/._-]|$)/.test(value)) return "Claude"
   if (/(^|[\s/._-])gemini([\s/._-]|$)/.test(value)) return "Gemini"
-  return "SwiftScale"
+  if (/(^|[\s/])swift/.test(value)) return "SwiftScale"
+  const brands = ["DeepSeek", "Qwen", "Llama", "Mistral", "Kimi", "GLM", "Doubao", "Grok", "MiniMax"]
+  return brands.find((brand) => value.includes(brand.toLowerCase())) ?? model.id.split("/")[0].split(/[._-]/)[0]
 }
 
 export function connectedProviderModelFamily(model: {
@@ -29,7 +31,11 @@ export function connectedProviderModelFamily(model: {
 }
 
 export function sortSwiftScaleModelFamilies(a: SwiftScaleModelFamily, b: SwiftScaleModelFamily) {
-  return SWIFTSCALE_MODEL_FAMILIES.indexOf(a) - SWIFTSCALE_MODEL_FAMILIES.indexOf(b)
+  const rank = (family: string) => {
+    const index = (SWIFTSCALE_MODEL_FAMILIES as readonly string[]).indexOf(family)
+    return index < 0 ? SWIFTSCALE_MODEL_FAMILIES.length : index
+  }
+  return rank(a) - rank(b) || a.localeCompare(b)
 }
 
 export function preferredSwiftScaleModel<T extends { id: string; name: string }>(models: T[]) {
@@ -45,11 +51,11 @@ export function preferredSwiftScaleModel<T extends { id: string; name: string }>
 }
 
 export function swiftScaleModelFamilyProviderID(family: SwiftScaleModelFamily) {
-  return SWIFTSCALE_MODEL_FAMILY_PROVIDER_IDS[family]
+  return SWIFTSCALE_MODEL_FAMILY_PROVIDER_IDS[family] ?? "swiftcoder"
 }
 
 export function groupSwiftScaleModelsByFamily<T extends { id: string; name: string }>(models: T[]) {
-  return SWIFTSCALE_MODEL_FAMILIES.map((family) => ({
+  return [...new Set(models.map(swiftScaleModelFamily))].sort(sortSwiftScaleModelFamilies).map((family) => ({
     family,
     models: models.filter((model) => swiftScaleModelFamily(model) === family),
   })).filter((group) => group.models.length > 0)

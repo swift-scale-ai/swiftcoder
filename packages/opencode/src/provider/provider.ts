@@ -47,10 +47,18 @@ const isSwiftScaleProductModel = (id: string) =>
   isSwiftScaleTextModelID(id) &&
   (id === "swift.auto" || (/^swift[a-z0-9-]+\.auto$/.test(id) && id !== "swiftembed.auto" && id !== "swiftrerank.auto"))
 
-const isSwiftScaleDirectModel = (id: string) => /^(?:gpt|claude|gemini)-[a-z0-9][a-z0-9.-]*$/.test(id)
+type SwiftScaleCatalogEntry = {
+  id: string
+  display_name?: string
+  capabilities?: string[]
+  max_input_tokens?: number
+  max_output_tokens?: number
+  max_context_tokens?: number
+}
 
-export const swiftScaleCatalogModelIDs = (modelIDs: string[] | undefined, apiServicesKey: boolean) =>
-  apiServicesKey ? modelIDs : modelIDs?.filter((id) => isSwiftScaleProductModel(id))
+// The authenticated Gateway catalog enforces account access for both API keys
+// and desktop OAuth. OAuth alone does not imply a Coding-only subscription.
+export const swiftScaleCatalogModelIDs = (modelIDs: string[] | undefined) => modelIDs
 
 const inferredSwiftScaleModelName = (id: string) => {
   const slug = id.replace(/^swift/, "").replace(/\.auto$/, "")
@@ -81,15 +89,50 @@ export function applyOpenSwiftScaleCatalog(models: Record<string, Model>, modelI
   }
 }
 
-export function applySwiftScaleCatalog(models: Record<string, Model>, modelIDs?: string[]) {
+export function applySwiftScaleCatalog(
+  models: Record<string, Model>,
+  modelIDs?: string[],
+  entries: SwiftScaleCatalogEntry[] = [],
+) {
+  const template = models[SWIFTSCALE_FALLBACK_MODEL] ?? Object.values(models)[0]
+  for (const entry of entries) {
+    if (!template || models[entry.id] || !modelIDs?.includes(entry.id)) continue
+    const capabilities = new Set(entry.capabilities ?? [])
+    if (!["chat", "code", "text", "chat-completions"].some((value) => capabilities.has(value))) continue
+    models[entry.id] = {
+      ...template,
+      id: ModelV2.ID.make(entry.id),
+      name: entry.display_name || entry.id,
+      status: "active",
+      family: entry.id.split(/[./_-]/)[0],
+      api: { ...template.api, id: entry.id, npm: "@ai-sdk/openai-compatible" },
+      release_date: "",
+      variants: {},
+      options: {},
+      headers: {},
+      limit: {
+        context: entry.max_context_tokens ?? 0,
+        input: entry.max_input_tokens,
+        output: entry.max_output_tokens ?? 0,
+      },
+      capabilities: {
+        ...template.capabilities,
+        reasoning: capabilities.has("reasoning"),
+        toolcall: capabilities.has("tool-use") || capabilities.has("tools"),
+        attachment: false,
+        interleaved: false,
+        input: { text: true, audio: false, image: false, video: false, pdf: false },
+        output: { text: true, audio: false, image: false, video: false, pdf: false },
+      },
+    }
+  }
   const allowed = new Set(
     (modelIDs ?? [SWIFTSCALE_FALLBACK_MODEL]).filter((id) => {
       if (isSwiftScaleProductModel(id)) return true
-      return isSwiftScaleDirectModel(id) && models[id] !== undefined
+      return models[id] !== undefined && isSwiftScaleTextModelID(id)
     }),
   )
 
-  const template = models[SWIFTSCALE_FALLBACK_MODEL] ?? Object.values(models)[0]
   if (template) {
     for (const id of allowed) {
       if (!isSwiftScaleProductModel(id)) continue
@@ -99,6 +142,8 @@ export function applySwiftScaleCatalog(models: Record<string, Model>, modelIDs?:
         id: ModelV2.ID.make(id),
         api: { ...template.api, id },
         family: id.replace(/\.auto$/, ""),
+        // Product aliases are active even if the legacy template was deprecated.
+        status: "active",
       }
     }
   }
@@ -183,6 +228,41 @@ function googleVertexEndpoint(location: string) {
   if (location === "global") return "aiplatform.googleapis.com"
   if (location === "eu" || location === "us") return `aiplatform.${location}.rep.googleapis.com`
   return `${location}-aiplatform.googleapis.com`
+}
+
+// Applies the `headerTimeout`, `chunkTimeout` (SSE idle) and `timeout` provider options at the
+// fetch layer, on top of `options.fetch` when a custom fetch is configured.
+function timeoutFetch(options: Record<string, any>) {
+  const customFetch = options["fetch"]
+  const chunkTimeout = options["chunkTimeout"] ?? 300_000
+  const headerTimeout = options["headerTimeout"] ?? 300_000
+  const timeout = options["timeout"]
+
+  return async (input: any, init?: BunFetchRequestInit) => {
+    const fetchFn = customFetch ?? fetch
+    const opts = init ?? {}
+    const chunkAbortCtl = typeof chunkTimeout === "number" && chunkTimeout > 0 ? new AbortController() : undefined
+    const headerTimeoutMs = headerTimeout === false ? undefined : headerTimeout
+    const headerTimeoutCtl = typeof headerTimeoutMs === "number" ? timeoutController(headerTimeoutMs) : undefined
+    const signals: AbortSignal[] = []
+
+    if (opts.signal) signals.push(opts.signal)
+    if (chunkAbortCtl) signals.push(chunkAbortCtl.signal)
+    if (headerTimeoutCtl) signals.push(headerTimeoutCtl.signal)
+    if (timeout !== undefined && timeout !== null && timeout !== false) signals.push(AbortSignal.timeout(timeout))
+
+    const combined = signals.length === 0 ? null : signals.length === 1 ? signals[0] : AbortSignal.any(signals)
+    if (combined) opts.signal = combined
+
+    const res = await fetchFn(input, {
+      ...opts,
+      // @ts-ignore see here: https://github.com/oven-sh/bun/issues/16682
+      timeout: false,
+    }).finally(() => headerTimeoutCtl?.clear())
+
+    if (!chunkAbortCtl) return res
+    return wrapSSE(res, chunkTimeout, chunkAbortCtl)
+  }
 }
 
 function googleVertexAnthropicBaseURL(project: string | undefined, location: string | undefined) {
@@ -337,20 +417,20 @@ function custom(dep: CustomDep): Record<string, CustomLoader> {
           environment: env.SWIFTCODER_GATEWAY_BASE_URL,
           catalog: Object.values(input.models)[0]?.api.url,
         })
-        const modelIDs = yield* Effect.promise(async () => {
+        const entries = yield* Effect.promise(async () => {
           try {
             const response = await fetch(`${baseURL.replace(/\/$/, "")}/models`, {
               headers: { Authorization: `Bearer ${key}` },
               signal: AbortSignal.timeout(10_000),
             })
             if (!response.ok) return undefined
-            const body = (await response.json()) as { data?: Array<{ id?: unknown }> }
-            return body.data?.flatMap((item) => (typeof item.id === "string" ? [item.id.toLowerCase()] : []))
+            const body = (await response.json()) as { data?: SwiftScaleCatalogEntry[] }
+            return body.data?.filter((item) => typeof item.id === "string")
           } catch {
             return undefined
           }
         })
-        applySwiftScaleCatalog(input.models, swiftScaleCatalogModelIDs(modelIDs, apiServicesKey))
+        applySwiftScaleCatalog(input.models, swiftScaleCatalogModelIDs(entries?.map((item) => item.id)), entries)
       } else {
         applySwiftScaleCatalog(input.models)
       }
@@ -993,9 +1073,11 @@ function custom(dep: CustomDep): Record<string, CustomLoader> {
         )
       }
 
-      // Use official ai-gateway-provider package (v2.x for AI SDK v5 compatibility)
-      const { createAiGateway } = yield* Effect.promise(() => import("ai-gateway-provider"))
+      const { createAiGateway, parseAiGatewayOptions } = yield* Effect.promise(() => import("ai-gateway-provider"))
       const { createUnified } = yield* Effect.promise(() => import("ai-gateway-provider/providers/unified"))
+      const { createOpenAI } = yield* Effect.promise(() => import("ai-gateway-provider/providers/openai"))
+      const { createAnthropic } = yield* Effect.promise(() => import("ai-gateway-provider/providers/anthropic"))
+      const { createOpenAICompatible } = yield* Effect.promise(() => import("@ai-sdk/openai-compatible"))
 
       const metadata = iife(() => {
         if (input.options?.metadata) return input.options.metadata
@@ -1016,19 +1098,65 @@ function custom(dep: CustomDep): Record<string, CustomLoader> {
         },
       }
 
-      const aigateway = createAiGateway({
-        accountId,
-        gateway,
-        apiKey: apiToken,
-        ...(Object.values(opts).some((v) => v !== undefined) ? { options: opts } : {}),
-      })
-      const unified = createUnified({ apiKey: apiToken })
-
       return {
         autoload: true,
-        async getModel(_sdk: any, modelID: string, _options?: Record<string, any>) {
-          // Model IDs use Unified API format: provider/model (e.g., "anthropic/claude-sonnet-4-5")
-          return aigateway(unified(modelID))
+        async getModel(_sdk: any, modelID: string, options?: Record<string, any>) {
+          // This loader builds its own clients instead of using the SDK from resolveSDK, so the
+          // timeout options have to be applied to the requests it makes explicitly.
+          const gatewayFetch = timeoutFetch(options ?? {})
+          // ai-gateway-provider's REST path always calls the global fetch. Its binding path hands
+          // the request to `run`, so send the same request the REST path would (options as
+          // request-level cf-aig-* headers) through the timeout-aware fetch instead.
+          const aigateway = createAiGateway({
+            binding: {
+              run(body, init) {
+                const headers = parseAiGatewayOptions(opts)
+                headers.set("Content-Type", "application/json")
+                headers.set("cf-aig-authorization", `Bearer ${apiToken}`)
+                return gatewayFetch(`https://gateway.ai.cloudflare.com/v1/${accountId}/${gateway}`, {
+                  body: JSON.stringify(body),
+                  headers,
+                  method: "POST",
+                  signal: init?.signal,
+                })
+              },
+            },
+          })
+          // Model IDs use Unified API format: provider/model (e.g., "anthropic/claude-sonnet-4-5").
+          // OpenAI and Anthropic ride their native passthrough routes so agents get the Responses
+          // and Messages APIs; new OpenAI models reject tools+reasoning_effort on chat completions.
+          // The passthrough wrappers inject a CF_TEMP_TOKEN sentinel that the gateway strips before
+          // dispatch, so upstream billing stays on the gateway (Unified Billing / stored BYOK).
+          if (modelID.startsWith("openai/")) return aigateway(createOpenAI()(modelID.slice("openai/".length)))
+          // models.dev lists Anthropic ids with dotted versions (claude-haiku-4.5); Anthropic's
+          // Messages API expects dashed native slugs (claude-haiku-4-5), so translate before passing.
+          // No native Anthropic slug contains a dot, so the blanket replacement is lossless here -
+          // unlike OpenAI above, whose native ids (e.g. gpt-4.1) keep their dots and must not be touched.
+          if (modelID.startsWith("anthropic/"))
+            return aigateway(createAnthropic()(modelID.slice("anthropic/".length).replaceAll(".", "-")))
+          // Workers AI is the only first-party provider whose upstream is Cloudflare itself, so it is
+          // the only one that should receive the Cloudflare token as its upstream Authorization header.
+          // The Unified API addresses Workers AI both with the explicit "workers-ai/" prefix and as
+          // bare "@cf/..." ids. Third-party providers must not receive the token; they rely on the
+          // gateway's stored/BYOK keys instead.
+          // Workers AI is Cloudflare's own upstream, so it rides the unified compat route with the
+          // Cloudflare token as its upstream Authorization header.
+          const isWorkersAi = modelID.startsWith("workers-ai/") || modelID.startsWith("@cf/")
+          if (isWorkersAi) return aigateway(createUnified({ apiKey: apiToken })(modelID))
+
+          // Every other third-party provider (google, xai, alibaba, deepseek, moonshotai, …) is only
+          // served by Cloudflare's catalog-aware REST API. The universal/compat gateway route rejects
+          // them with "Invalid provider" (the gateway's compat endpoint doesn't front those upstreams),
+          // so point an OpenAI-compatible client at the REST endpoint and bind it to the gateway with
+          // cf-aig-gateway-id — that keeps requests gateway-routed (analytics/caching/BYOK), not a
+          // bypass. models.dev ids (provider/model, dotted) pass through unchanged.
+          return createOpenAICompatible({
+            name: "cloudflare-ai-gateway",
+            baseURL: `https://api.cloudflare.com/client/v4/accounts/${accountId}/ai/v1`,
+            apiKey: apiToken,
+            headers: { "cf-aig-gateway-id": gateway },
+            fetch: gatewayFetch as typeof fetch,
+          })(modelID)
         },
         options: {},
       }
@@ -1582,7 +1710,8 @@ const layer = Layer.effect(
         const enabled = cfg.enabled_providers ? new Set(cfg.enabled_providers) : null
 
         function isProviderAllowed(providerID: ProviderV2.ID): boolean {
-          if (!supportedProviderIDs.has(providerID)) return false
+          // Keep the default catalog focused while honoring explicitly configured providers.
+          if (!supportedProviderIDs.has(providerID) && !Object.hasOwn(cfg.provider ?? {}, providerID)) return false
           if (enabled && !enabled.has(providerID)) return false
           if (disabled.has(providerID)) return false
           return true
@@ -1934,38 +2063,9 @@ const layer = Layer.effect(
         const existing = s.sdk.get(key)
         if (existing) return existing
 
-        const customFetch = options["fetch"]
-        const chunkTimeout = options["chunkTimeout"]
-        const headerTimeout = options["headerTimeout"]
+        options["fetch"] = timeoutFetch(options)
         delete options["chunkTimeout"]
         delete options["headerTimeout"]
-
-        options["fetch"] = async (input: any, init?: BunFetchRequestInit) => {
-          const fetchFn = customFetch ?? fetch
-          const opts = init ?? {}
-          const chunkAbortCtl = typeof chunkTimeout === "number" && chunkTimeout > 0 ? new AbortController() : undefined
-          const headerTimeoutMs = headerTimeout === false ? undefined : headerTimeout
-          const headerTimeoutCtl = typeof headerTimeoutMs === "number" ? timeoutController(headerTimeoutMs) : undefined
-          const signals: AbortSignal[] = []
-
-          if (opts.signal) signals.push(opts.signal)
-          if (chunkAbortCtl) signals.push(chunkAbortCtl.signal)
-          if (headerTimeoutCtl) signals.push(headerTimeoutCtl.signal)
-          if (options["timeout"] !== undefined && options["timeout"] !== null && options["timeout"] !== false)
-            signals.push(AbortSignal.timeout(options["timeout"]))
-
-          const combined = signals.length === 0 ? null : signals.length === 1 ? signals[0] : AbortSignal.any(signals)
-          if (combined) opts.signal = combined
-
-          const res = await fetchFn(input, {
-            ...opts,
-            // @ts-ignore see here: https://github.com/oven-sh/bun/issues/16682
-            timeout: false,
-          }).finally(() => headerTimeoutCtl?.clear())
-
-          if (!chunkAbortCtl) return res
-          return wrapSSE(res, chunkTimeout, chunkAbortCtl)
-        }
 
         const bundledLoader = BUNDLED_PROVIDERS[model.api.npm]
         if (bundledLoader) {

@@ -4,7 +4,7 @@ import { I18nProvider } from "@swiftscale/ui/context"
 import { DialogProvider } from "@swiftscale/ui/context/dialog"
 import { FileComponentProvider } from "@swiftscale/ui/context/file"
 import { Font } from "@swiftscale/ui/font"
-import { Splash } from "@swiftscale/ui/logo"
+import { SwiftCoderSplash } from "@/components/swiftcoder-splash"
 import { ThemeProvider } from "@swiftscale/ui/theme/context"
 import { MetaProvider } from "@solidjs/meta"
 import {
@@ -59,7 +59,13 @@ import { WslServersProvider } from "@/wsl/context"
 import DirectoryLayout, { DirectoryDataProvider } from "@/pages/directory-layout"
 import { ErrorPage } from "./pages/error"
 import { useCheckServerHealth } from "./utils/server-health"
-import { legacySessionHref, legacySessionServer, parseServerKey, requireServerKey, sessionHref } from "./utils/session-route"
+import {
+  legacySessionHref,
+  legacySessionServer,
+  parseServerKey,
+  requireServerKey,
+  sessionHref,
+} from "./utils/session-route"
 import { createSessionLineage } from "@/pages/session/session-lineage"
 
 import { SessionPage, SessionRouteErrorBoundary, TargetSessionRouteContent } from "@/pages/session"
@@ -492,7 +498,7 @@ function ConnectionGate(props: ParentProps<{ disableHealthCheck?: boolean; start
       </Show>
       <Show when={loading()}>
         <div class="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-background-base">
-          <Splash class="w-16 h-20 opacity-50 animate-pulse" />
+          <SwiftCoderSplash class="size-16 rounded-lg object-cover opacity-50 animate-pulse" />
         </div>
       </Show>
     </>
@@ -513,7 +519,7 @@ function ConnectionError(props: { onRetry?: () => void; onServerSelected?: (key:
   return (
     <div class="h-dvh w-screen flex flex-col items-center justify-center bg-background-base gap-6 p-6">
       <div class="flex flex-col items-center max-w-md text-center">
-        <Splash class="w-12 h-15 mb-4" />
+        <SwiftCoderSplash class="size-12 rounded-lg object-cover mb-4" />
         <p class="text-14-regular text-text-base">
           {unreachable()[0]}
           <span class="text-text-strong font-medium">{name()}</span>

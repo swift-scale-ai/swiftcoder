@@ -1,5 +1,8 @@
 import { $ } from "bun"
 import { downloadCliToResources } from "./utils"
+import { resolveBuildVersion } from "./build-version"
+
+process.env.SWIFTCODER_VERSION = resolveBuildVersion(process.env.SWIFTCODER_CHANNEL ?? "dev")
 
 await $`bun run install-electron`
 

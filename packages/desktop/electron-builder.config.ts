@@ -2,6 +2,7 @@ import path from "node:path"
 import { fileURLToPath } from "node:url"
 
 import type { Configuration } from "electron-builder"
+import { resolveBuildVersion } from "./scripts/build-version"
 
 const packageDir = path.dirname(fileURLToPath(import.meta.url))
 
@@ -11,7 +12,7 @@ const channel = (() => {
   return "dev"
 })()
 
-const releaseVersion = process.env.SWIFTCODER_VERSION?.trim()
+const releaseVersion = resolveBuildVersion(channel)
 if (releaseVersion && !/^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$/.test(releaseVersion)) {
   throw new Error(`Invalid SWIFTCODER_VERSION: ${releaseVersion}`)
 }
