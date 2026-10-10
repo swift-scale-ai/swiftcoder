@@ -2,6 +2,7 @@ import path from "node:path"
 import { fileURLToPath } from "node:url"
 
 import type { Configuration } from "electron-builder"
+import { resolveBuildVersion } from "./scripts/build-version"
 
 const packageDir = path.dirname(fileURLToPath(import.meta.url))
 
@@ -11,7 +12,7 @@ const channel = (() => {
   return "dev"
 })()
 
-const releaseVersion = process.env.SWIFTCODER_VERSION?.trim()
+const releaseVersion = resolveBuildVersion(channel)
 if (releaseVersion && !/^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$/.test(releaseVersion)) {
   throw new Error(`Invalid SWIFTCODER_VERSION: ${releaseVersion}`)
 }
@@ -42,6 +43,16 @@ const getBase = (appId: string): Configuration => ({
     "!resources/linux/**",
     "!resources/*.metainfo.xml",
   ],
+  electronFuses: {
+    runAsNode: false,
+    enableCookieEncryption: true,
+    enableNodeOptionsEnvironmentVariable: false,
+    enableNodeCliInspectArguments: false,
+    enableEmbeddedAsarIntegrityValidation: true,
+    onlyLoadAppFromAsar: true,
+    loadBrowserProcessSpecificV8Snapshot: false,
+    grantFileProtocolExtraPrivileges: false,
+  },
   extraResources: [
     { from: path.join(packageDir, "../../LICENSE"), to: "legal/LICENSE.txt" },
     { from: path.join(packageDir, "../../THIRD_PARTY_NOTICES.md"), to: "legal/THIRD_PARTY_NOTICES.md" },

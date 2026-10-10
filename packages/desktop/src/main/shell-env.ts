@@ -1,4 +1,4 @@
-import { spawnSync } from "node:child_process"
+import { execFile, spawnSync } from "node:child_process"
 import { userInfo } from "node:os"
 import { basename } from "node:path"
 
@@ -61,6 +61,36 @@ function probe(shell: string, mode: "-il" | "-l"): Probe {
   return { type: "Loaded", value: env }
 }
 
+function probeAsync(shell: string, mode: "-il" | "-l") {
+  return new Promise<Probe>((resolve) => {
+    execFile(
+      shell,
+      [mode, "-c", "env -0"],
+      { encoding: "buffer", timeout: TIMEOUT, windowsHide: true, maxBuffer: 1024 * 1024 },
+      (error, stdout) => {
+        if (error) {
+          const code = (error as NodeJS.ErrnoException).code
+          if (code === "ETIMEDOUT") {
+            resolve({ type: "Timeout" })
+            return
+          }
+          console.log(`[server] Shell env probe failed for ${shell} ${mode}: ${error.message}`)
+          resolve({ type: "Unavailable" })
+          return
+        }
+
+        const env = parseShellEnv(stdout)
+        if (Object.keys(env).length === 0) {
+          console.log(`[server] Shell env probe returned empty env for ${shell} ${mode}`)
+          resolve({ type: "Unavailable" })
+          return
+        }
+        resolve({ type: "Loaded", value: env })
+      },
+    )
+  })
+}
+
 export function isNushell(shell: string) {
   const name = basename(shell).toLowerCase()
   const raw = shell.toLowerCase()
@@ -84,6 +114,32 @@ export function loadShellEnv(shell: string, logger: ShellEnvLogger) {
   }
 
   const login = probe(shell, "-l")
+  if (login.type === "Loaded") {
+    logger.log(`[server] Loaded shell environment with -l (${Object.keys(login.value).length} vars)`)
+    return login.value
+  }
+
+  logger.log(`[server] Falling back to app environment: ${shell}`)
+  return null
+}
+
+export async function loadShellEnvAsync(shell: string, logger: ShellEnvLogger) {
+  if (isNushell(shell)) {
+    logger.log(`[server] Skipping shell env probe for nushell: ${shell}`)
+    return null
+  }
+
+  const interactive = await probeAsync(shell, "-il")
+  if (interactive.type === "Loaded") {
+    logger.log(`[server] Loaded shell environment with -il (${Object.keys(interactive.value).length} vars)`)
+    return interactive.value
+  }
+  if (interactive.type === "Timeout") {
+    logger.log(`[server] Interactive shell env probe timed out: ${shell}`)
+    return null
+  }
+
+  const login = await probeAsync(shell, "-l")
   if (login.type === "Loaded") {
     logger.log(`[server] Loaded shell environment with -l (${Object.keys(login.value).length} vars)`)
     return login.value

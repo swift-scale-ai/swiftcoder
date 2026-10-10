@@ -11,7 +11,7 @@ fi
 node ./tools/verify-baseline.mjs
 ./tools/check-branding.sh
 
-if rg -n --hidden --glob '!node_modules/**' --glob '!packages/desktop/dist/**' --glob '!packages/desktop/out/**' 'swiftscale[.]ai' . ../swiftcoder-docs; then
+if rg -n --hidden --glob '!.git/**' --glob '!node_modules/**' --glob '!packages/desktop/dist/**' --glob '!packages/desktop/out/**' 'swiftscale[.]ai' .; then
   echo "Legacy SwiftScale domain found. Use swift-scale.com." >&2
   exit 1
 fi

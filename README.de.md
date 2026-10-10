@@ -4,7 +4,7 @@
 
 SwiftCoder ist ein leichtgewichtiger KI-Coding-Agent für macOS, unterstützt von [SwiftScale](https://swift-scale.com). Er überführt eine natürlichsprachliche Aufgabe in einen kontrollierten lokalen Arbeitsablauf: Repository verstehen, Arbeit planen, Dateien untersuchen und bearbeiten, Befehle ausführen, Änderungen prüfen und das Ergebnis verifizieren.
 
-SwiftCoder kombiniert eine Electron-Desktop-Anwendung, eine fokussierte SolidJS-Arbeitsoberfläche und einen integrierten TypeScript Agent Server, der von OpenCode abgeleitet ist. Der Desktop-Client ist offen, nachvollziehbar und lokal ausgerichtet. SwiftScale stellt Identität, Kontoberechtigungen, Modellzugriff, Routing und kommerzielle KI-Dienste bereit.
+SwiftCoder kombiniert eine Electron-Desktop-Anwendung, eine fokussierte SolidJS-Arbeitsoberfläche und einen integrierten TypeScript Agent Server, der von SwiftScale gepflegt wird. Der Desktop-Client ist offen, nachvollziehbar und lokal ausgerichtet. SwiftScale stellt Identität, Kontoberechtigungen, Modellzugriff, Routing und kommerzielle KI-Dienste bereit.
 
 ## Positionierung
 
@@ -140,7 +140,7 @@ Lokale Testartefakte dürfen nicht in einem öffentlichen Update-Kanal bereitges
 
 - `packages/desktop`: Electron-Hauptprozess, Preload, Paketierung und Renderer-Einstiegspunkt.
 - `packages/app`: SolidJS-Workspace-Oberfläche.
-- `packages/opencode`: integrierter TypeScript Agent Server aus der Upstream-Basis.
+- `packages/agent`: integrierter TypeScript Agent Server aus der Upstream-Basis.
 - `packages/core`, `packages/schema`, `packages/protocol`: gemeinsame Agent-Domäne und API-Verträge.
 - `packages/ui`, `packages/session-ui`: UI- und Agent-Zeitleistenkomponenten.
 - `tools`: Automatisierung für Entwicklung, Prüfung, Paketierung und Veröffentlichung.
@@ -149,7 +149,7 @@ Lokale Testartefakte dürfen nicht in einem öffentlichen Update-Kanal bereitges
 
 ## Lizenz und Namensnennung
 
-Der SwiftCoder-Quellcode wird unter der MIT License in `LICENSE` veröffentlicht. Wesentliche Teile sind von OpenCode abgeleitet und behalten den Upstream-Copyright- und MIT-Hinweis in `THIRD_PARTY_NOTICES.md` und `legal/OpenCode-LICENSE.txt` bei.
+Der SwiftCoder-Quellcode wird unter der MIT License in `LICENSE` veröffentlicht. Wesentliche Teile sind von OpenCode abgeleitet und behalten den Upstream-__PRESERVED_BRAND_0__-LICENSE.txt` bei.
 
 Lizenzen von Abhängigkeiten und Assets sind dokumentiert in:
 

@@ -24,8 +24,8 @@ included at `legal/OpenCode-LICENSE.txt`. The original project is available at
 
 ## models.dev
 
-The model catalog snapshots in `packages/opencode/resources/models-api.json`
-and `packages/opencode/test/tool/fixtures/models-api.json` are generated from
+The model catalog snapshots in `packages/agent/resources/models-api.json`
+and `packages/agent/test/tool/fixtures/models-api.json` are generated from
 models.dev data.
 
 Copyright (c) 2025 models.dev

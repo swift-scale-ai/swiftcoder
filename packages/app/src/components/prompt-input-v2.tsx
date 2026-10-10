@@ -427,7 +427,6 @@ export function usePromptInputV2Controller(props: PromptInputV2ControllerProps):
   const selectedProductMode = createMemo(() =>
     effectiveSwiftScaleProductMode(products(), local.productMode.current()),
   )
-  const apiServicesMode = createMemo(() => selectedProductMode() === "api_services")
   const [modelSelectedInComposer, setModelSelectedInComposer] = createSignal(false)
   const explicitModelSelection = () => Boolean(props.controls.session.id) || modelSelectedInComposer()
   createEffect(
@@ -458,10 +457,10 @@ export function usePromptInputV2Controller(props: PromptInputV2ControllerProps):
     const current = props.controls.model.selection.current()
     const available = selectableModels()
     const currentAvailable = current && available.some((model) => modelKey(model) === modelKey(current))
-    if (current && currentAvailable && (!apiServicesMode() || explicitModelSelection())) {
+    if (current && currentAvailable && explicitModelSelection()) {
       return connectedProviderModelFamily(current)
     }
-    const preferred = apiServicesMode() ? preferredSwiftScaleModel(available) : undefined
+    const preferred = preferredSwiftScaleModel(available)
     if (preferred) return connectedProviderModelFamily(preferred)
     return (
       [...new Set(available.map(connectedProviderModelFamily))].sort(sortSwiftScaleModelFamilies)[0] ?? "SwiftScale"
@@ -476,7 +475,7 @@ export function usePromptInputV2Controller(props: PromptInputV2ControllerProps):
     const models = selectableModels()
       .filter((model) => connectedProviderModelFamily(model) === currentFamily())
       .sort((a, b) => a.name.localeCompare(b.name))
-    if (!apiServicesMode() || currentFamily() !== "SwiftScale") return models
+    if (currentFamily() !== "SwiftScale") return models
     const preferred = preferredSwiftScaleModel(models)
     if (!preferred) return models
     return [preferred, ...models.filter((model) => modelKey(model) !== modelKey(preferred))]
@@ -492,8 +491,8 @@ export function usePromptInputV2Controller(props: PromptInputV2ControllerProps):
     const available = selectableModels()
     const current = props.controls.model.selection.current()
     const currentAvailable = current && available.some((model) => modelKey(model) === modelKey(current))
-    if (currentAvailable && (!apiServicesMode() || explicitModelSelection())) return
-    const fallback = apiServicesMode() ? preferredSwiftScaleModel(available) : available[0]
+    if (currentAvailable && explicitModelSelection()) return
+    const fallback = preferredSwiftScaleModel(available)
     if (!fallback) return
     if (current && modelKey(current) === modelKey(fallback)) return
     selectModel(modelKey(fallback))
@@ -543,7 +542,7 @@ export function usePromptInputV2Controller(props: PromptInputV2ControllerProps):
       if (
         current &&
         versionModels().some((model) => modelKey(model) === modelKey(current)) &&
-        (!apiServicesMode() || explicitModelSelection())
+        explicitModelSelection()
       )
         return modelKey(current)
       const fallback = versionModels()[0]

@@ -4,7 +4,7 @@
 
 SwiftCoder 是一款由 [SwiftScale](https://swift-scale.com) 驅動的輕量級 macOS AI 程式設計代理。它能將自然語言任務轉化為可控的本機工作流程：理解程式碼儲存庫、規劃工作、檢查與編輯檔案、執行命令、審查變更並驗證結果。
 
-SwiftCoder 由 Electron 桌面外殼、專注的 SolidJS 工作台，以及衍生自 OpenCode 的內建 TypeScript Agent Server 組成。桌面用戶端堅持開放、可檢查與本機優先；SwiftScale 則提供身分驗證、帳號權限、模型存取、請求路由及商業 AI 服務。
+SwiftCoder 由 Electron 桌面外殼、專注的 SolidJS 工作台，以及由 SwiftScale 維護的內建 TypeScript Agent Server 組成。桌面用戶端堅持開放、可檢查與本機優先；SwiftScale 則提供身分驗證、帳號權限、模型存取、請求路由及商業 AI 服務。
 
 ## 產品定位
 
@@ -140,7 +140,7 @@ bun run check:security
 
 - `packages/desktop`：Electron 主程序、Preload、打包設定及渲染器入口。
 - `packages/app`：SolidJS 工作區介面。
-- `packages/opencode`：從上游基線保留的內建 TypeScript Agent Server。
+- `packages/agent`：從上游基線保留的內建 TypeScript Agent Server。
 - `packages/core`、`packages/schema`、`packages/protocol`：共享 Agent 領域模型與 API 契約。
 - `packages/ui`、`packages/session-ui`：介面和 Agent 時間線元件。
 - `tools`：SwiftCoder 開發、驗證、打包和發布自動化工具。
@@ -149,7 +149,7 @@ bun run check:security
 
 ## 授權與歸屬
 
-SwiftCoder 原始碼依根目錄 `LICENSE` 中的 MIT License 發布。專案的重要部分衍生自 OpenCode，並在 `THIRD_PARTY_NOTICES.md` 和 `legal/OpenCode-LICENSE.txt` 中保留上游著作權及 MIT License 聲明。
+SwiftCoder 原始碼依根目錄 `LICENSE` 中的 MIT License 發布。專案的重要部分衍生自 OpenCode，並在 `THIRD_PARTY_NOTICES.md` 和 `__PRESERVED_BRAND_0__` 中保留上游著作權及 MIT License 聲明。
 
 相依套件和資源授權記錄於：
 

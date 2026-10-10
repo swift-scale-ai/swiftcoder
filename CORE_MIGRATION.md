@@ -1,31 +1,37 @@
-# SwiftCore migration
+# SwiftCoder monorepo migration
 
-This repository contains the SwiftCoder product. Product-neutral packages now
-live in the adjacent `../swiftcore` repository and are linked through explicit
-`file:` dependencies during local development.
-
-The expected checkout layout is:
+SwiftCoder and SwiftCore now live in one repository. The original repositories
+remain unchanged; this checkout was created in `swiftcoder-v2`.
 
 ```text
-swiftscale-agent/
-├── swiftcore/
-├── swiftcoder/
-└── swiftworks/
+swiftcoder-v2/
+├── packages/
+│   ├── app, desktop, swiftcoder, tui, codemode   Product packages
+│   ├── core, llm, schema, protocol, plugin    Agent foundation
+│   ├── client, server, sdk/js                 API contracts
+│   ├── ui, session-ui, desktop-kit           Shared experience
+│   └── script, core-script                  Build helpers
+├── tools/                                   Product tooling
+├── scripts/                                 Shared boundary checks
+└── bun.lock                                 One dependency lock
 ```
 
-Once `@swiftscale/*` packages are published, release builds should replace the
-local `file:` references with exact registry versions.
+All local package dependencies use `workspace:*`. No adjacent SwiftCore
+checkout, parent dependency-tree symlink, or `.swiftcore-ref` is required.
+The two `script` directories have different package names: the product keeps
+`@swiftscale/coder-script` in `packages/script`, while `@swiftscale/script`
+is located in `packages/core-script`.
 
-Until then, CI checks out both repositories into the same parent directory and
-uses `.swiftcore-ref` as the compatibility lock. The file must contain the full
-40-character commit SHA of the SwiftCore revision required by SwiftCoder. When
-SwiftCoder adopts a newer Core revision, update `.swiftcore-ref` and `bun.lock`
-in the same change.
+The migration records both source commits in `UPSTREAM_BASELINE.json`, and the
+local merge commit retains both Git histories. Existing release tags describe
+the historical split-repository layout, not this migration.
 
-The pinned SwiftCore commit must be pushed before the corresponding SwiftCoder
-change. Public repositories need no additional checkout credential. If
-SwiftCore becomes private, configure a read-only cross-repository token for its
-checkout step.
+SwiftCoder still owns coding prompts, Git, repository context, LSP, terminal,
+patch tools, CLI/TUI, product branding and packaging. Shared packages must not
+depend on product packages. `bun run check:boundaries` enforces the dependency
+direction and verifies local workspace references.
 
-SwiftCoder owns coding prompts, Git, repository context, LSP, terminal, patch
-tools, CLI/TUI, the Coder desktop interface, branding and packaging.
+Run `./tools/bootstrap.sh`, `bun run typecheck`, and `bun run check:boundaries`
+from this repository. Build a macOS development app with
+`./tools/package-mac-dev.sh`. Core and product changes are committed, tested and
+released together; CI checks out only this repository.

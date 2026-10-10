@@ -1,7 +1,7 @@
 {
   "name": "@swiftscale/swiftcoder-desktop",
   "private": true,
-  "version": "0.2.5",
+  "version": "0.3.2",
   "description": "SwiftScale-powered AI coding agent for macOS",
   "type": "module",
   "license": "MIT",
@@ -37,9 +37,9 @@
     "jsonc-parser": "3.3.1"
   },
   "devDependencies": {
-    "@swiftscale/desktop-kit": "file:../../../swiftcore/packages/desktop-kit",
+    "@swiftscale/desktop-kit": "workspace:*",
     "@swiftscale/coder-app": "workspace:*",
-    "@swiftscale/ui": "file:../../../swiftcore/packages/ui",
+    "@swiftscale/ui": "workspace:*",
     "@sentry/solid": "catalog:",
     "@sentry/vite-plugin": "catalog:",
     "@solid-primitives/i18n": "2.2.1",
@@ -50,7 +50,7 @@
     "@types/node": "catalog:",
     "@typescript/native": "catalog:",
     "@valibot/to-json-schema": "1.6.0",
-    "electron": "42.8.1",
+    "electron": "42.11.1",
     "electron-builder": "26.15.3",
     "electron-vite": "^5",
     "solid-js": "catalog:",

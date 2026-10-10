@@ -244,6 +244,7 @@ export const dict = {
   "dialog.provider.swiftcoder.tagline": "可靠的优化模型",
   "dialog.provider.swiftcoderGo.tagline": "适合所有人的低成本订阅",
   "dialog.provider.anthropic.note": "直接使用 Claude 模型，包括 Pro 和 Max",
+  "dialog.provider.openswiftscale.note": "开源、可自托管的 OpenAI 兼容网关",
   "dialog.provider.copilot.note": "通过 GitHub Copilot 使用辅助编程 AI 模型",
   "dialog.provider.openai.note": "适合快速处理各类 AI 任务的 GPT 模型",
   "dialog.provider.google.note": "可快速生成结构化回复的 Gemini 模型",
@@ -890,7 +891,7 @@ export const dict = {
   "app.name.desktop": "SwiftCoder",
 
   "settings.section.desktop": "桌面",
-  "settings.section.swiftscale": "SwiftScale",
+  "settings.section.swiftscale": "SwiftScaleCloud",
   "settings.section.server": "Agent",
 
   "settings.tab.general": "通用",
@@ -899,7 +900,7 @@ export const dict = {
   "settings.tab.accountPlan": "账号与套餐",
   "settings.account.title": "账号",
   "settings.account.desktopOnly": "账号登录仅在 macOS App 中可用。",
-  "settings.account.swiftScaleAccount": "SwiftScale 账号",
+  "settings.account.swiftScaleAccount": "SwiftScaleCloud 账号",
   "settings.account.signIn.authorizing": "请在浏览器中完成登录，SwiftCoder 将自动继续。",
   "settings.account.signIn.description": "登录后即可使用账号套餐包含的模型。",
   "settings.account.signIn.action": "登录",

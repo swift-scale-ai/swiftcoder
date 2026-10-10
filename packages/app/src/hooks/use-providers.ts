@@ -9,7 +9,7 @@ export const popularProviders = ["swiftcoder", "anthropic", "openai", "google"]
 const popularProviderSet = new Set(popularProviders)
 const supportedProviderSet = new Set(popularProviders)
 
-const supportedProviders = <T>(providers: Map<string, T>) =>
+export const supportedProviders = <T>(providers: Map<string, T>) =>
   new Map(Array.from(providers).filter(([id]) => supportedProviderSet.has(id)))
 
 export function useProviders(directory: Accessor<string | undefined>) {

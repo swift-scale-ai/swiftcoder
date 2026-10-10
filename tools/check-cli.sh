@@ -3,7 +3,7 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
-bun run --cwd "$ROOT_DIR/packages/opencode" typecheck
+bun run --cwd "$ROOT_DIR/packages/agent" typecheck
 "$ROOT_DIR/tools/build-cli.sh"
 
 binary="$ROOT_DIR/.artifacts/cli/swiftcoder"

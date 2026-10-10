@@ -3,10 +3,12 @@ import { fileURLToPath } from "node:url"
 import { app, utilityProcess } from "electron"
 import type { Details } from "electron"
 import { getLogger } from "./logging"
-import { getUserShell, loadShellEnv } from "./shell-env"
+import { getUserShell, loadShellEnvAsync } from "./shell-env"
 import { getStore } from "./store"
 import { DEFAULT_SERVER_URL_KEY } from "./store-keys"
 import { scopeDesktopStorageEnv } from "./desktop-storage-env"
+import { normalizeDefaultServerUrl } from "./server-url"
+import { isIdleSessionStatus } from "./sidecar-idle"
 
 export type HealthCheck = { wait: Promise<void> }
 
@@ -15,7 +17,7 @@ type SidecarMessage =
   | { type: "stopped" }
   | { type: "error"; error: { message: string; stack?: string } }
 
-export type SidecarListener = { stop: () => Promise<void> }
+export type SidecarListener = { stop: () => Promise<void>; isIdle: () => Promise<boolean> }
 
 const SIDECAR_SERVICE_NAME = "swiftcoder agent server"
 const SIDECAR_START_STALL_TIMEOUT = 60_000
@@ -31,31 +33,44 @@ type SpawnLocalServerOptions = {
 
 export function getDefaultServerUrl(): string | null {
   const value = getStore().get(DEFAULT_SERVER_URL_KEY)
-  return typeof value === "string" ? value : null
+  if (typeof value !== "string") return null
+  try {
+    return normalizeDefaultServerUrl(value)
+  } catch {
+    getStore().delete(DEFAULT_SERVER_URL_KEY)
+    return null
+  }
 }
 
 export function setDefaultServerUrl(url: string | null) {
   if (url) {
-    getStore().set(DEFAULT_SERVER_URL_KEY, url)
+    getStore().set(DEFAULT_SERVER_URL_KEY, normalizeDefaultServerUrl(url))
     return
   }
 
   getStore().delete(DEFAULT_SERVER_URL_KEY)
 }
 
-export function preferAppEnv(userDataPath: string, preserveStorageEnv = false) {
+export async function preferAppEnv(userDataPath: string, preserveStorageEnv = false) {
+  const applyProductEnv = () => {
+    Object.assign(process.env, {
+      SWIFTCODER_EXPERIMENTAL_ICON_DISCOVERY: "true",
+      SWIFTCODER_EXPERIMENTAL_FILEWATCHER: "true",
+      SWIFTCODER_CLIENT: "desktop",
+      SWIFTCODER_PRODUCT_MODE: "1",
+      SWIFTCODER_DISABLE_SHARE: "1",
+      SWIFTCODER_DISABLE_DEFAULT_PLUGINS: "1",
+    })
+    if (!preserveStorageEnv) scopeDesktopStorageEnv(userDataPath)
+  }
+
+  // Storage and product flags are required before migrations and renderer startup.
+  // The potentially slow login-shell probe can finish concurrently with app.whenReady().
+  applyProductEnv()
   const shell = process.platform === "win32" ? null : getUserShell()
-  const shellEnv = shell ? loadShellEnv(shell, getLogger()) : null
-  Object.assign(process.env, {
-    ...shellEnv,
-    SWIFTCODER_EXPERIMENTAL_ICON_DISCOVERY: "true",
-    SWIFTCODER_EXPERIMENTAL_FILEWATCHER: "true",
-    SWIFTCODER_CLIENT: "desktop",
-    SWIFTCODER_PRODUCT_MODE: "1",
-    SWIFTCODER_DISABLE_SHARE: "1",
-    SWIFTCODER_DISABLE_DEFAULT_PLUGINS: "1",
-  })
-  if (!preserveStorageEnv) scopeDesktopStorageEnv(userDataPath)
+  const shellEnv = shell ? await loadShellEnvAsync(shell, getLogger()) : null
+  if (shellEnv) Object.assign(process.env, shellEnv)
+  applyProductEnv()
   return shellEnv
 }
 
@@ -146,8 +161,8 @@ export async function spawnLocalServer(
     throw error
   })
 
+  const url = `http://${hostname}:${port}`
   const wait = (async () => {
-    const url = `http://${hostname}:${port}`
     let healthy = false
     const gone = exit.promise.then((code) => {
       if (healthy) return
@@ -171,6 +186,7 @@ export async function spawnLocalServer(
 
   return {
     listener: {
+      isIdle: () => checkSidecarIdle(url, password),
       stop: () => {
         if (stopping) return stopping
         if (exited) return Promise.resolve()
@@ -185,6 +201,22 @@ export async function spawnLocalServer(
       },
     },
     health: { wait },
+  }
+}
+
+async function checkSidecarIdle(url: string, password: string) {
+  const headers = new Headers()
+  headers.set("authorization", `Basic ${Buffer.from(`swiftcoder:${password}`).toString("base64")}`)
+  try {
+    const response = await fetch(new URL("/session/status", url), {
+      method: "GET",
+      headers,
+      signal: AbortSignal.timeout(3_000),
+    })
+    if (!response.ok) return false
+    return isIdleSessionStatus(await response.json())
+  } catch {
+    return false
   }
 }
 

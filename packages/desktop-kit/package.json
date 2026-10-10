@@ -1,0 +1,24 @@
+{
+  "name": "@swiftscale/desktop-kit",
+  "version": "0.1.0",
+  "description": "Product-neutral desktop lifecycle primitives for SwiftScale agents",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./auth": "./src/auth.ts",
+    "./deep-link": "./src/deep-link.ts",
+    "./product": "./src/product.ts",
+    "./runtime": "./src/runtime.ts",
+    "./update": "./src/update.ts",
+    "./window-state": "./src/window-state.ts"
+  },
+  "scripts": {
+    "test": "node --test src/*.test.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "typescript": "catalog:"
+  },
+  "license": "MIT"
+}

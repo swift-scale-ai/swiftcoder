@@ -1,4 +1,4 @@
-import { createMemo, createEffect, on, onCleanup, For, Show } from "solid-js"
+import { createMemo, createEffect, on, onCleanup, For, lazy, Show } from "solid-js"
 import type { JSX } from "solid-js"
 import { useSync } from "@/context/sync"
 import { checksum } from "@swiftscale/core/util/encode"
@@ -8,7 +8,6 @@ import { Icon } from "@swiftscale/ui/icon"
 import { Button } from "@swiftscale/ui/button"
 import { Accordion } from "@swiftscale/ui/accordion"
 import { StickyAccordionHeader } from "@swiftscale/ui/sticky-accordion-header"
-import { File } from "@swiftscale/session-ui/file"
 import { Markdown } from "@swiftscale/session-ui/markdown"
 import { ScrollView } from "@swiftscale/ui/scroll-view"
 import type { Message, Part, UserMessage } from "@swiftscale/sdk/v2/client"
@@ -21,6 +20,8 @@ import { useSessionLayout } from "@/pages/session/session-layout"
 import { getSessionContext } from "./session-context-metrics"
 import { estimateSessionContextBreakdown, type SessionContextBreakdownKey } from "./session-context-breakdown"
 import { createSessionContextFormatter } from "./session-context-format"
+
+const File = lazy(() => import("@swiftscale/session-ui/file").then((module) => ({ default: module.File })))
 
 const BREAKDOWN_COLOR: Record<SessionContextBreakdownKey, string> = {
   system: "var(--syntax-info)",

@@ -1,0 +1,44 @@
+{
+  "product": "SwiftCoder",
+  "date": "2026-10-10",
+  "source": {
+    "directory": "../swiftcoder-v2",
+    "commit": "4725f3b",
+    "unchanged": true
+  },
+  "changes": [
+    "Renamed packages/opencode to packages/agent and updated workspace, CI, build and documentation references",
+    "Replaced product-owned legacy identifiers, paths, CSS identifiers and theme preload naming",
+    "Development desktop builds now compile this repository's SwiftCoder CLI instead of downloading upstream opencode2",
+    "Shared build version selection no longer queries the upstream npm release",
+    "Removed upstream social-card network requests and updated owned repository metadata",
+    "Preserved earlier theme preferences through non-destructive local-storage migration"
+  ],
+  "retainedIntentionally": [
+    "Upstream licenses, copyright, attribution, provenance and Git history",
+    "Actual third-party dependency names, vendored client package and exported ABI symbols",
+    "External provider catalog identifiers and provider artwork",
+    "Historical theme identifiers and storage keys used only for compatibility",
+    "Regression guard patterns and upstream issue links explaining inherited fixes"
+  ],
+  "verification": {
+    "frozenLockfileInstall": "passed",
+    "typecheck": "20 tasks passed across 22 workspaces",
+    "repositoryBoundaries": "passed",
+    "runtimeBranding": "passed",
+    "thirdPartyInventory": "passed: 1265 package versions",
+    "openSourceReadiness": "passed",
+    "desktopProductionBuild": "passed: version 0.3.1",
+    "macArm64CliBuild": "passed: version smoke test and ad-hoc signature verification",
+    "desktopFocusedTests": "24 passed",
+    "coreProviderTests": "11 passed",
+    "frontendUnitTests": "780 passed, 1 existing i18n parity failure; new theme migration tests separately passed",
+    "agentRegressionTests": "348 passed, 3 skipped, 10 existing failures, 2 existing errors",
+    "agentSourceBaseline": "345 passed, 3 skipped, 13 failures, 2 errors; no new failing test names in cleaned copy"
+  },
+  "limitations": [
+    "The source baseline is not fully green: existing translation, configuration/YAML, Homebrew fixture and legacy plugin fixture failures remain",
+    "No desktop GUI smoke test, signed installer, GitHub push or new release tag was performed",
+    "Brand cleanup is not a Rust rewrite or a bundle-size optimization"
+  ]
+}

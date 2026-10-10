@@ -2,8 +2,9 @@ import { sentryVitePlugin } from "@sentry/vite-plugin"
 import { defineConfig } from "electron-vite"
 import appPlugin from "@swiftscale/coder-app/vite"
 import * as fs from "node:fs/promises"
+import { resolveBuildVersion } from "./scripts/build-version"
 
-const SWIFTCODER_SERVER_DIST = "../opencode/dist/node"
+const SWIFTCODER_SERVER_DIST = "../agent/dist/node"
 const SWIFTCODER_SERVER_ENTRY = "./chunks/swiftcoder-server.js"
 
 const channel = (() => {
@@ -12,6 +13,8 @@ const channel = (() => {
   if (process.env.SWIFTCODER_CHANNEL === "latest") return "prod"
   return "dev"
 })()
+
+const version = resolveBuildVersion(channel)
 
 const nodePtyPkg = `@lydell/node-pty-${process.platform}-${process.arch}`
 
@@ -96,6 +99,9 @@ const require = __cjs_mod__.createRequire(import.meta.url);
     },
   },
   renderer: {
+    define: {
+      "import.meta.env.SWIFTCODER_VERSION": JSON.stringify(version),
+    },
     plugins: [appPlugin, sentry],
     publicDir: "../../../app/public",
     root: "src/renderer",

@@ -3,6 +3,7 @@ set -euo pipefail
 
 ROOT="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
 CONFIG="${SWIFTCODER_RELEASE_ENV:-$HOME/.config/swiftcoder/release.env}"
+REQUESTED_VERSION="${SWIFTCODER_VERSION:-}"
 DIST="$ROOT/packages/desktop/dist"
 CHANNEL=""
 STAGE_WEB=false
@@ -71,6 +72,9 @@ set -a
 # shellcheck source=/dev/null
 source "$CONFIG"
 set +a
+if [[ -n "$REQUESTED_VERSION" ]]; then
+  export SWIFTCODER_VERSION="$REQUESTED_VERSION"
+fi
 
 # electron-builder distinguishes an unset CSC_LINK from an exported empty
 # value. An empty exported value resolves to the project directory and is then

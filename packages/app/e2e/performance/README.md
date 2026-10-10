@@ -61,7 +61,7 @@ Committed smoke and regression tests continue to own correctness coverage for pa
 Set `SWIFTCODER_PERFORMANCE_TRACE_DIR` to emit a standard Chrome DevTools trace for every benchmark page automatically:
 
 ```sh
-SWIFTCODER_PERFORMANCE_TRACE_DIR=/tmp/opencode-performance-traces \
+SWIFTCODER_PERFORMANCE_TRACE_DIR=/tmp/swiftcoder-performance-traces \
 bunx playwright test --config e2e/performance/playwright.config.ts \
   timeline/session-tab-switch-benchmark.spec.ts
 ```

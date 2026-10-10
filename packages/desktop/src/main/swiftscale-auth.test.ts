@@ -106,6 +106,28 @@ describe("SwiftScale desktop authentication", () => {
     expect(credentialChanges).toEqual(["logout"])
   })
 
+  test("starts without cloud credentials when refresh fails and preserves the saved session", async () => {
+    const store = memoryStore()
+    store.value = JSON.stringify({
+      version: 1,
+      auth: { type: "oauth", access: "expired", refresh: "refresh-old", expires: 1, accountId: "acct_1" },
+      account: { id: "acct_1", email: "dev@example.com", plan: "api_services" },
+    })
+    const saved = store.value
+    const changes: unknown[] = []
+    const auth = createSwiftScaleAuthController({
+      store,
+      now: () => 10_000,
+      fetch: (async () => new Response(null, { status: 401 })) as typeof fetch,
+      onChanged: (status) => changes.push(status),
+    })
+
+    expect(await auth.credentialForSidecar()).toBeUndefined()
+    expect(store.value).toBe(saved)
+    expect(await auth.status()).toEqual({ state: "error", message: "SwiftScale authentication failed (401)" })
+    expect(changes).toEqual([{ state: "error", message: "SwiftScale authentication failed (401)" }])
+  })
+
   test("caches Phase 4 entitlements and supports an explicit refresh", async () => {
     const store = memoryStore()
     store.value = JSON.stringify({

@@ -5,7 +5,7 @@
   "upstream": {
     "name": "OpenCode",
     "repository": "https://github.com/anomalyco/opencode",
-    "localReference": "../opencode",
+    "localReference": "../agent",
     "commit": "284214c78d32a09fd9c729bdefc07be50f74eb40",
     "packageVersion": "1.18.15",
     "license": "MIT"
@@ -17,6 +17,113 @@
     "solidJs": "1.9.10"
   },
   "strategy": "controlled-fork",
+  "monorepoMigration": {
+    "layout": "single-repository-bun-workspace",
+    "directory": "swiftcoder-v2",
+    "swiftcoderSource": "a2f82c6e4a82acb69b7f0af1eee194d0fbf70bcc",
+    "swiftcoreSource": "d0c1aa7b84627d3b9b7c92e0ec41f3ef6d3dad3c",
+    "gitHistory": "both-source-histories-retained",
+    "scriptDirectory": "packages/core-script",
+    "dependencyProtocol": "workspace:*",
+    "validation": {
+      "workspaces": 22,
+      "typecheckTasks": 20,
+      "relatedTestsPassed": 823,
+      "relatedTestsFailed": 0,
+      "internalWorkspaceLinksVerified": 45,
+      "frozenLockfileInstall": "passed",
+      "desktopProductionBuild": "passed",
+      "macOSCliBuildAndSmoke": "passed",
+      "electronSidecarIsolatedStartStop": "passed",
+      "coreSourceFilesPreserved": 2786,
+      "boundariesBrandingAndOpenSourceChecks": "passed"
+    }
+  },
+  "latestSelectiveSync": {
+    "appliedAt": "2026-10-10",
+    "upstreamCommit": "055d95bb7e278c94baf06235a52cac79dd13ba67",
+    "upstreamPackageVersion": "1.18.35",
+    "upstreamChannel": "dev-includes-post-v1.18.35-fixes",
+    "previousSync": {
+      "appliedAt": "2026-10-02",
+      "upstreamCommit": "1ddb0873aee50d209d1a8d7f91b89c5daf692d49",
+      "upstreamPackageVersion": "1.18.34"
+    },
+    "mode": "selective-port-not-full-merge",
+    "features": [
+      "debug config secret redaction",
+      "Node npm file URL resolution and filesystem runtime cycle fix",
+      "macOS CLI ad-hoc signing before smoke tests",
+      "GPT-6 family OAuth compatibility and system prompt",
+      "numeric GPT major/minor eligibility checks",
+      "Gemini and Gemma thinking variants",
+      "Copilot interaction identity and adaptive thinking summary",
+      "Bedrock model-specific tool image handling",
+      "provider and Cloudflare gateway header/chunk timeout defaults",
+      "parent and child session identity headers in both LLM paths",
+      "ACP durable agent/model/variant restore and config option updates",
+      "MCP browser opener already-exited process handling",
+      "OpenAI ultrafast service tier in AI SDK and native Chat/Responses without enabling it by default",
+      "Copilot interleaved reasoning opaque values and reasoning replay",
+      "C++ module interface extension highlighting in TUI",
+      "xAI tool-result images with supported MIME filtering and SDK 3.0.139"
+    ],
+    "upstreamCommits": [
+      "82d4c89031",
+      "ba341c6cac",
+      "f5ce4f881e",
+      "9b4882db54",
+      "500c46ec79",
+      "02a167e048",
+      "3a35b45db8",
+      "610df0b566",
+      "c0f09afef5",
+      "a9a6fad0fa",
+      "c10134729d",
+      "5cd8e68fdd",
+      "35fc7a776c",
+      "b04697366f",
+      "4eb29a64f0",
+      "e9f8a210b9",
+      "611cc73d84",
+      "0033bb3559",
+      "95daf90670",
+      "b471c2b449",
+      "5e2df97a89",
+      "b2a3926e87",
+      "055d95bb7e",
+      "83802d800e"
+    ],
+    "bundledCatalogUpdate": {
+      "source": "https://models.dev/api.json",
+      "models": ["gpt-6.1-sol", "gpt-6-astra", "gpt-6-luna", "gpt-6-sol"],
+      "scope": "openai-only-existing-catalog-preserved"
+    },
+    "localAdaptations": [
+      "SwiftCoder branding and SwiftScale model catalog preserved",
+      "explicitly configured providers allowed without broadening the default provider list",
+      "active product aliases no longer inherit deprecated legacy model status",
+      "native LLM headers use the existing request.http transport contract",
+      "OpenAI SDK 3.0.84 retained with a version-adapted service tier schema/type patch",
+      "xAI SDK patch preserves inline PDF, prompt cache key and extensible reasoning effort support",
+      "desktop prebuild creates the Node sidecar after the CLI build that clears agent/dist"
+    ],
+    "releaseStatus": "source-prepared-for-v0.3.2",
+    "validation": {
+      "focusedCompatibilityTests": { "passed": 175, "failed": 0, "files": 7 },
+      "providerTransformAndSessionLLMTests": { "passed": 471, "failed": 0, "files": 3 },
+      "workspaceTypecheck": { "passed": 20, "failed": 0 },
+      "frozenLockfileInstall": "passed",
+      "repositoryBoundariesAndBranding": "passed",
+      "macOSArm64CliBuildSignatureAndVersionSmoke": "passed",
+      "desktopProductionBuild": "passed",
+      "additionalRecordedReplay": {
+        "status": "known-model-fixture-mismatch",
+        "case": "SwiftCoder proxy tool loop cannot resolve swiftcoder/gpt-5.2-codex"
+      }
+    },
+    "corePinStatus": "co-located-workspaces-no-external-pin-required"
+  },
   "retainedWorkspaces": [
     "packages/app",
     "packages/client",
@@ -28,7 +135,7 @@
     "packages/http-recorder",
     "packages/httpapi-codegen",
     "packages/llm",
-    "packages/opencode",
+    "packages/agent",
     "packages/plugin",
     "packages/protocol",
     "packages/schema",
@@ -39,13 +146,5 @@
     "packages/tui",
     "packages/ui"
   ],
-  "excludedProductAreas": [
-    "console",
-    "enterprise",
-    "github-app",
-    "slack",
-    "stats",
-    "storybook",
-    "web-site"
-  ]
+  "excludedProductAreas": ["console", "enterprise", "github-app", "slack", "stats", "storybook", "web-site"]
 }

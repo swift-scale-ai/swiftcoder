@@ -27,7 +27,14 @@ if pgrep -f "$RUNNING_APP_PATTERN" >/dev/null 2>&1; then
 fi
 
 export SWIFTCODER_CHANNEL="dev"
-export SWIFTCODER_VERSION="0.2.5-dev"
+if [[ -z "${SWIFTCODER_VERSION:-}" ]]; then
+  SWIFTCODER_VERSION="$(bun -e 'import { resolveBuildVersion } from "./packages/desktop/scripts/build-version.ts"; console.log(resolveBuildVersion("dev"))')"
+fi
+if [[ ! "$SWIFTCODER_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?(\+[0-9A-Za-z.-]+)?$ ]]; then
+  echo "Invalid SWIFTCODER_VERSION: $SWIFTCODER_VERSION" >&2
+  exit 1
+fi
+export SWIFTCODER_VERSION
 export SWIFTCODER_SKIP_NOTARIZE="1"
 export CSC_IDENTITY_AUTO_DISCOVERY="false"
 

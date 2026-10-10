@@ -7,8 +7,8 @@
   "packageManager": "bun@1.3.14",
   "scripts": {
     "dev": "bun --cwd packages/desktop dev",
-    "dev:agent": "bun run --cwd packages/opencode --conditions=browser src/index.ts",
-    "cli:dev": "bun --conditions=browser packages/opencode/src/index.ts",
+    "dev:agent": "bun run --cwd packages/agent --conditions=browser src/index.ts",
+    "cli:dev": "bun --conditions=browser packages/agent/src/index.ts",
     "cli:build": "./tools/build-cli.sh",
     "cli:install": "./tools/install-cli.sh",
     "cli:check": "./tools/check-cli.sh",
@@ -17,7 +17,8 @@
     "package:mac:alpha": "./tools/package-mac-alpha.sh",
     "package:mac:release": "./tools/package-mac-release.sh",
     "lint": "oxlint",
-    "typecheck": "bun --cwd packages/codemode typecheck && bun --cwd packages/tui typecheck && bun --cwd packages/opencode typecheck && bun --cwd packages/app typecheck && bun --cwd packages/desktop typecheck",
+    "typecheck": "bun turbo run typecheck",
+    "test": "bun turbo run test",
     "check:boundaries": "bun tools/check-repository-boundaries.ts",
     "check:branding": "./tools/check-branding.sh",
     "check:phase0": "./tools/check-phase0.sh",
@@ -39,8 +40,7 @@
   "workspaces": {
     "packages": [
       "packages/*",
-      "../swiftcore/packages/*",
-      "../swiftcore/packages/sdk/js"
+      "packages/sdk/js"
     ],
     "catalog": {
       "@effect/opentelemetry": "4.0.0-beta.83",
@@ -156,11 +156,13 @@
     "@opentelemetry/core": "2.10.0",
     "@types/bun": "catalog:",
     "@types/node": "catalog:",
+    "@xmldom/xmldom": "0.8.15",
     "app-builder-lib": "26.15.3",
     "body-parser": "2.3.0",
     "builder-util-runtime": "9.7.0",
     "electron-builder-squirrel-windows": "26.15.3",
-    "fast-uri": "3.1.5",
+    "fast-uri": "3.1.6",
+    "fastify": "5.12.1",
     "find-my-way": "9.7.0",
     "form-data": "4.0.6",
     "hono": "4.13.0",
@@ -169,6 +171,7 @@
     "nanoid": "3.3.18",
     "postcss": "8.5.25",
     "protobufjs": "7.6.5",
+    "qs": "6.16.0",
     "socket.io-parser": "4.2.7",
     "tar": "7.5.22",
     "undici": "8.10.0",
@@ -182,7 +185,8 @@
     "@npmcli/agent@4.0.2": "patches/@npmcli%2Fagent@4.0.2.patch",
     "@silvia-odwyer/photon-node@0.3.4": "patches/@silvia-odwyer%2Fphoton-node@0.3.4.patch",
     "@standard-community/standard-openapi@0.2.9": "patches/@standard-community%2Fstandard-openapi@0.2.9.patch",
-    "@ai-sdk/xai@3.0.102": "patches/@ai-sdk%2Fxai@3.0.102.patch",
+    "@ai-sdk/xai@3.0.139": "patches/@ai-sdk%2Fxai@3.0.139.patch",
+    "@ai-sdk/openai@3.0.84": "patches/@ai-sdk%2Fopenai@3.0.84.patch",
     "@ai-sdk/mistral@3.0.51": "patches/@ai-sdk%2Fmistral@3.0.51.patch",
     "gcp-metadata@8.1.2": "patches/gcp-metadata@8.1.2.patch",
     "pacote@21.5.0": "patches/pacote@21.5.0.patch",

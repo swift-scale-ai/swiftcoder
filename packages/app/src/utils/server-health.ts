@@ -3,7 +3,7 @@ import { ServerConnection } from "@/context/server"
 import { authTokenFromCredentials, createSdkForServer } from "./server"
 import { ClientError } from "@opencode-ai/client"
 import { SwiftCoderHealthClient } from "./client-brand-compat"
-import { Accessor, createEffect, onCleanup } from "solid-js"
+import { Accessor, createEffect, createSignal, onCleanup } from "solid-js"
 import { createStore, reconcile } from "solid-js/store"
 
 export type ServerHealth = { healthy: boolean; version?: string }
@@ -113,7 +113,8 @@ export async function checkServerHealth(
   return attempt(0).finally(() => timeout?.clear?.())
 }
 
-const pollMs = 10_000
+const unhealthyPollMs = 10_000
+const healthyPollMs = 60_000
 
 export function useCheckServerHealth() {
   const platform = usePlatform()
@@ -138,14 +139,22 @@ export function useCheckServerHealth() {
 export const useServerHealth = (servers: Accessor<ServerConnection.Any[]>, enabled: Accessor<boolean>) => {
   const checkServerHealth = useCheckServerHealth()
   const [status, setStatus] = createStore({} as Record<ServerConnection.Key, ServerHealth | undefined>)
+  const [visible, setVisible] = createSignal(typeof document === "undefined" || document.visibilityState !== "hidden")
+
+  if (typeof document !== "undefined") {
+    const onVisibilityChange = () => setVisible(document.visibilityState !== "hidden")
+    document.addEventListener("visibilitychange", onVisibilityChange)
+    onCleanup(() => document.removeEventListener("visibilitychange", onVisibilityChange))
+  }
 
   createEffect(() => {
-    if (!enabled()) {
+    if (!enabled() || !visible()) {
       setStatus(reconcile({}))
       return
     }
     const list = servers()
     let dead = false
+    let timer: ReturnType<typeof setTimeout> | undefined
 
     const refresh = async () => {
       const results: Record<string, ServerHealth> = {}
@@ -159,13 +168,14 @@ export const useServerHealth = (servers: Accessor<ServerConnection.Any[]>, enabl
       )
       if (dead) return
       setStatus(reconcile(results))
+      const allHealthy = Object.values(results).every((result) => result.healthy)
+      timer = setTimeout(() => void refresh(), allHealthy ? healthyPollMs : unhealthyPollMs)
     }
 
     void refresh()
-    const id = setInterval(() => void refresh(), pollMs)
     onCleanup(() => {
       dead = true
-      clearInterval(id)
+      if (timer) clearTimeout(timer)
     })
   })
 

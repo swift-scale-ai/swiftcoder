@@ -1,0 +1,132 @@
+diff --git a/dist/index.js b/dist/index.js
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -723,7 +723,7 @@
+        *
+        * @default 'auto'
+        */
+-      serviceTier: import_v43.z.enum(["auto", "flex", "priority", "default"]).optional(),
++      serviceTier: import_v43.z.enum(["auto", "flex", "priority", "ultrafast", "default"]).optional(),
+       /**
+        * Whether to use strict JSON schema validation.
+        *
+@@ -4781,7 +4781,7 @@
+        *
+        * Defaults to 'auto'.
+        */
+-      serviceTier: import_v423.z.enum(["auto", "flex", "priority", "default"]).nullish(),
++      serviceTier: import_v423.z.enum(["auto", "flex", "priority", "ultrafast", "default"]).nullish(),
+       /**
+        * Whether to store the generation. Defaults to `true`.
+        */
+diff --git a/dist/index.mjs b/dist/index.mjs
+--- a/dist/index.mjs
++++ b/dist/index.mjs
+@@ -717,7 +717,7 @@
+        *
+        * @default 'auto'
+        */
+-      serviceTier: z3.enum(["auto", "flex", "priority", "default"]).optional(),
++      serviceTier: z3.enum(["auto", "flex", "priority", "ultrafast", "default"]).optional(),
+       /**
+        * Whether to use strict JSON schema validation.
+        *
+@@ -4882,7 +4882,7 @@
+        *
+        * Defaults to 'auto'.
+        */
+-      serviceTier: z23.enum(["auto", "flex", "priority", "default"]).nullish(),
++      serviceTier: z23.enum(["auto", "flex", "priority", "ultrafast", "default"]).nullish(),
+       /**
+        * Whether to store the generation. Defaults to `true`.
+        */
+diff --git a/dist/index.d.ts b/dist/index.d.ts
+--- a/dist/index.d.ts
++++ b/dist/index.d.ts
+@@ -14,7 +14,7 @@
+     store?: boolean | undefined;
+     metadata?: Record<string, string> | undefined;
+     prediction?: Record<string, any> | undefined;
+-    serviceTier?: "default" | "auto" | "flex" | "priority" | undefined;
++    serviceTier?: "default" | "auto" | "flex" | "priority" | "ultrafast" | undefined;
+     strictJsonSchema?: boolean | undefined;
+     textVerbosity?: "low" | "medium" | "high" | undefined;
+     promptCacheKey?: string | undefined;
+@@ -1089,7 +1089,7 @@
+     reasoningContext?: "auto" | "current_turn" | "all_turns" | undefined;
+     reasoningSummary?: string | null | undefined;
+     safetyIdentifier?: string | null | undefined;
+-    serviceTier?: "default" | "auto" | "flex" | "priority" | null | undefined;
++    serviceTier?: "default" | "auto" | "flex" | "priority" | "ultrafast" | null | undefined;
+     store?: boolean | null | undefined;
+     passThroughUnsupportedFiles?: boolean | undefined;
+     strictJsonSchema?: boolean | null | undefined;
+diff --git a/dist/index.d.mts b/dist/index.d.mts
+--- a/dist/index.d.mts
++++ b/dist/index.d.mts
+@@ -14,7 +14,7 @@
+     store?: boolean | undefined;
+     metadata?: Record<string, string> | undefined;
+     prediction?: Record<string, any> | undefined;
+-    serviceTier?: "default" | "auto" | "flex" | "priority" | undefined;
++    serviceTier?: "default" | "auto" | "flex" | "priority" | "ultrafast" | undefined;
+     strictJsonSchema?: boolean | undefined;
+     textVerbosity?: "low" | "medium" | "high" | undefined;
+     promptCacheKey?: string | undefined;
+@@ -1089,7 +1089,7 @@
+     reasoningContext?: "auto" | "current_turn" | "all_turns" | undefined;
+     reasoningSummary?: string | null | undefined;
+     safetyIdentifier?: string | null | undefined;
+-    serviceTier?: "default" | "auto" | "flex" | "priority" | null | undefined;
++    serviceTier?: "default" | "auto" | "flex" | "priority" | "ultrafast" | null | undefined;
+     store?: boolean | null | undefined;
+     passThroughUnsupportedFiles?: boolean | undefined;
+     strictJsonSchema?: boolean | null | undefined;
+diff --git a/dist/internal/index.d.ts b/dist/internal/index.d.ts
+--- a/dist/internal/index.d.ts
++++ b/dist/internal/index.d.ts
+@@ -13,7 +13,7 @@
+     store?: boolean | undefined;
+     metadata?: Record<string, string> | undefined;
+     prediction?: Record<string, any> | undefined;
+-    serviceTier?: "default" | "auto" | "flex" | "priority" | undefined;
++    serviceTier?: "default" | "auto" | "flex" | "priority" | "ultrafast" | undefined;
+     strictJsonSchema?: boolean | undefined;
+     textVerbosity?: "low" | "medium" | "high" | undefined;
+     promptCacheKey?: string | undefined;
+diff --git a/dist/internal/index.d.mts b/dist/internal/index.d.mts
+--- a/dist/internal/index.d.mts
++++ b/dist/internal/index.d.mts
+@@ -13,7 +13,7 @@
+     store?: boolean | undefined;
+     metadata?: Record<string, string> | undefined;
+     prediction?: Record<string, any> | undefined;
+-    serviceTier?: "default" | "auto" | "flex" | "priority" | undefined;
++    serviceTier?: "default" | "auto" | "flex" | "priority" | "ultrafast" | undefined;
+     strictJsonSchema?: boolean | undefined;
+     textVerbosity?: "low" | "medium" | "high" | undefined;
+     promptCacheKey?: string | undefined;
+diff --git a/src/chat/openai-chat-options.ts b/src/chat/openai-chat-options.ts
+--- a/src/chat/openai-chat-options.ts
++++ b/src/chat/openai-chat-options.ts
+@@ -142,7 +142,7 @@
+        *
+        * @default 'auto'
+        */
+-      serviceTier: z.enum(['auto', 'flex', 'priority', 'default']).optional(),
++      serviceTier: z.enum(['auto', 'flex', 'priority', 'ultrafast', 'default']).optional(),
+ 
+       /**
+        * Whether to use strict JSON schema validation.
+diff --git a/src/responses/openai-responses-options.ts b/src/responses/openai-responses-options.ts
+--- a/src/responses/openai-responses-options.ts
++++ b/src/responses/openai-responses-options.ts
+@@ -296,7 +296,7 @@
+        *
+        * Defaults to 'auto'.
+        */
+-      serviceTier: z.enum(['auto', 'flex', 'priority', 'default']).nullish(),
++      serviceTier: z.enum(['auto', 'flex', 'priority', 'ultrafast', 'default']).nullish(),
+ 
+       /**
+        * Whether to store the generation. Defaults to `true`.

@@ -4,11 +4,16 @@
   "globalPassThroughEnv": ["CI", "SWIFTCODER_DISABLE_SHARE"],
   "tasks": {
     "typecheck": {},
+    "test": {
+      "dependsOn": ["^build"],
+      "outputs": [],
+      "passThroughEnv": ["*"]
+    },
     "build": {
       "dependsOn": [],
       "outputs": ["dist/**"]
     },
-    "opencode#test": {
+    "swiftcoder#test": {
       "dependsOn": ["^build"],
       "outputs": [],
       "passThroughEnv": ["*"]
