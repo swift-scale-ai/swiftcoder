@@ -2,7 +2,7 @@
 set -eu
 
 ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
-CORE_ROOT="$ROOT/../swiftcore"
+CORE_ROOT="$ROOT"
 BUN="$ROOT/.tools/bun"
 
 "$ROOT/tools/check-phase0.sh"

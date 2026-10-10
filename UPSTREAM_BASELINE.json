@@ -17,6 +17,28 @@
     "solidJs": "1.9.10"
   },
   "strategy": "controlled-fork",
+  "monorepoMigration": {
+    "layout": "single-repository-bun-workspace",
+    "directory": "swiftcoder-v2",
+    "swiftcoderSource": "a2f82c6e4a82acb69b7f0af1eee194d0fbf70bcc",
+    "swiftcoreSource": "d0c1aa7b84627d3b9b7c92e0ec41f3ef6d3dad3c",
+    "gitHistory": "both-source-histories-retained",
+    "scriptDirectory": "packages/core-script",
+    "dependencyProtocol": "workspace:*",
+    "validation": {
+      "workspaces": 22,
+      "typecheckTasks": 20,
+      "relatedTestsPassed": 823,
+      "relatedTestsFailed": 0,
+      "internalWorkspaceLinksVerified": 45,
+      "frozenLockfileInstall": "passed",
+      "desktopProductionBuild": "passed",
+      "macOSCliBuildAndSmoke": "passed",
+      "electronSidecarIsolatedStartStop": "passed",
+      "coreSourceFilesPreserved": 2786,
+      "boundariesBrandingAndOpenSourceChecks": "passed"
+    }
+  },
   "latestSelectiveSync": {
     "appliedAt": "2026-10-02",
     "upstreamCommit": "1ddb0873aee50d209d1a8d7f91b89c5daf692d49",
@@ -80,7 +102,7 @@
       "desktopProductionBuild": "passed",
       "electronSidecarIsolatedStartStopSmoke": "passed"
     },
-    "corePinStatus": "pinned-in-.swiftcore-ref"
+    "corePinStatus": "co-located-workspaces-no-external-pin-required"
   },
   "retainedWorkspaces": [
     "packages/app",

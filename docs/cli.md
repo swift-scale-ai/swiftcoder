@@ -17,19 +17,11 @@ output for automation.
 
 ## Install from source
 
-SwiftCoder uses the sibling SwiftCore checkout recorded in `.swiftcore-ref`.
-With `swiftcoder` and `swiftcore` next to each other:
-
-```text
-swiftscale-agent/
-├── swiftcoder/
-└── swiftcore/
-```
-
-run:
+SwiftCoder and its core packages are included in this monorepo. From the
+repository root, run:
 
 ```bash
-cd swiftcoder
+cd swiftcoder-v2
 ./tools/bootstrap.sh
 bun run cli:install
 ```

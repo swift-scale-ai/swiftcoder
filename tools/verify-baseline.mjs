@@ -2,7 +2,6 @@ import { existsSync, lstatSync, readFileSync } from "node:fs"
 import { resolve } from "node:path"
 
 const root = resolve(import.meta.dirname, "..")
-const coreRoot = resolve(root, "../swiftcore")
 const baseline = JSON.parse(readFileSync(resolve(root, "UPSTREAM_BASELINE.json"), "utf8"))
 
 const required = [
@@ -19,8 +18,7 @@ for (const file of required) {
 }
 
 for (const workspace of baseline.retainedWorkspaces) {
-  const local = resolve(root, workspace)
-  const target = existsSync(local) ? local : resolve(coreRoot, workspace)
+  const target = resolve(root, workspace)
   if (!existsSync(target)) throw new Error(`Missing retained workspace: ${workspace}`)
   if (lstatSync(target).isSymbolicLink()) throw new Error(`Workspace must not be a symlink: ${workspace}`)
 }

@@ -1,48 +1,42 @@
-import { existsSync } from "node:fs"
-import { readdir } from "node:fs/promises"
+import { readdir, readFile } from "node:fs/promises"
 import { join } from "node:path"
 
 const root = join(import.meta.dir, "..")
 const packages = join(root, "packages")
-const extracted = [
-  "client",
-  "core",
-  "effect-drizzle-sqlite",
-  "effect-sqlite-node",
-  "http-recorder",
-  "httpapi-codegen",
-  "llm",
-  "plugin",
-  "protocol",
-  "schema",
-  "sdk",
-  "server",
-  "session-ui",
-  "ui",
-]
-const failures = extracted
-  .filter((name) => existsSync(join(packages, name, "package.json")))
-  .map((name) => `packages/${name} belongs in SwiftCore`)
-const forbidden = ["@swiftscale", "swiftworks"].join("/")
+const names = new Set<string>()
+const productNames = new Set([
+  "swiftcoder",
+  "@swiftscale/coder-app",
+  "@swiftscale/coder-tui",
+  "@swiftscale/coder-codemode",
+  "@swiftscale/coder-script",
+  "@swiftscale/swiftcoder-desktop",
+])
+const manifests: Array<{ name: string; [key: string]: unknown }> = []
+for (const entry of await readdir(packages, { withFileTypes: true })) {
+  if (!entry.isDirectory()) continue
+  const folder = entry.name === "sdk" ? "sdk/js" : entry.name
+  const manifest = JSON.parse(await readFile(join(packages, folder, "package.json"), "utf8"))
+  if (names.has(manifest.name)) throw new Error(`Duplicate workspace: ${manifest.name}`)
+  names.add(manifest.name)
+  manifests.push(manifest)
+}
 
-async function visit(path: string) {
-  for (const entry of await readdir(path, { withFileTypes: true })) {
-    if (["node_modules", "dist", "out", ".turbo"].includes(entry.name)) continue
-    const target = join(path, entry.name)
-    if (entry.isDirectory()) {
-      await visit(target)
-      continue
+for (const manifest of [JSON.parse(await readFile(join(root, "package.json"), "utf8")), ...manifests]) {
+  for (const field of ["dependencies", "devDependencies", "optionalDependencies", "peerDependencies"]) {
+    for (const [name, version] of Object.entries(manifest[field] ?? {})) {
+      if (names.has(manifest.name) && !productNames.has(manifest.name) && productNames.has(name)) {
+        throw new Error(`${manifest.name}: core package must not depend on product ${name}`)
+      }
+      if (names.has(name) && version !== "workspace:*") {
+        throw new Error(`${manifest.name}: ${name} must use workspace:*`)
+      }
+      if (typeof version === "string" && /(?:file:|link:).*swiftcore/.test(version)) {
+        throw new Error(`${manifest.name}: external SwiftCore dependency ${name}`)
+      }
     }
-    if (!/\.(?:ts|tsx|js|jsx|json)$/.test(entry.name)) continue
-    if ((await Bun.file(target).text()).includes(forbidden)) failures.push(`${target}: imports SwiftWorks`)
   }
 }
 
-await visit(packages)
-
-if (failures.length) {
-  console.error(failures.join("\n"))
-  process.exit(1)
-}
-
-console.log("SwiftCoder dependency boundaries are valid")
+await import("../scripts/check-boundaries")
+console.log(`SwiftCoder monorepo boundaries are valid (${names.size} workspaces)`)

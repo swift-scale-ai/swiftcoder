@@ -37,9 +37,9 @@
     "jsonc-parser": "3.3.1"
   },
   "devDependencies": {
-    "@swiftscale/desktop-kit": "file:../../../swiftcore/packages/desktop-kit",
+    "@swiftscale/desktop-kit": "workspace:*",
     "@swiftscale/coder-app": "workspace:*",
-    "@swiftscale/ui": "file:../../../swiftcore/packages/ui",
+    "@swiftscale/ui": "workspace:*",
     "@sentry/solid": "catalog:",
     "@sentry/vite-plugin": "catalog:",
     "@solid-primitives/i18n": "2.2.1",

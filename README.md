@@ -135,6 +135,13 @@ SwiftCoder Desktop (projects, sessions, timeline, diff, terminal)
 - Node.js 22.22.2 or newer
 - Xcode Command Line Tools
 
+## Monorepo
+
+This checkout contains both SwiftCoder and its SwiftCore foundation in one Bun
+workspace. All packages live under `packages/`; no sibling repository is
+required. Package names and core-to-product dependency boundaries are retained.
+See [the migration notes](CORE_MIGRATION.md) for layout and source provenance.
+
 ## Development
 
 ```bash

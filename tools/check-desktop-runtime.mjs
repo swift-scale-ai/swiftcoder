@@ -6,8 +6,8 @@ import { _electron as electron } from "@playwright/test"
 const root = resolve(import.meta.dirname, "..")
 const appPath = join(root, "packages/desktop")
 const executablePath = join(appPath, "node_modules/electron/dist/Electron.app/Contents/MacOS/Electron")
-const evidenceDir = resolve(root, "../swiftcoder-docs/evidence/phase3")
-const phase4EvidenceDir = resolve(root, "../swiftcoder-docs/evidence/phase4")
+const evidenceDir = resolve(root, ".artifacts/evidence/phase3")
+const phase4EvidenceDir = resolve(root, ".artifacts/evidence/phase4")
 const budgets = {
   interactiveMs: 8_000,
   workingSetMiB: 1_400,

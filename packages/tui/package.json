@@ -48,10 +48,10 @@
     "./component/register-spinner": "./src/component/register-spinner.ts"
   },
   "dependencies": {
-    "@swiftscale/core": "file:../../../swiftcore/packages/core",
-    "@swiftscale/plugin": "file:../../../swiftcore/packages/plugin",
-    "@swiftscale/sdk": "file:../../../swiftcore/packages/sdk/js",
-    "@swiftscale/ui": "file:../../../swiftcore/packages/ui",
+    "@swiftscale/core": "workspace:*",
+    "@swiftscale/plugin": "workspace:*",
+    "@swiftscale/sdk": "workspace:*",
+    "@swiftscale/ui": "workspace:*",
     "@opentui/core": "catalog:",
     "@opentui/keymap": "catalog:",
     "@opentui/solid": "catalog:",

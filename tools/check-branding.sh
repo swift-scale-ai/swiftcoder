@@ -14,10 +14,10 @@ RUNTIME_PATHS=(
   packages/opencode/script
   packages/opencode/resources
   packages/tui/src
-  ../swiftcore/packages/core/src
-  ../swiftcore/packages/server/src
-  ../swiftcore/packages/sdk/js/src
-  ../swiftcore/packages/client/src
+  packages/core/src
+  packages/server/src
+  packages/sdk/js/src
+  packages/client/src
 )
 
 FORBIDDEN='\bOpenCode\b|opencode[.]ai|models[.]opencode[.]ai|opncd[.]ai|swiftcoder[.]ai|OPENCODE_|x-opencode|oc://|opencode-go|opencode[.]json|[.]opencode|opencode-cli|opencode[.]local|opencode[.]db|opencode-root|opencode-instance|/bin/opencode|anomalyco/opencode|discord[.]com/invite/opencode'
