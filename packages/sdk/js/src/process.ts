@@ -1,6 +1,6 @@
 import { type ChildProcess, spawnSync } from "node:child_process"
 
-// Duplicated from `packages/opencode/src/util/process.ts` because the SDK cannot
+// Duplicated from `packages/agent/src/util/process.ts` because the SDK cannot
 // import `swiftcoder` without creating a cycle (`swiftcoder` depends on `@swiftscale/sdk`).
 export function stop(proc: ChildProcess) {
   if (proc.exitCode !== null || proc.signalCode !== null) return

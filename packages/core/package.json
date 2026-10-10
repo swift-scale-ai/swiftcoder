@@ -13,7 +13,7 @@
     "typecheck": "tsc --noEmit"
   },
   "bin": {
-    "swiftcoder": "../opencode/bin/swiftcoder"
+    "swiftcoder": "../agent/bin/swiftcoder"
   },
   "exports": {
     "./effect/layer-node": "./src/effect/layer-node.ts",

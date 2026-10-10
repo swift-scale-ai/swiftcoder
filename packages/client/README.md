@@ -18,7 +18,7 @@ Effect consumers construct canonical decoded inputs:
 ```ts
 import { AbsolutePath, Location, SwiftCoder, Prompt } from "@swiftscale/client/effect"
 
-const client = yield * SwiftCoder.make({ baseUrl: "https://opencode.example" })
+const client = yield * SwiftCoder.make({ baseUrl: "https://swiftcoder.example" })
 yield *
   client.sessions.create({
     location: Location.Ref.make({ directory: AbsolutePath.make("/workspace") }),

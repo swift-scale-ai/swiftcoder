@@ -10,4 +10,4 @@ Use patch releases (`v0.3.1`, `v0.3.2`, and so on) for subsequent updates unless
 
 Release builds take their version from the Git tag via `SWIFTCODER_VERSION`.
 Local `tools/package-mac-dev.sh` builds use the nearest release tag plus `-dev`.
-Automatic patch bumps use SwiftCoder's reachable stable tags and desktop package version as the baseline; they do not use the upstream OpenCode version.
+Automatic patch bumps use SwiftCoder's reachable stable tags and desktop package version as the baseline; they do not use the upstream SwiftCoder version.

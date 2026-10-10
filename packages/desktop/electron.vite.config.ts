@@ -4,7 +4,7 @@ import appPlugin from "@swiftscale/coder-app/vite"
 import * as fs from "node:fs/promises"
 import { resolveBuildVersion } from "./scripts/build-version"
 
-const SWIFTCODER_SERVER_DIST = "../opencode/dist/node"
+const SWIFTCODER_SERVER_DIST = "../agent/dist/node"
 const SWIFTCODER_SERVER_ENTRY = "./chunks/swiftcoder-server.js"
 
 const channel = (() => {

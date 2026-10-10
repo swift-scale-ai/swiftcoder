@@ -32,7 +32,7 @@ describe("inlineCodeKind", () => {
     expect(inlineCodeKind(`terraform.tfvars`)).toBe("path")
     expect(inlineCodeKind(`pnpm-lock.yaml`)).toBe("path")
     expect(inlineCodeKind(`packages/desktop-electron`)).toBe("path")
-    expect(inlineCodeKind(`~/.config/opencode`)).toBe("path")
+    expect(inlineCodeKind(`~/.config/swiftcoder`)).toBe("path")
     expect(inlineCodeKind(`@swiftscale/app`)).toBe("path")
     expect(inlineCodeKind(`session/status`)).toBe("path")
   })
@@ -40,7 +40,7 @@ describe("inlineCodeKind", () => {
   test("detects urls", () => {
     expect(inlineCodeKind(`https://swift-scale.com/docs`)).toBe("url")
     expect(inlineCodeKind(`http://localhost:4444`)).toBe("url")
-    expect(inlineCodeKind(`file:///tmp/opencode`)).toBeUndefined()
+    expect(inlineCodeKind(`file:///tmp/swiftcoder`)).toBeUndefined()
     expect(inlineCodeKind(`ftp://swift-scale.com/docs`)).toBeUndefined()
   })
 })

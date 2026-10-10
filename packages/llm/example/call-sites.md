@@ -480,7 +480,7 @@ This follows the strongest parts of adjacent libraries:
 - AI SDK: configured provider instances expose provider-specific model methods.
 - Effect AI: executable models carry provider requirements and can be resolved by
   an app boundary.
-- LiteLLM/opencode config: dynamic `providerID/modelID` branching belongs at the
+- LiteLLM/swiftcoder config: dynamic `providerID/modelID` branching belongs at the
   app boundary, not in the typed public provider API or a global runtime
   resolver.
 - LangChain/LlamaIndex: constructor-style config plus model id is convenient,
@@ -561,7 +561,7 @@ App boundary = explicit durable-config -> typed-provider call
 - [ ] Decide whether a tiny `Provider.define(...)` helper is warranted after two
       or three provider conversions; start with plain objects if duplication is not
       yet painful.
-- [x] Update `packages/opencode/src/session/llm/native-request.ts` to construct
+- [x] Update `packages/agent/src/session/llm/native-request.ts` to construct
       executable models at the session boundary with explicit provider facade
       calls, mapping catalog metadata such as `endpoint.websocket` to the correct
       named route selector.

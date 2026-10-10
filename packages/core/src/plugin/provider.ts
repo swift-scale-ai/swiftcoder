@@ -1,4 +1,4 @@
-import { SwiftCoderPlugin } from "./provider/opencode"
+import { SwiftCoderPlugin } from "./provider/swiftcoder"
 import type { PluginInternal } from "./internal"
 import type { Scope } from "effect"
 

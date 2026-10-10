@@ -95,7 +95,7 @@ export function WslServerSettings(props: {
         {(item) => {
           const key = ServerConnection.Key.make(item.config.id)
           const check = () => wsl.data?.swiftcoderChecks[item.config.distro]
-          const opencodeAction = () => wslSwiftCoderAction(check())
+          const swiftcoderAction = () => wslSwiftCoderAction(check())
           const busy = () => wsl.data?.job?.kind === "install-swiftcoder" && wsl.data.job.distro === item.config.distro
           return (
             <div class="settings-v2-servers-row">
@@ -117,7 +117,7 @@ export function WslServerSettings(props: {
                 <Show when={props.controller.canDefault() && props.controller.defaultKey() === key}>
                   <Tag>{language.t("dialog.server.status.default")}</Tag>
                 </Show>
-                <Show when={opencodeAction()}>
+                <Show when={swiftcoderAction()}>
                   {(label) => (
                     <ButtonV2
                       size="small"

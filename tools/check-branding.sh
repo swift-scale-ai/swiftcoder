@@ -10,9 +10,9 @@ RUNTIME_PATHS=(
   packages/desktop/src
   packages/desktop/scripts
   packages/desktop/resources
-  packages/opencode/src
-  packages/opencode/script
-  packages/opencode/resources
+  packages/agent/src
+  packages/agent/script
+  packages/agent/resources
   packages/tui/src
   packages/core/src
   packages/server/src
@@ -27,10 +27,19 @@ if rg -n \
   --glob '!**/dist/**' \
   --glob '!**/out/**' \
   --glob '!packages/app/src/utils/client-brand-compat.ts' \
-  --glob '!packages/opencode/src/mcp/index.ts' \
+  --glob '!packages/agent/src/mcp/index.ts' \
   "$FORBIDDEN" "${RUNTIME_PATHS[@]}"; then
   echo "Legacy OpenCode product branding found in a runtime surface." >&2
   exit 1
 fi
 
 echo "SwiftCoder runtime branding check passed."
+
+if [[ -d packages/opencode ]]; then
+  echo "Legacy agent workspace path remains." >&2
+  exit 1
+fi
+if rg -n '@opencode-ai/cli-|opencode2|downloadCliToResources' packages/desktop/scripts; then
+  echo "Desktop builds must use the local SwiftCoder CLI." >&2
+  exit 1
+fi

@@ -3,7 +3,7 @@ set -eu
 
 ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 CORE_ROOT="$ROOT"
-BUN="$ROOT/.tools/bun"
+BUN="${BUN:-$(command -v bun)}"
 
 "$ROOT/tools/check-phase0.sh"
 (cd "$ROOT/packages/desktop" && "$BUN" test \
@@ -12,7 +12,7 @@ BUN="$ROOT/.tools/bun"
   src/main/swiftscale-auth.test.ts \
   src/main/window-state.test.ts \
   ../../tools/mock-swiftscale.test.ts)
-(cd "$ROOT/packages/opencode" && "$BUN" test \
+(cd "$ROOT/packages/agent" && "$BUN" test \
   src/provider/error-swiftscale.test.ts \
   src/provider/swiftscale-base-url.test.ts \
   src/auth/macos-keychain.test.ts)

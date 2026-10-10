@@ -10,6 +10,7 @@ export const pack = async () => {
   const original = await Bun.file("package.json").text()
   // oxlint-disable-next-line typescript-eslint/no-unsafe-type-assertion -- package.json is validated by the package schema and build checks.
   const pkg = JSON.parse(original) as {
+    readonly name: string
     readonly version: string
     exports: Record<string, string | { readonly import: string; readonly types: string }>
   }
@@ -26,7 +27,8 @@ export const pack = async () => {
   await Bun.write("package.json", JSON.stringify(pkg, null, 2))
   try {
     await $`bun pm pack`
-    return fileURLToPath(new URL(`../opencode-ai-http-recorder-${pkg.version}.tgz`, import.meta.url))
+    const filename = `${pkg.name.replace(/^@/, "").replaceAll("/", "-")}-${pkg.version}.tgz`
+    return fileURLToPath(new URL(`../${filename}`, import.meta.url))
   } finally {
     await Bun.write("package.json", original)
   }

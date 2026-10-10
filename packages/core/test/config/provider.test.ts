@@ -68,7 +68,7 @@ describe("ConfigProviderPlugin.Plugin", () => {
               info: decode({
                 providers: {
                   swiftcoder: {
-                    api: { type: "aisdk", package: "@ai-sdk/openai", url: "https://opencode.test/v1" },
+                    api: { type: "aisdk", package: "@ai-sdk/openai", url: "https://swiftcoder.test/v1" },
                     models: {
                       "alpha-gpt-next": {
                         variants: [
@@ -119,7 +119,7 @@ describe("ConfigProviderPlugin.Plugin", () => {
               info: decode({
                 providers: {
                   swiftcoder: {
-                    api: { type: "aisdk", package: "@ai-sdk/openai", url: "https://opencode.test/v1" },
+                    api: { type: "aisdk", package: "@ai-sdk/openai", url: "https://swiftcoder.test/v1" },
                   },
                 },
               }),

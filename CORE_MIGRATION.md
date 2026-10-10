@@ -6,7 +6,7 @@ remain unchanged; this checkout was created in `swiftcoder-v2`.
 ```text
 swiftcoder-v2/
 ├── packages/
-│   ├── app, desktop, opencode, tui, codemode   Product packages
+│   ├── app, desktop, swiftcoder, tui, codemode   Product packages
 │   ├── core, llm, schema, protocol, plugin    Agent foundation
 │   ├── client, server, sdk/js                 API contracts
 │   ├── ui, session-ui, desktop-kit           Shared experience

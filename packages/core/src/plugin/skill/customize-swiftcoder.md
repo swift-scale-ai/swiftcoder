@@ -40,13 +40,13 @@ already-loaded config until then.
 | Scope                         | Path                                                                                                                      |
 | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
 | Project config                | `./swiftcoder.json`, `./swiftcoder.jsonc`, or `.swiftcoder/swiftcoder.json` (swiftcoder walks up from the cwd to the worktree root) |
-| Global config                 | `~/.config/opencode/swiftcoder.json` (NOT `~/.swiftcoder/`)                                                                   |
+| Global config                 | `~/.config/swiftcoder/swiftcoder.json` (NOT `~/.swiftcoder/`)                                                                   |
 | Project agents                | `.swiftcoder/agent/<name>.md` or `.swiftcoder/agents/<name>.md`                                                               |
-| Global agents                 | `~/.config/opencode/agent(s)/<name>.md`                                                                                   |
+| Global agents                 | `~/.config/swiftcoder/agent(s)/<name>.md`                                                                                   |
 | Project commands              | `.swiftcoder/command/<name>.md` or `.swiftcoder/commands/<name>.md`                                                           |
-| Global commands               | `~/.config/opencode/command(s)/<name>.md`                                                                                 |
+| Global commands               | `~/.config/swiftcoder/command(s)/<name>.md`                                                                                 |
 | Project skills                | `.swiftcoder/skill(s)/<name>/SKILL.md`                                                                                      |
-| Global skills                 | `~/.config/opencode/skill(s)/<name>/SKILL.md`                                                                             |
+| Global skills                 | `~/.config/swiftcoder/skill(s)/<name>/SKILL.md`                                                                             |
 | External skills (auto-loaded) | `~/.claude/skills/<name>/SKILL.md`, `~/.agents/skills/<name>/SKILL.md`                                                    |
 
 Configs from each scope are deep-merged. Project overrides global. Unknown
@@ -123,9 +123,9 @@ Every field is optional.
 
   "plugin": [
     "opencode-gemini-auth",
-    "opencode-foo@1.2.3",
+    "swiftcoder-foo@1.2.3",
     "./local-plugin.ts",
-    ["opencode-bar", { "option": "value" }]
+    ["swiftcoder-bar", { "option": "value" }]
   ],
 
   "permission": {
@@ -312,10 +312,10 @@ model: anthropic/claude-sonnet-4-6
 ```json
 "plugin": [
   "opencode-gemini-auth",            // npm spec, latest
-  "opencode-foo@1.2.3",              // npm spec, pinned
+  "swiftcoder-foo@1.2.3",              // npm spec, pinned
   "./local-plugin.ts",               // file path, relative to the declaring config
   "file:///abs/path/plugin.js",      // file URL
-  ["opencode-bar", { "key": "val" }] // tuple form with options
+  ["swiftcoder-bar", { "key": "val" }] // tuple form with options
 ]
 ```
 

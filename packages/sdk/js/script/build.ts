@@ -9,7 +9,7 @@ import path from "path"
 
 import { createClient } from "@hey-api/openapi-ts"
 
-const swiftcoder = path.resolve(dir, "../../opencode")
+const swiftcoder = path.resolve(dir, "../../agent")
 
 await $`bun dev generate > ${dir}/openapi.json`.cwd(swiftcoder)
 

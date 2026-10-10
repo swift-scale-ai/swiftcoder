@@ -5,7 +5,7 @@
   "upstream": {
     "name": "OpenCode",
     "repository": "https://github.com/anomalyco/opencode",
-    "localReference": "../opencode",
+    "localReference": "../agent",
     "commit": "284214c78d32a09fd9c729bdefc07be50f74eb40",
     "packageVersion": "1.18.15",
     "license": "MIT"
@@ -115,7 +115,7 @@
     "packages/http-recorder",
     "packages/httpapi-codegen",
     "packages/llm",
-    "packages/opencode",
+    "packages/agent",
     "packages/plugin",
     "packages/protocol",
     "packages/schema",

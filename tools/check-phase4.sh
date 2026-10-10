@@ -2,7 +2,7 @@
 set -euo pipefail
 
 ROOT="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
-BUN="$ROOT/.tools/bun"
+BUN="${BUN:-$(command -v bun)}"
 
 "$ROOT/tools/check-phase3.sh"
 
@@ -12,7 +12,7 @@ BUN="$ROOT/.tools/bun"
   src/main/product-analytics.test.ts \
   src/main/ipc-contract.test.ts \
   ../../tools/mock-swiftscale.test.ts)
-(cd "$ROOT/packages/opencode" && "$BUN" test src/provider/error-swiftscale.test.ts)
+(cd "$ROOT/packages/agent" && "$BUN" test src/provider/error-swiftscale.test.ts)
 (cd "$ROOT/packages/app" && "$BUN" test --conditions=solid --preload ./happydom.ts \
   src/pages/layout/helpers.test.ts \
   src/pages/layout/account-summary.test.ts)
@@ -20,7 +20,7 @@ BUN="$ROOT/.tools/bun"
 (cd "$ROOT/packages/desktop" && "$BUN" test ../../tools/phase4-kpi.test.ts)
 (cd "$ROOT" && node tools/check-open-source-readiness.mjs)
 
-if rg -n 'swiftscale\.ai|opencode\.ai' \
+if rg -n 'swiftscale\.ai|swiftcoder\.ai' \
   "$ROOT/packages/app/src/components/dialog-swiftscale-account.tsx" \
   "$ROOT/packages/desktop/src/main/swiftscale-auth-contract.ts"; then
   echo "Phase 4 account surfaces contain a non-SwiftScale production domain" >&2

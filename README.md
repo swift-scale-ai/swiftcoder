@@ -36,7 +36,7 @@ controlled local workflow: understand the repository, plan the work, inspect
 and edit files, run commands, review changes, and verify the result.
 
 SwiftCoder combines an Electron desktop shell, a focused SolidJS workbench,
-and an embedded TypeScript Agent Server derived from OpenCode. The desktop
+and an embedded TypeScript Agent Server maintained by SwiftScale. The desktop
 client is designed to be open, inspectable, and local-first, while SwiftScale
 provides identity, account entitlements, model access, routing, and commercial
 AI services.
@@ -223,7 +223,7 @@ Local test artifacts are never eligible for staging to a public update channel.
 
 - `packages/desktop`: Electron main process, preload, packaging, and renderer entry.
 - `packages/app`: SolidJS workspace UI.
-- `packages/opencode`: embedded TypeScript Agent Server retained from the upstream baseline.
+- `packages/agent`: embedded TypeScript Agent Server retained from the upstream baseline.
 - `packages/core`, `packages/schema`, `packages/protocol`: shared Agent domain and API contracts.
 - `packages/ui`, `packages/session-ui`: UI and Agent timeline components.
 - `tools`: SwiftCoder development, verification, packaging, and release automation.

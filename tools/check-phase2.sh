@@ -3,13 +3,13 @@ set -euo pipefail
 
 ROOT="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
 CORE_ROOT="$ROOT"
-BUN="$ROOT/.tools/bun"
+BUN="${BUN:-$(command -v bun)}"
 
 "$ROOT/tools/check-phase1.sh"
 
 (cd "$CORE_ROOT/packages/core" && "$BUN" test test/filesystem/filesystem.test.ts)
 
-(cd "$ROOT/packages/opencode" && "$BUN" test \
+(cd "$ROOT/packages/agent" && "$BUN" test \
   test/agent/agent.test.ts \
   test/tool/external-directory.test.ts \
   test/tool/read.test.ts \
@@ -24,9 +24,9 @@ BUN="$ROOT/.tools/bun"
 
 # Keep listener-backed suites isolated. They bind temporary loopback ports and
 # require the normal macOS development environment rather than a network sandbox.
-(cd "$ROOT/packages/opencode" && "$BUN" test test/server/session-actions.test.ts)
-(cd "$ROOT/packages/opencode" && "$BUN" test test/server/httpapi-v2-pty.test.ts)
-(cd "$ROOT/packages/opencode" && "$BUN" test test/cli/serve/session-restart.test.ts)
+(cd "$ROOT/packages/agent" && "$BUN" test test/server/session-actions.test.ts)
+(cd "$ROOT/packages/agent" && "$BUN" test test/server/httpapi-v2-pty.test.ts)
+(cd "$ROOT/packages/agent" && "$BUN" test test/cli/serve/session-restart.test.ts)
 
 (cd "$ROOT/packages/app" && "$BUN" test --conditions=solid --preload ./happydom.ts \
   src/pages/home-session-open.test.ts \

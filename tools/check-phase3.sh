@@ -2,7 +2,7 @@
 set -euo pipefail
 
 ROOT="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
-BUN="$ROOT/.tools/bun"
+BUN="${BUN:-$(command -v bun)}"
 
 "$ROOT/tools/check-phase2.sh"
 
@@ -14,8 +14,8 @@ BUN="$ROOT/.tools/bun"
   src/main/server-url.test.ts \
   src/main/sidecar-idle.test.ts \
   src/main/local-server-security.test.ts)
-(cd "$ROOT/packages/opencode" && "$BUN" test test/config/product-policy.test.ts)
-(cd "$ROOT/packages/opencode" && "$BUN" test test/session/messages-pagination.test.ts)
+(cd "$ROOT/packages/agent" && "$BUN" test test/config/product-policy.test.ts)
+(cd "$ROOT/packages/agent" && "$BUN" test test/session/messages-pagination.test.ts)
 (cd "$ROOT/packages/app" && "$BUN" test --conditions=solid --preload ./happydom.ts \
   src/pages/session/usage-exceeded-dialogs.test.ts \
   src/pages/session/timeline/rows-current.test.ts \

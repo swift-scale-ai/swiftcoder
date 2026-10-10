@@ -39,11 +39,11 @@ jobs:
       - name: Build cross-platform CLI archives
         env:
           SWIFTCODER_RELEASE: "1"
-        run: bun run --cwd packages/opencode build -- --skip-embed-web-ui
+        run: bun run --cwd packages/agent build -- --skip-embed-web-ui
       - name: Rename archives and generate checksums
         run: |
           set -euo pipefail
-          cd packages/opencode/dist
+          cd packages/agent/dist
           shopt -s nullglob
           archives=(swiftcoder-*.zip swiftcoder-*.tar.gz)
           (( ${#archives[@]} > 0 ))
@@ -53,14 +53,14 @@ jobs:
       - name: Verify release archives
         run: |
           set -euo pipefail
-          test -f packages/opencode/dist/swiftcoder-cli-darwin-arm64.zip
-          test -f packages/opencode/dist/swiftcoder-cli-darwin-x64.zip
-          test -f packages/opencode/dist/swiftcoder-cli-linux-arm64.tar.gz
-          test -f packages/opencode/dist/swiftcoder-cli-linux-x64.tar.gz
-          test -f packages/opencode/dist/swiftcoder-cli-windows-x64.zip
-          test -s packages/opencode/dist/swiftcoder-cli-checksums.txt
-          test -f packages/opencode/dist/install.sh
-          test -f packages/opencode/dist/install.ps1
+          test -f packages/agent/dist/swiftcoder-cli-darwin-arm64.zip
+          test -f packages/agent/dist/swiftcoder-cli-darwin-x64.zip
+          test -f packages/agent/dist/swiftcoder-cli-linux-arm64.tar.gz
+          test -f packages/agent/dist/swiftcoder-cli-linux-x64.tar.gz
+          test -f packages/agent/dist/swiftcoder-cli-windows-x64.zip
+          test -s packages/agent/dist/swiftcoder-cli-checksums.txt
+          test -f packages/agent/dist/install.sh
+          test -f packages/agent/dist/install.ps1
       - name: Publish CLI archives to GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
@@ -74,9 +74,9 @@ jobs:
           fi
           for _ in {1..30}; do gh release view "$tag" >/dev/null 2>&1 && break; sleep 2; done
           gh release upload "$tag" \
-            packages/opencode/dist/swiftcoder-cli-*.zip \
-            packages/opencode/dist/swiftcoder-cli-*.tar.gz \
-            packages/opencode/dist/swiftcoder-cli-checksums.txt \
-            packages/opencode/dist/install.sh \
-            packages/opencode/dist/install.ps1 \
+            packages/agent/dist/swiftcoder-cli-*.zip \
+            packages/agent/dist/swiftcoder-cli-*.tar.gz \
+            packages/agent/dist/swiftcoder-cli-checksums.txt \
+            packages/agent/dist/install.sh \
+            packages/agent/dist/install.ps1 \
             --clobber

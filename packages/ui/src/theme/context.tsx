@@ -12,13 +12,13 @@ import type { DesktopTheme } from "./types"
 export type ColorScheme = "light" | "dark" | "system"
 
 const STORAGE_KEYS = {
-  THEME_ID: "opencode-theme-id",
-  COLOR_SCHEME: "opencode-color-scheme",
-  THEME_CSS_LIGHT: "opencode-theme-css-light",
-  THEME_CSS_DARK: "opencode-theme-css-dark",
+  THEME_ID: "swiftcoder-theme-id",
+  COLOR_SCHEME: "swiftcoder-color-scheme",
+  THEME_CSS_LIGHT: "swiftcoder-theme-css-light",
+  THEME_CSS_DARK: "swiftcoder-theme-css-dark",
 } as const
 
-const THEME_STYLE_ID = "oc-theme"
+const THEME_STYLE_ID = "swiftcoder-theme"
 let files: Record<string, () => Promise<{ default: DesktopTheme }>> | undefined
 let ids: string[] | undefined
 let known: Set<string> | undefined
@@ -44,7 +44,7 @@ function knownThemes() {
 }
 
 const names: Record<string, string> = {
-  "oc-2": "OC-2",
+  "oc-2": "SwiftCoder Classic",
   amoled: "AMOLED",
   aura: "Aura",
   ayu: "Ayu",
@@ -91,7 +91,12 @@ function normalize(id: string | null | undefined) {
 function read(key: string) {
   if (typeof localStorage !== "object") return null
   try {
-    return localStorage.getItem(key)
+    const current = localStorage.getItem(key)
+    if (current !== null) return current
+    // Preserve preferences created by earlier SwiftCoder releases.
+    const legacy = localStorage.getItem(key.replace(/^swiftcoder-/, "opencode-"))
+    if (legacy !== null) localStorage.setItem(key, legacy)
+    return legacy
   } catch {
     return null
   }
@@ -148,7 +153,7 @@ function applyThemeCss(theme: DesktopTheme, themeId: string, mode: "light" | "da
   ${v2}
 }`
 
-  document.getElementById("oc-theme-preload")?.remove()
+  document.getElementById("swiftcoder-theme-preload")?.remove()
   ensureThemeStyleElement().textContent = fullCss
   document.documentElement.dataset.theme = themeId
   document.documentElement.dataset.colorScheme = mode

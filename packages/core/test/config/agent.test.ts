@@ -23,7 +23,7 @@ describe("ConfigAgentPlugin.Plugin", () => {
   it.effect("matches POSIX paths against home-relative permissions", () =>
     Effect.gen(function* () {
       const permissions = yield* loadHomePermissions("/home/test")
-      expect(PermissionV2.evaluate("external_directory", "/home/test/p/opencode/src/*", permissions).effect).toBe(
+      expect(PermissionV2.evaluate("external_directory", "/home/test/p/swiftcoder/src/*", permissions).effect).toBe(
         "allow",
       )
       expect(PermissionV2.evaluate("external_directory", "/home/test/cache/files/*", permissions).effect).toBe("deny")

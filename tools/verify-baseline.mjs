@@ -10,7 +10,7 @@ const required = [
   "bun.lock",
   "packages/desktop/package.json",
   "packages/app/package.json",
-  "packages/opencode/package.json",
+  "packages/agent/package.json",
 ]
 
 for (const file of required) {

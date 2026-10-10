@@ -4,7 +4,7 @@
 
 SwiftCoder는 [SwiftScale](https://swift-scale.com)이 제공하는 macOS용 경량 AI 코딩 에이전트입니다. 자연어 작업을 저장소 이해, 작업 계획, 파일 검사 및 편집, 명령 실행, 변경 검토, 결과 검증으로 이어지는 통제 가능한 로컬 워크플로로 전환합니다.
 
-SwiftCoder는 Electron 데스크톱 셸, 집중도 높은 SolidJS 워크벤치, OpenCode에서 파생된 내장 TypeScript Agent Server로 구성됩니다. 데스크톱 클라이언트는 개방적이고 검토 가능하며 로컬 우선으로 설계되었습니다. SwiftScale은 인증, 계정 권한, 모델 접근, 라우팅 및 상용 AI 서비스를 제공합니다.
+SwiftCoder는 Electron 데스크톱 셸, 집중도 높은 SolidJS 워크벤치, SwiftScale이 개발하는 내장 TypeScript Agent Server로 구성됩니다. 데스크톱 클라이언트는 개방적이고 검토 가능하며 로컬 우선으로 설계되었습니다. SwiftScale은 인증, 계정 권한, 모델 접근, 라우팅 및 상용 AI 서비스를 제공합니다.
 
 ## 제품 포지셔닝
 
@@ -140,7 +140,7 @@ bun run check:security
 
 - `packages/desktop`: Electron 메인 프로세스, Preload, 패키징 및 렌더러 진입점
 - `packages/app`: SolidJS 워크스페이스 UI
-- `packages/opencode`: 업스트림 기준에서 유지한 내장 TypeScript Agent Server
+- `packages/agent`: 업스트림 기준에서 유지한 내장 TypeScript Agent Server
 - `packages/core`, `packages/schema`, `packages/protocol`: 공유 Agent 도메인과 API 계약
 - `packages/ui`, `packages/session-ui`: UI 및 Agent 타임라인 컴포넌트
 - `tools`: 개발, 검증, 패키징 및 릴리스 자동화
@@ -149,7 +149,7 @@ bun run check:security
 
 ## 라이선스 및 귀속
 
-SwiftCoder 소스는 루트 `LICENSE`의 MIT License로 공개됩니다. 주요 부분은 OpenCode에서 파생되었으며 업스트림 저작권과 MIT 고지를 `THIRD_PARTY_NOTICES.md` 및 `legal/OpenCode-LICENSE.txt`에 유지합니다.
+SwiftCoder 소스는 루트 `LICENSE`의 MIT License로 공개됩니다. 주요 부분은 OpenCode에서 파생되었으며 업스트림 저작권과 MIT 고지를 `THIRD_PARTY_NOTICES.md` 및 `__PRESERVED_BRAND_0__`에 유지합니다.
 
 의존성과 에셋 라이선스:
 
