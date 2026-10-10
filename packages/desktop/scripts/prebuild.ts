@@ -9,5 +9,6 @@ process.env.SWIFTCODER_VERSION = resolveBuildVersion(channel)
 await $`bun ./scripts/copy-icons.ts ${channel}`
 await $`bun ./scripts/copy-metainfo.ts ${channel}`
 
-await $`cd ../agent && bun script/build-node.ts`
 if (channel === "dev") await buildCliToResources()
+// The CLI build clears agent/dist, so build the Node sidecar after it.
+await $`cd ../agent && bun script/build-node.ts`

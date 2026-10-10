@@ -69,6 +69,16 @@ describe("OpenAI Responses route", () => {
     }),
   )
 
+  it.effect("passes ultrafast without changing the default service tier", () =>
+    Effect.gen(function* () {
+      const prepared = yield* LLMClient.prepare(
+        LLM.updateRequest(request, { providerOptions: { openai: { serviceTier: "ultrafast" } } }),
+      )
+      expect(prepared.body).toMatchObject({ service_tier: "ultrafast" })
+      expect((yield* LLMClient.prepare(request)).body).not.toHaveProperty("service_tier")
+    }),
+  )
+
   it.effect("omits unsupported semantic service tiers", () =>
     Effect.gen(function* () {
       const prepared = yield* LLMClient.prepare(

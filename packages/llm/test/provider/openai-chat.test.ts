@@ -29,6 +29,28 @@ const request = LLM.request({
 })
 
 describe("OpenAI Chat route", () => {
+  for (const tier of ["priority", "ultrafast"] as const) {
+    it.effect(`passes semantic ${tier} service tier options`, () =>
+      Effect.gen(function* () {
+        const prepared = yield* LLMClient.prepare<OpenAIChat.OpenAIChatBody>(
+          LLM.updateRequest(request, { providerOptions: { openai: { serviceTier: tier } } }),
+        )
+        expect(prepared.body.service_tier).toBe(tier)
+        expect(prepared.body).not.toHaveProperty("serviceTier")
+      }),
+    )
+  }
+
+  it.effect("omits absent and unsupported service tiers", () =>
+    Effect.gen(function* () {
+      expect((yield* LLMClient.prepare(request)).body).not.toHaveProperty("service_tier")
+      const prepared = yield* LLMClient.prepare(
+        LLM.updateRequest(request, { providerOptions: { openai: { serviceTier: "unsupported" } } }),
+      )
+      expect(prepared.body).not.toHaveProperty("service_tier")
+    }),
+  )
+
   it.effect("prepares OpenAI Chat payload", () =>
     Effect.gen(function* () {
       // Pass the OpenAIChat payload type so `prepared.body` is statically
