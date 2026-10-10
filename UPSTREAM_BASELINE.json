@@ -108,7 +108,7 @@
       "xAI SDK patch preserves inline PDF, prompt cache key and extensible reasoning effort support",
       "desktop prebuild creates the Node sidecar after the CLI build that clears agent/dist"
     ],
-    "releaseStatus": "source-prepared-for-v0.3.1",
+    "releaseStatus": "source-prepared-for-v0.3.2",
     "validation": {
       "focusedCompatibilityTests": { "passed": 175, "failed": 0, "files": 7 },
       "providerTransformAndSessionLLMTests": { "passed": 471, "failed": 0, "files": 3 },

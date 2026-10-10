@@ -367,7 +367,7 @@
     },
     "packages/desktop": {
       "name": "@swiftscale/swiftcoder-desktop",
-      "version": "0.3.1",
+      "version": "0.3.2",
       "dependencies": {
         "@lydell/node-pty": "catalog:",
         "@zip.js/zip.js": "2.7.62",
